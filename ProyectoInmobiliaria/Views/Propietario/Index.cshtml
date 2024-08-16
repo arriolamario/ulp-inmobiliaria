@@ -1,0 +1,43 @@
+﻿@model IEnumerable<ProyectoInmobiliaria.Models.Propietario>
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>DNI</th>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Teléfono</th>
+                <th>Email</th>
+                <th>Dirección</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var propietario in Model)
+            {
+                <tr>
+                    <td>@propietario.id</td>
+                    <td>@propietario.dni</td>
+                    <td>@propietario.nombre</td>
+                    <td>@propietario.apellido</td>
+                    <td>@propietario.telefono</td>
+                    <td>@propietario.email</td>
+                    <td>@propietario.direccion</td>
+                    <td>
+                        <a href="@Url.Action("Details", "Propietario", new { id = propietario.id })"
+                            class="btn btn-info btn-sm">Detalles</a>
+                        <a href="@Url.Action("Edit", "Propietario", new { id = propietario.id })"
+                            class="btn btn-warning btn-sm">Editar</a>
+                        <a href="@Url.Action("Delete", "Propietario", new { id = propietario.id })"
+                            class="btn btn-danger btn-sm">Borrar</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
