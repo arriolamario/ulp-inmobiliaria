@@ -10,9 +10,9 @@ public abstract class RepositorioBase
         connectionString = configuration.GetConnectionString("DefaultConnection") ?? "";
     }
 
-    public List<t> ExecuteReader<t>(string query, Func<MySqlDataReader, t> mapper)
+    public List<T> ExecuteReaderList<T>(string query, Func<MySqlDataReader, T> mapper)
     {
-        List<t> result = new List<t>();
+        List<T> result = new List<T>();
 
 
         using (MySqlConnection connection = new MySqlConnection(connectionString))
@@ -32,6 +32,43 @@ public abstract class RepositorioBase
         return result;
     }
 
+    public T ExecuteReader<T>(string query, Func<MySqlDataReader, T> mapper)
+    {
+        T result = default(T);
 
+        using (MySqlConnection connection = new MySqlConnection(connectionString))
+        {
+            connection.Open();
+            using (MySqlCommand command = new MySqlCommand(query, connection))
+            {
+                using (MySqlDataReader reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        result = mapper(reader);
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
+    public int ExecuteNonQuery(string query, Action<MySqlParameterCollection> parameters)
+    {
+        int result = default(int);
+
+        using (MySqlConnection connection = new MySqlConnection(connectionString))
+        {
+            connection.Open();
+            using (MySqlCommand command = new MySqlCommand(query, connection))
+            {
+                parameters(command.Parameters);
+                result = command.ExecuteNonQuery();
+            }
+        }
+
+        return result;
+    }
 
 }

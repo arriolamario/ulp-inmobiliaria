@@ -2,13 +2,21 @@ namespace ProyectoInmobiliaria.Models;
 
 public class Propietario
 {
-    public int id { get; set; }
-    public string dni { get; set; } = "";
-    public string nombre { get; set; } = "";
-    public string apellido { get; set; } = "";
-    public string telefono { get; set; } = "";
-    public string email { get; set; } = "";
-    public string direccion { get; set; } = "";
+    public int Id { get; set; }
+    public string Dni { get; set; } = "";
+    public string Nombre { get; set; } = "";
+    public string Apellido { get; set; } = "";
+    private string telefono = "";
+    public string Telefono
+    {
+        get { return $"{TelefonoArea}-{TelefonoNumero}"; }
+        set { telefono = value; }
+    }
     
-    
+    public string Email { get; set; } = "";
+    public string Direccion { get; set; } = "";
+    public DateTime Fecha_Creacion { get; set; }
+    public DateTime Fecha_Actualizacion { get; set; }
+    public string TelefonoArea { get; set; } = "";
+    public string TelefonoNumero { get; set; } = "";
 }

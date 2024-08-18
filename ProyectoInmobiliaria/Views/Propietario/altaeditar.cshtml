@@ -1,0 +1,54 @@
+@model ProyectoInmobiliaria.Models.Propietario
+@{
+    ViewData["Title"] = "Formulario de Registro";
+}
+@if (Model == null)
+{
+    <h2>Formulario de Registro</h2>
+}
+else
+{
+    <h2>Formulario de Actualizar</h2>
+}
+
+<form asp-action="CrearActualizar">
+    <div class="form-group">
+        <label asp-for="Nombre">Nombre</label>
+        <input asp-for="Nombre" class="form-control">
+    </div>
+    <div class="form-group">
+        <label asp-for="Apellido">Apellido</label>
+        <input asp-for="Apellido" class="form-control">
+    </div>
+    <div class="form-group">
+        <label asp-for="Dni">Dni</label>
+        <input asp-for="Dni" class="form-control">
+    </div>
+    <div class="form-group">
+        <label asp-for="Email">Email</label>
+        <input asp-for="Email" class="form-control">
+    </div>
+    <div class="form-group">
+        <label asp-for="TelefonoArea">Area</label>
+        <input asp-for="TelefonoArea" class="form-control">
+    </div>
+    <div>
+        <label asp-for="TelefonoNumero">Número</label>
+        <input asp-for="TelefonoNumero" class="form-control">
+    </div>
+    <div>
+        <label asp-for="Direccion">Direccion</label>
+        <input asp-for="Direccion" class="form-control">
+    </div>
+    <input type="hidden" asp-for="Id" />
+    @if (Model == null)
+    {
+        <button type="submit" class="btn btn-primary">Registrar</button>
+        <a href="@Url.Action("Index", "Propietario")" class="btn btn-primary">Volver a la lista</a>
+    }
+    else
+    {
+        <button type="submit" class="btn btn-primary">Actualizar</button>
+        <a href="@Url.Action("Detalle", "Propietario", new { id = Model.Id })" class="btn btn-primary">Volver</a>
+    }
+</form>

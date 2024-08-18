@@ -3,41 +3,31 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>DNI</th>
-                <th>Nombre</th>
-                <th>Apellido</th>
-                <th>Teléfono</th>
-                <th>Email</th>
-                <th>Dirección</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var propietario in Model)
-            {
-                <tr>
-                    <td>@propietario.id</td>
-                    <td>@propietario.dni</td>
-                    <td>@propietario.nombre</td>
-                    <td>@propietario.apellido</td>
-                    <td>@propietario.telefono</td>
-                    <td>@propietario.email</td>
-                    <td>@propietario.direccion</td>
-                    <td>
-                        <a href="@Url.Action("Details", "Propietario", new { id = propietario.id })"
-                            class="btn btn-info btn-sm">Detalles</a>
-                        <a href="@Url.Action("Edit", "Propietario", new { id = propietario.id })"
+<div class="container mt-5">
+    <h2 class="mb-4">Lista de Propietarios</h2>
+    <div class="row">
+        @foreach (var propietario in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">@propietario.Nombre @propietario.Apellido</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">DNI: @propietario.Dni</h6>
+                        <p class="card-text">
+                            <strong>Teléfono:</strong> @propietario.Telefono <br />
+                            <strong>Email:</strong> @propietario.Email <br />
+                            <strong>Dirección:</strong> @propietario.Direccion
+                        </p>
+                        <a href="@Url.Action("Detalle", "Propietario", new { id = propietario.Id })"
+                            class="btn btn-info btn-sm">Ver</a>
+                        @* <a href="@Url.Action("Edit", "Propietario", new { id = propietario.Id })"
                             class="btn btn-warning btn-sm">Editar</a>
-                        <a href="@Url.Action("Delete", "Propietario", new { id = propietario.id })"
-                            class="btn btn-danger btn-sm">Borrar</a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+                        <a href="@Url.Action("Delete", "Propietario", new { id = propietario.Id })"
+                            class="btn btn-danger btn-sm">Borrar</a> *@
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <a href="@Url.Action("AltaEditar", "Propietario")" class="btn btn-success mt-4">Agregar Nuevo Propietario</a>
 </div>

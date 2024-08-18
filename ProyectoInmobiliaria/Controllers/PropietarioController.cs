@@ -8,18 +8,46 @@ namespace ProyectoInmobiliaria.Controllers;
 public class PropietarioController : Controller
 {
     private readonly ILogger<HomeController> _logger;
-    private IConfiguration _Configuration { get; }
+    private IConfiguration _Configuration;
+    private RepositorioPropietario _repositorioPropietario;
 
     public PropietarioController(ILogger<HomeController> logger, IConfiguration configuration)
     {
         _logger = logger;
         _Configuration = configuration;
+        _repositorioPropietario = new RepositorioPropietario(_Configuration);
     }
 
     public IActionResult Index()
     {
-        RepositorioPropietario repositorioPropietario = new RepositorioPropietario(_Configuration);
-        return View(repositorioPropietario.GetPropietarios());
+        return View(_repositorioPropietario.GetPropietarios());
     }
-    
+
+    public IActionResult Detalle(int Id)
+    {
+        return View(_repositorioPropietario.GetPropietario(Id));
+    }
+
+    public IActionResult AltaEditar(int Id)
+    {
+        if (Id == 0)
+            return View();
+
+        return View(_repositorioPropietario.GetPropietario(Id));
+    }
+
+    [HttpPost]
+    public IActionResult CrearActualizar(Propietario propietario)
+    {
+        if (propietario.Id == 0)
+        {
+            _repositorioPropietario.InsertarPropietario(propietario);
+        }
+        else
+        {
+            _repositorioPropietario.ActualizarPropietario(propietario);
+        }
+        return RedirectToAction("Index");
+    }
+
 }
