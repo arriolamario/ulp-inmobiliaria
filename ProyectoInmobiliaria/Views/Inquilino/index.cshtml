@@ -1,0 +1,45 @@
+@model IEnumerable<ProyectoInmobiliaria.Models.Inquilino>
+
+@{
+    ViewData["Title"] = "Lista de Inquilinos";
+}
+
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-primary">Lista de Inquilinos</h2>
+        <a href="@Url.Action("AltaEditar", "Inquilino")" class="btn btn-success shadow-sm">Agregar Nuevo Inquilino</a>
+    </div>
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <table class="table table-hover table-responsive">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Nombre</th>
+                        <th>DNI</th>
+                        <th>Teléfono</th>
+                        <th>Email</th>
+                        <th>Dirección</th>
+                        <th class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var inquilino in Model)
+                    {
+                        <tr>
+                            <td class="align-middle">@inquilino.Nombre @inquilino.Apellido</td>
+                            <td class="align-middle">@inquilino.Dni</td>
+                            <td class="align-middle">@inquilino.Telefono</td>
+                            <td class="align-middle">@inquilino.Email</td>
+                            <td class="align-middle">@inquilino.Direccion</td>
+                            <td class="align-middle text-center">
+                                <a href="@Url.Action("Detalle", "Inquilino", new { id = inquilino.Id })" class="btn btn-sm btn-info mx-1 shadow-sm">Ver</a>
+                                <a href="@Url.Action("AltaEditar", "Inquilino", new { id = inquilino.Id })" class="btn btn-sm btn-warning mx-1 shadow-sm">Editar</a>
+                                <a href="@Url.Action("Delete", "Inquilino", new { id = inquilino.Id })" class="btn btn-sm btn-danger mx-1 shadow-sm" onclick="return confirm('¿Estás seguro de que deseas borrar este inquilino?');">Borrar</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
