@@ -1,0 +1,33 @@
+@model ProyectoInmobiliaria.Models.Inquilino
+<div class="container mt-5">
+<div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h2>Detalles del Inquilino</h2>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">Nombre Completo</dt>
+                <dd class="col-sm-9">@Model.Nombre @Model.Apellido</dd>
+
+                <dt class="col-sm-3">DNI</dt>
+                <dd class="col-sm-9">@Model.Dni</dd>
+
+                <dt class="col-sm-3">Teléfono</dt>
+                <dd class="col-sm-9">@Model.TelefonoArea - @Model.TelefonoNumero</dd>
+
+                <dt class="col-sm-3">Email</dt>
+                <dd class="col-sm-9">@Model.Email</dd>
+
+                <dt class="col-sm-3">Dirección</dt>
+                <dd class="col-sm-9">@Model.Direccion</dd>
+
+                <dt class="col-sm-3">Fecha de Creación</dt>
+                <dd class="col-sm-9">@Model.Fecha_Creacion.ToString("dd/MM/yyyy")</dd>
+            </dl>
+        </div>
+        <div class="card-footer text-end">
+            <a href="@Url.Action("Edit", "Inquilino", new { id = Model.Id })" class="btn btn-warning">Editar</a>
+            <a href="@Url.Action("Index", "Inquilino")" class="btn btn-secondary">Volver a la Lista</a>
+        </div>
+    </div>
+</div>

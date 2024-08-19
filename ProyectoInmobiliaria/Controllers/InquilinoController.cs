@@ -20,4 +20,8 @@ public class InquilinoController: Controller {
     public IActionResult Index() {        
         return View(_repositorioInquilino.GetInquilinos());
     }
+
+     public IActionResult Detalle(int Id) {
+        return View(_repositorioInquilino.GetInquilino(Id));
+    }
 }
