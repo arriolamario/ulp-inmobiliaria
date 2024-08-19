@@ -1,0 +1,43 @@
+@model IEnumerable<ProyectoInmobiliaria.Models.Inquilino>
+
+@{
+    ViewData["Title"] = "Lista de Inquilinos";
+}
+
+<div class="container mt-5">
+    @if (TempData["SuccessMessage"] != null) {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-primary">Lista de Inquilinos</h2>
+        <a href="@Url.Action("AltaEditar", "Inquilino")" class="btn btn-success shadow-sm">Agregar Nuevo Inquilino</a>
+    </div>
+    <div class="row">
+        @foreach (var inquilino in Model) {
+            <div class="col-12 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title text-white p-2" style="background-color: #2d94f5;">@inquilino.Nombre @inquilino.Apellido</h5>
+                        <p class="card-text"><strong>DNI:</strong> @inquilino.Dni</p>
+                        <p class="card-text"><strong>Teléfono:</strong> @inquilino.Telefono</p>
+                        <p class="card-text"><strong>Email:</strong> @inquilino.Email</p>
+                        <p class="card-text"><strong>Dirección:</strong> @inquilino.Direccion</p>
+                        <div class="d-flex justify-content-end">
+                            <a href="@Url.Action("Detalle", "Inquilino", new { id = inquilino.Id })" class="btn btn-info btn-sm mx-1 shadow-sm">Ver</a>
+                            <a href="@Url.Action("AltaEditar", "Inquilino", new { id = inquilino.Id })" class="btn btn-warning btn-sm mx-1 shadow-sm">Editar</a>
+                            <form asp-action="BajaLogica" method="post" class="d-inline">
+                                <input type="hidden" name="id" value="@inquilino.Id" />
+                                <button type="submit" class="btn btn-danger btn-sm mx-1 shadow-sm" onclick="return confirm('¿Estás seguro de que deseas dar de baja a este inquilino?');">Borrar</button>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

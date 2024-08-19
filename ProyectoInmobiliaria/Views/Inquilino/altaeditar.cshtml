@@ -1,0 +1,77 @@
+@model ProyectoInmobiliaria.Models.Inquilino
+
+@{
+    ViewData["Title"] = "Formulario de Registro";
+}
+
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h2>@(Model == null ? "Formulario de Registro" : "Formulario de Actualización")</h2>
+        </div>
+        <div class="card-body">
+
+            <form asp-action="CrearActualizar">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input asp-for="Nombre" class="form-control" placeholder="Nombre">
+                            <label asp-for="Nombre">Nombre</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input asp-for="Apellido" class="form-control" placeholder="Apellido">
+                            <label asp-for="Apellido">Apellido</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input asp-for="Dni" class="form-control" placeholder="DNI">
+                            <label asp-for="Dni">DNI</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input asp-for="Email" class="form-control" placeholder="Email">
+                            <label asp-for="Email">Email</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <div class="form-floating">
+                            <input asp-for="TelefonoArea" class="form-control" placeholder="Área">
+                            <label asp-for="TelefonoArea">Área</label>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="form-floating">
+                            <input asp-for="TelefonoNumero" class="form-control" placeholder="Número">
+                            <label asp-for="TelefonoNumero">Número</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <div class="form-floating">
+                        <input asp-for="Direccion" class="form-control" placeholder="Dirección">
+                        <label asp-for="Direccion">Dirección</label>
+                    </div>
+                </div>
+
+                <input type="hidden" asp-for="Id" />
+
+                <div class="d-flex justify-content-between">
+                    <a href="@Url.Action(Model == null ? "Index" : "Detalle", "Inquilino", Model == null ? null : new { id = Model.Id })" class="btn btn-secondary">
+                        @(Model == null ? "Volver a la Lista" : "Volver")
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        @(Model == null ? "Registrar" : "Actualizar")
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
