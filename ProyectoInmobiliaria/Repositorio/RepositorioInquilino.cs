@@ -20,7 +20,8 @@ public class RepositorioInquilino: RepositorioBase {
                             {nameof(Inquilino.Direccion)}, 
                             {nameof(Inquilino.Fecha_Creacion)}, 
                             {nameof(Inquilino.Fecha_Actualizacion)} 
-                    from inquilino;";
+                    from inquilino
+                    where activo = 1;";
 
         resultInquilinos = this.ExecuteReaderList<Inquilino>(query, (reader) => {
             return new Inquilino() {

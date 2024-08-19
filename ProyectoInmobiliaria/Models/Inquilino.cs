@@ -19,4 +19,5 @@ public class Inquilino
     public DateTime Fecha_Actualizacion { get; set; }
     public string TelefonoArea { get; set; } = "";
     public string TelefonoNumero { get; set; } = "";
+    public Boolean Activo { get; set; } = true;
 }
