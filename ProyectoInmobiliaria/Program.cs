@@ -1,5 +1,13 @@
 var builder = WebApplication.CreateBuilder(args);
 
+string name = builder.Environment.EnvironmentName;
+
+builder.Configuration
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true) // Carga appsettings.json
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true) // Carga appsettings.{Environment}.json
+    .AddEnvironmentVariables(); // Carga variables de entorno
+    
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
