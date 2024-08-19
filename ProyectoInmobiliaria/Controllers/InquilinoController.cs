@@ -55,4 +55,16 @@ public class InquilinoController: Controller {
         return RedirectToAction("Index");
     }
 
+    [HttpPost]
+    public IActionResult BajaLogica(int id) {
+        var success = _repositorioInquilino.BajaLogicaInquilino(id);
+        
+        if (success) {
+            TempData["SuccessMessage"] = "Inquilino dado de baja correctamente.";
+        } else {
+            TempData["ErrorMessage"] = "No se pudo dar de baja al inquilino.";
+        }
+
+        return RedirectToAction("Index");
+    }
 }

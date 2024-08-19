@@ -141,4 +141,17 @@ public class RepositorioInquilino : RepositorioBase {
         return existe;
     }
 
+    public bool BajaLogicaInquilino(int id) {
+        bool result = false;
+
+        string query = @$"UPDATE inquilino SET 
+                            {nameof(Inquilino.Activo)} = 0
+                        WHERE {nameof(Inquilino.Id)} = @{nameof(Inquilino.Id)};";
+
+        result = 0 < this.ExecuteNonQuery(query, (parameters) => {
+            parameters.AddWithValue($"@{nameof(Inquilino.Id)}", id);
+        });
+
+        return result;
+    }
 }

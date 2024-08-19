@@ -29,7 +29,11 @@
                         <div class="d-flex justify-content-end">
                             <a href="@Url.Action("Detalle", "Inquilino", new { id = inquilino.Id })" class="btn btn-info btn-sm mx-1 shadow-sm">Ver</a>
                             <a href="@Url.Action("AltaEditar", "Inquilino", new { id = inquilino.Id })" class="btn btn-warning btn-sm mx-1 shadow-sm">Editar</a>
-                            <a href="@Url.Action("Delete", "Inquilino", new { id = inquilino.Id })" class="btn btn-danger btn-sm mx-1 shadow-sm" onclick="return confirm('¿Estás seguro de que deseas borrar este inquilino?');">Borrar</a>
+                            <form asp-action="BajaLogica" method="post" class="d-inline">
+                                <input type="hidden" name="id" value="@inquilino.Id" />
+                                <button type="submit" class="btn btn-danger btn-sm mx-1 shadow-sm" onclick="return confirm('¿Estás seguro de que deseas dar de baja a este inquilino?');">Borrar</button>
+                            </form>
+
                         </div>
                     </div>
                 </div>
