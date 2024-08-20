@@ -1,4 +1,4 @@
-namespace ProyectoInmobiliaria.Repositorio;
+namespace InmobiliariaCA.Repositorio;
 
 using MySql.Data.MySqlClient;
 
@@ -32,9 +32,9 @@ public abstract class RepositorioBase
         return result;
     }
 
-    public T ExecuteReader<T>(string query, Func<MySqlDataReader, T> mapper)
+    public T? ExecuteReader<T>(string query, Func<MySqlDataReader, T> mapper)
     {
-        T result = default(T);
+        T? result = default(T);
 
         using (MySqlConnection connection = new MySqlConnection(connectionString))
         {
@@ -54,9 +54,9 @@ public abstract class RepositorioBase
         return result;
     }
 
-    public T ExecuteReader<T>(string query, Action<MySqlParameterCollection> parameters, Func<MySqlDataReader, T> mapper)
+    public T? ExecuteReader<T>(string query, Action<MySqlParameterCollection> parameters, Func<MySqlDataReader, T> mapper)
     {
-        T result = default(T);
+        T? result = default(T);
 
         using (MySqlConnection connection = new MySqlConnection(connectionString))
         {

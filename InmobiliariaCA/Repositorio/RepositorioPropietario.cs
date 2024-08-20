@@ -1,8 +1,8 @@
-using ProyectoInmobiliaria.Models;
+using InmobiliariaCA.Models;
 using MySql.Data.MySqlClient;
 using Microsoft.Extensions.Configuration;
 
-namespace ProyectoInmobiliaria.Repositorio;
+namespace InmobiliariaCA.Repositorio;
 
 public class RepositorioPropietario : RepositorioBase
 {
@@ -34,8 +34,8 @@ public class RepositorioPropietario : RepositorioBase
                             Dni = reader["dni"].ToString() ?? "",
                             Email = reader["email"].ToString() ?? "",
                             Nombre = reader["nombre"].ToString() ?? "",
-                            TelefonoArea = reader["telefono"].ToString().Split('-')[0] ?? "",
-                            TelefonoNumero = reader["telefono"].ToString().Split('-')[1] ?? "",
+                            TelefonoArea = reader["telefono"].ToString()?.Split('-')[0] ?? "",
+                            TelefonoNumero = reader["telefono"].ToString()?.Split('-')[1] ?? "",
                             Direccion = reader["direccion"].ToString() ?? "",
                             Id = int.Parse(reader["id"].ToString() ?? "0"),
                             Estado = int.Parse(reader["estado"].ToString() ?? "0"),
@@ -46,9 +46,9 @@ public class RepositorioPropietario : RepositorioBase
         return resultPropietarios;
     }
 
-    public Propietario GetPropietario(int Id)
+    public Propietario? GetPropietario(int Id)
     {
-        Propietario result = default(Propietario);
+        Propietario? result = default(Propietario);
 
         string query = @$"select {nameof(Propietario.Id)}, 
                                 {nameof(Propietario.Dni)}, 
@@ -70,8 +70,8 @@ public class RepositorioPropietario : RepositorioBase
                             Dni = reader["dni"].ToString() ?? "",
                             Email = reader["email"].ToString() ?? "",
                             Nombre = reader["nombre"].ToString() ?? "",
-                            TelefonoArea = reader["telefono"].ToString().Split('-')[0] ?? "",
-                            TelefonoNumero = reader["telefono"].ToString().Split('-')[1] ?? "",
+                            TelefonoArea = reader["telefono"].ToString()?.Split('-')[0] ?? "",
+                            TelefonoNumero = reader["telefono"].ToString()?.Split('-')[1] ?? "",
                             Direccion = reader["direccion"].ToString() ?? "",
                             Id = int.Parse(reader["id"].ToString() ?? "0"),
                             Estado = int.Parse(reader["estado"].ToString() ?? "0"),

@@ -1,6 +1,6 @@
-namespace ProyectoInmobiliaria.Repositorio;
+namespace InmobiliariaCA.Repositorio;
 
-using ProyectoInmobiliaria.Models;
+using InmobiliariaCA.Models;
 using MySql.Data.MySqlClient;
 using Microsoft.Extensions.Configuration;
 
@@ -30,8 +30,8 @@ public class RepositorioInquilino : RepositorioBase {
                 Dni = reader["dni"].ToString() ?? "",
                 Email = reader["email"].ToString() ?? "",
                 Nombre = reader["nombre"].ToString() ?? "",
-                TelefonoArea = reader["telefono"].ToString().Split('-')[0] ?? "",
-                TelefonoNumero = reader["telefono"].ToString().Split('-')[1] ?? "",
+                TelefonoArea = reader["telefono"]?.ToString()?.Split('-')[0] ?? "",
+                TelefonoNumero = reader["telefono"]?.ToString()?.Split('-')[1] ?? "",
                 Direccion = reader["direccion"].ToString() ?? "",
                 Id = int.Parse(reader["id"].ToString() ?? "0"),
                 Fecha_Creacion = DateTime.Parse(reader["fecha_creacion"].ToString() ?? "0"),
@@ -41,8 +41,8 @@ public class RepositorioInquilino : RepositorioBase {
         return resultInquilinos;
     }
 
-    public Inquilino GetInquilino(int Id) {
-        Inquilino result = default(Inquilino);
+    public Inquilino? GetInquilino(int Id) {
+        Inquilino? result = null;
 
         string query = @$"select {nameof(Inquilino.Id)}, 
                             {nameof(Inquilino.Dni)}, 
@@ -62,8 +62,8 @@ public class RepositorioInquilino : RepositorioBase {
                 Dni = reader["dni"].ToString() ?? "",
                 Email = reader["email"].ToString() ?? "",
                 Nombre = reader["nombre"].ToString() ?? "",
-                TelefonoArea = reader["telefono"].ToString().Split('-')[0] ?? "",
-                TelefonoNumero = reader["telefono"].ToString().Split('-')[1] ?? "",
+                TelefonoArea = reader["telefono"].ToString()?.Split('-')[0] ?? "",
+                TelefonoNumero = reader["telefono"].ToString()?.Split('-')[1] ?? "",
                 Direccion = reader["direccion"].ToString() ?? "",
                 Id = int.Parse(reader["id"].ToString() ?? "0"),
                 Fecha_Creacion = DateTime.Parse(reader["fecha_creacion"].ToString() ?? "0"),

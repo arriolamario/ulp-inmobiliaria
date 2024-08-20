@@ -1,4 +1,4 @@
-namespace ProyectoInmobiliaria.Models;
+namespace InmobiliariaCA.Models;
 using System;
 using System.ComponentModel.DataAnnotations;
 
