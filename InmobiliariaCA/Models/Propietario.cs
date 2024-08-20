@@ -1,4 +1,4 @@
-namespace ProyectoInmobiliaria.Models;
+namespace InmobiliariaCA.Models;
 using System.ComponentModel.DataAnnotations;
 
 public class Propietario

@@ -1,9 +1,8 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using ProyectoInmobiliaria.Models;
-using ProyectoInmobiliaria.Repositorio;
+using InmobiliariaCA.Models;
+using InmobiliariaCA.Repositorio;
 
-namespace ProyectoInmobiliaria.Controllers;
+namespace InmobiliariaCA.Controllers;
 
 public class PropietarioController : Controller
 {
