@@ -35,14 +35,15 @@ public class InquilinoController: Controller {
     public IActionResult CrearActualizar(Inquilino inquilino) {
 
         var existingInquilino = _repositorioInquilino.ExisteInquilinoPorDni(inquilino.Dni);
-        Console.WriteLine("Valor de existingInquilino: " + existingInquilino);
-        // o si estás en un entorno donde la consola no es visible:
-        Debug.WriteLine("Valor de existingInquilino: " + existingInquilino);
 
         if (existingInquilino) {
            
             ModelState.AddModelError("Dni", "El DNI ingresado ya está en uso.");
-            return View(inquilino);
+            var errors = ModelState.Values.SelectMany(v => v.Errors).ToList();
+            foreach (var error in errors) {
+                Console.WriteLine("Valor de error: " + error.ErrorMessage);
+            }
+            return View("AltaEditar",inquilino);
         }
 
         if (inquilino.Id == 0) {
