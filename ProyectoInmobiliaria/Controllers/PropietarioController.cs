@@ -37,8 +37,10 @@ public class PropietarioController : Controller
     }
 
     [HttpPost]
-    public IActionResult CrearActualizar(Propietario propietario)
+    public IActionResult AltaEditar(Propietario propietario)
     {
+        // if (ModelState.IsValid)
+        // {
         if (propietario.Id == 0)
         {
             _repositorioPropietario.InsertarPropietario(propietario);
@@ -48,6 +50,19 @@ public class PropietarioController : Controller
             _repositorioPropietario.ActualizarPropietario(propietario);
         }
         return RedirectToAction("Index");
+        // }
+        // return View("AltaEditar", propietario);
     }
 
+    public IActionResult Baja(int Id)
+    {
+        if (Id == 0)
+        {
+        }
+        else
+        {
+            _repositorioPropietario.BajaPropietario(Id);
+        }
+        return RedirectToAction("Index");
+    }
 }

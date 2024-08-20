@@ -9,12 +9,31 @@
     }
   },
   "profiles": {
-    "http": {
+    "produccion": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,
       "applicationUrl": "http://localhost:5182",
       "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Produccion"
+      }
+    },
+    "mario": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "applicationUrl": "http://localhost:5182",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Mario"
+      }
+    },
+    "paulo": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "applicationUrl": "http://localhost:5182",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Mario"
       }
     },
     "https": {

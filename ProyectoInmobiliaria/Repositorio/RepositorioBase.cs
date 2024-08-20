@@ -63,9 +63,7 @@ public abstract class RepositorioBase
             connection.Open();
             using (MySqlCommand command = new MySqlCommand(query, connection))
             {
-                
                 parameters(command.Parameters);
-
                 using (MySqlDataReader reader = command.ExecuteReader())
                 {
                     if (reader.Read())
@@ -77,7 +75,7 @@ public abstract class RepositorioBase
         }
 
         return result;
-    }   
+    }
 
     public int ExecuteNonQuery(string query, Action<MySqlParameterCollection> parameters)
     {
@@ -89,7 +87,7 @@ public abstract class RepositorioBase
             using (MySqlCommand command = new MySqlCommand(query, connection))
             {
                 parameters(command.Parameters);
-                result = command.ExecuteNonQuery();
+                result = Convert.ToInt32(command.ExecuteScalar());
             }
         }
 

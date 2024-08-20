@@ -2,53 +2,94 @@
 @{
     ViewData["Title"] = "Formulario de Registro";
 }
-@if (Model == null)
-{
-    <h2>Formulario de Registro</h2>
-}
-else
-{
-    <h2>Formulario de Actualizar</h2>
-}
 
-<form asp-action="CrearActualizar">
-    <div class="form-group">
-        <label asp-for="Nombre">Nombre</label>
-        <input asp-for="Nombre" class="form-control">
+
+<form asp-action="AltaEditar">
+    <div class="card">
+        <div class="card-header text-center">
+            @if (Model == null)
+            {
+                <h2>Alta</h2>
+            }
+            else
+            {
+                <h2>Editar</h2>
+            }
+
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <label asp-for="Apellido">Apellido</label>
+                        <input asp-for="Apellido" placeholder="Apellido" class="form-control">
+                        <span asp-validation-for="Apellido" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <label asp-for="Nombre">Nombre</label>
+                        <input asp-for="Nombre" placeholder="Nombre" class="form-control">
+                        <span asp-validation-for="Nombre" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group">
+                    <label asp-for="Dni">Documento</label>
+                    <input asp-for="Dni" placeholder="Documento" class="form-control">
+                    <span asp-validation-for="Dni" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group">
+                    <label asp-for="Email" class="control-label">Email</label>
+                    <input asp-for="Email" placeholder="Email" class="form-control">
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label asp-for="TelefonoArea">Area</label>
+                        <input asp-for="TelefonoArea" placeholder="Area" class="form-control">
+                        <span asp-validation-for="TelefonoArea" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col">
+                    <label asp-for="TelefonoNumero">Número</label>
+                    <input asp-for="TelefonoNumero" placeholder="Número" class="form-control">
+                    <span asp-validation-for="TelefonoNumero" class="text-danger"></span>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div>
+                    <label asp-for="Direccion">Direccion</label>
+                    <input asp-for="Direccion" placeholder="Direccion" class="form-control">
+                    <span asp-validation-for="Direccion" class="text-danger"></span>
+                </div>
+            </div>
+            <input type="hidden" asp-for="Id" />
+        </div>
+        <div class="card-footer text-center">
+            @if (Model == null)
+            {
+                <button type="submit" class="btn btn-primary">Registrar</button>
+                <a href="@Url.Action("Index", "Propietario")" class="btn btn-warning">Volver a la lista</a>
+            }
+            else
+            {
+                <button type="submit" class="btn btn-primary">Actualizar</button>
+                <a href="@Url.Action("Detalle", "Propietario", new { id = Model.Id })" class="btn btn-warning">Volver</a>
+            }
+        </div>
     </div>
-    <div class="form-group">
-        <label asp-for="Apellido">Apellido</label>
-        <input asp-for="Apellido" class="form-control">
-    </div>
-    <div class="form-group">
-        <label asp-for="Dni">Dni</label>
-        <input asp-for="Dni" class="form-control">
-    </div>
-    <div class="form-group">
-        <label asp-for="Email">Email</label>
-        <input asp-for="Email" class="form-control">
-    </div>
-    <div class="form-group">
-        <label asp-for="TelefonoArea">Area</label>
-        <input asp-for="TelefonoArea" class="form-control">
-    </div>
-    <div>
-        <label asp-for="TelefonoNumero">Número</label>
-        <input asp-for="TelefonoNumero" class="form-control">
-    </div>
-    <div>
-        <label asp-for="Direccion">Direccion</label>
-        <input asp-for="Direccion" class="form-control">
-    </div>
-    <input type="hidden" asp-for="Id" />
-    @if (Model == null)
-    {
-        <button type="submit" class="btn btn-primary">Registrar</button>
-        <a href="@Url.Action("Index", "Propietario")" class="btn btn-primary">Volver a la lista</a>
-    }
-    else
-    {
-        <button type="submit" class="btn btn-primary">Actualizar</button>
-        <a href="@Url.Action("Detalle", "Propietario", new { id = Model.Id })" class="btn btn-primary">Volver</a>
-    }
 </form>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
+}
