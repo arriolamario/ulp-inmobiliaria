@@ -83,6 +83,18 @@ public class RepositorioPropietario : RepositorioBase
     }
 
 
+    public bool ExistePropietarioPorDni(string dni)
+    {
+        bool existe = false;
+        string query = @$"select count(*) from propietario where {nameof(Propietario.Dni)} = @{nameof(Propietario.Dni)};";
+
+        existe = this.ExecuteNonQuery(query, (parameters) => {
+            parameters.AddWithValue($"@{nameof(Propietario.Dni)}", dni);
+        }) > 0;
+        return existe;
+    }
+
+
     public bool ActualizarPropietario(Propietario propietario)
     {
         bool result = false;
