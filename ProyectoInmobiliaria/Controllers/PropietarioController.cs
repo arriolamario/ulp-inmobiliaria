@@ -39,8 +39,14 @@ public class PropietarioController : Controller
     [HttpPost]
     public IActionResult AltaEditar(Propietario propietario)
     {
-        // if (ModelState.IsValid)
-        // {
+        if(_repositorioPropietario.ExistePropietarioPorDni(propietario.Dni))
+        {
+            ModelState.AddModelError(nameof(propietario.Dni), "Documento ya existe");
+
+            return View(propietario);
+        }
+
+
         if (propietario.Id == 0)
         {
             _repositorioPropietario.InsertarPropietario(propietario);
@@ -50,8 +56,6 @@ public class PropietarioController : Controller
             _repositorioPropietario.ActualizarPropietario(propietario);
         }
         return RedirectToAction("Index");
-        // }
-        // return View("AltaEditar", propietario);
     }
 
     public IActionResult Baja(int Id)
