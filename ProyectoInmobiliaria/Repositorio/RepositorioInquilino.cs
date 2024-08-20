@@ -134,9 +134,13 @@ public class RepositorioInquilino : RepositorioBase {
                         FROM inquilino
                         WHERE {nameof(Inquilino.Dni)} = @Dni AND activo = 1;";
      
-        existe =  0 < this.ExecuteNonQuery(query, (parameters) => {
+        existe =  this.ExecuteReader<Inquilino>(query, (parameters) => {
             parameters.AddWithValue($"@{nameof(Inquilino.Dni)}", dni);
-        });
+        }, (mapper) => {
+            return new Inquilino() {
+                
+            };
+        }) != null;
 
         return existe;
     }

@@ -22,8 +22,10 @@ public class RepositorioPropietario : RepositorioBase
                                 {nameof(Propietario.Email)}, 
                                 {nameof(Propietario.Direccion)}, 
                                 {nameof(Propietario.Fecha_Creacion)}, 
-                                {nameof(Propietario.Fecha_Actualizacion)} 
-                        from propietario;";
+                                {nameof(Propietario.Fecha_Actualizacion)},
+                                {nameof(Propietario.Estado)}
+                        from propietario
+                        where Estado = 1;";
 
         resultPropietarios = this.ExecuteReaderList<Propietario>(query, (reader) => {
             return new Propietario()
@@ -36,6 +38,7 @@ public class RepositorioPropietario : RepositorioBase
                             TelefonoNumero = reader["telefono"].ToString().Split('-')[1] ?? "",
                             Direccion = reader["direccion"].ToString() ?? "",
                             Id = int.Parse(reader["id"].ToString() ?? "0"),
+                            Estado = int.Parse(reader["estado"].ToString() ?? "0"),
                             Fecha_Creacion = DateTime.Parse(reader["fecha_creacion"].ToString() ?? "0"),
                             Fecha_Actualizacion = DateTime.Parse(reader["fecha_actualizacion"].ToString() ?? "0")
                         };
@@ -55,7 +58,8 @@ public class RepositorioPropietario : RepositorioBase
                                 {nameof(Propietario.Email)}, 
                                 {nameof(Propietario.Direccion)}, 
                                 {nameof(Propietario.Fecha_Creacion)}, 
-                                {nameof(Propietario.Fecha_Actualizacion)} 
+                                {nameof(Propietario.Fecha_Actualizacion)}, 
+                                {nameof(Propietario.Estado)}
                         from propietario
                         where {nameof(Propietario.Id)} = {Id};";
 
@@ -70,6 +74,7 @@ public class RepositorioPropietario : RepositorioBase
                             TelefonoNumero = reader["telefono"].ToString().Split('-')[1] ?? "",
                             Direccion = reader["direccion"].ToString() ?? "",
                             Id = int.Parse(reader["id"].ToString() ?? "0"),
+                            Estado = int.Parse(reader["estado"].ToString() ?? "0"),
                             Fecha_Creacion = DateTime.Parse(reader["fecha_creacion"].ToString() ?? "0"),
                             Fecha_Actualizacion = DateTime.Parse(reader["fecha_actualizacion"].ToString() ?? "0")
                         };
@@ -116,6 +121,18 @@ public class RepositorioPropietario : RepositorioBase
             parameters.AddWithValue($"@{nameof(Propietario.Email)}", propietario.Email);
             parameters.AddWithValue($"@{nameof(Propietario.Direccion)}", propietario.Direccion);
         });
+        return result;
+    }
+
+    public bool BajaPropietario(int Id)
+    {
+        bool result = false;
+        string query = @$"UPDATE propietario SET {nameof(Propietario.Estado)} = 0 WHERE {nameof(Propietario.Id)} = @{nameof(Propietario.Id)};";
+
+        result = 0 < this.ExecuteNonQuery(query, (parameters) => {
+            parameters.AddWithValue($"@{nameof(Propietario.Id)}", Id);
+        });
+
         return result;
     }
 

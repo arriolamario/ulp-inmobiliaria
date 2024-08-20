@@ -54,6 +54,30 @@ public abstract class RepositorioBase
         return result;
     }
 
+
+    public T ExecuteReader<T>(string query, Action<MySqlParameterCollection> parameters, Func<MySqlDataReader, T> mapper)
+    {
+        T result = default(T);
+
+        using (MySqlConnection connection = new MySqlConnection(connectionString))
+        {
+            connection.Open();
+            using (MySqlCommand command = new MySqlCommand(query, connection))
+            {
+                parameters(command.Parameters);
+                using (MySqlDataReader reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        result = mapper(reader);
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
     public int ExecuteNonQuery(string query, Action<MySqlParameterCollection> parameters)
     {
         int result = default(int);
@@ -64,7 +88,7 @@ public abstract class RepositorioBase
             using (MySqlCommand command = new MySqlCommand(query, connection))
             {
                 parameters(command.Parameters);
-                result = command.ExecuteNonQuery();
+                result = Convert.ToInt32(command.ExecuteScalar());
             }
         }
 
