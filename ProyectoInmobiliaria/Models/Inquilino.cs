@@ -1,23 +1,43 @@
-namespace ProyectoInmobiliaria.Models;
-
-public class Inquilino
+namespace ProyectoInmobiliaria.Models
 {
-    public int Id { get; set; }
-    public string Dni { get; set; } = "";
-    public string Nombre { get; set; } = "";
-    public string Apellido { get; set; } = "";
-    private string telefono = "";
-    public string Telefono
-    {
-        get { return $"{TelefonoArea}-{TelefonoNumero}"; }
-        set { telefono = value; }
+    using System;
+    using System.ComponentModel.DataAnnotations;
+
+    public class Inquilino {
+        public int Id { get; set; }
+
+        [Required(ErrorMessage = "El campo DNI es obligatorio.")]
+        [StringLength(10, ErrorMessage = "El DNI no puede tener más de 10 caracteres.")]
+        [RegularExpression(@"^\d{8,10}$", ErrorMessage = "El DNI debe contener entre 8 y 10 dígitos numéricos.")]
+        public string Dni { get; set; } = "";
+
+        [Required(ErrorMessage = "El campo Nombre es obligatorio.")]
+        [StringLength(50, ErrorMessage = "El Nombre no puede tener más de 50 caracteres.")]
+        public string Nombre { get; set; } = "";
+
+        [Required(ErrorMessage = "El campo Apellido es obligatorio.")]
+        [StringLength(50, ErrorMessage = "El Apellido no puede tener más de 50 caracteres.")]
+        public string Apellido { get; set; } = "";
+
+        [Required(ErrorMessage = "El campo Teléfono es obligatorio.")]
+        [RegularExpression(@"^\d{2,4}$", ErrorMessage = "El área debe contener entre 2 y 4 dígitos numéricos.")]
+        public string TelefonoArea { get; set; } = "";
+
+        [Required(ErrorMessage = "El campo Teléfono es obligatorio.")]
+        [RegularExpression(@"^\d{6,10}$", ErrorMessage = "El número de teléfono debe contener entre 6 y 10 dígitos numéricos.")]
+        public string TelefonoNumero { get; set; } = "";
+
+        public string Telefono => $"{TelefonoArea}-{TelefonoNumero}";
+         [Required(ErrorMessage = "Campo obligatorio")]
+        [EmailAddress(ErrorMessage = "El formato del Email no es válido.")]
+        public string Email { get; set; } = "";
+
+        [Required(ErrorMessage = "El campo Direccion es obligatorio.")]
+        [StringLength(100, ErrorMessage = "La Dirección no puede tener más de 100 caracteres.")]
+        public string Direccion { get; set; } = "";
+
+        public DateTime Fecha_Creacion { get; set; }
+        public DateTime Fecha_Actualizacion { get; set; }
+        public Boolean Activo { get; set; } = true;
     }
-    
-    public string Email { get; set; } = "";
-    public string Direccion { get; set; } = "";
-    public DateTime Fecha_Creacion { get; set; }
-    public DateTime Fecha_Actualizacion { get; set; }
-    public string TelefonoArea { get; set; } = "";
-    public string TelefonoNumero { get; set; } = "";
-    public Boolean Activo { get; set; } = true;
 }

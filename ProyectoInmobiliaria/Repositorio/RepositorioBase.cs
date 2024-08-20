@@ -54,7 +54,6 @@ public abstract class RepositorioBase
         return result;
     }
 
-
     public T ExecuteReader<T>(string query, Action<MySqlParameterCollection> parameters, Func<MySqlDataReader, T> mapper)
     {
         T result = default(T);
