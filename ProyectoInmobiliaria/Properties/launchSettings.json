@@ -33,7 +33,7 @@
       "launchBrowser": true,
       "applicationUrl": "http://localhost:5182",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Mario"
+        "ASPNETCORE_ENVIRONMENT": "Paulo"
       }
     },
     "https": {
