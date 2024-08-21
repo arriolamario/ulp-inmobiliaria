@@ -19,6 +19,7 @@ public class PropietarioController : Controller
 
     public IActionResult Index()
     {
+        ViewBag.Mensaje = TempData["MensajeExito"] ?? TempData["MensajeExito"];
         return View(_repositorioPropietario.GetPropietarios());
     }
 
@@ -38,21 +39,22 @@ public class PropietarioController : Controller
     [HttpPost]
     public IActionResult AltaEditar(Propietario propietario)
     {
-        if(_repositorioPropietario.ExistePropietarioPorDni(propietario.Dni))
+        if (_repositorioPropietario.ExistePropietarioPorDni(propietario.Dni))
         {
             ModelState.AddModelError(nameof(propietario.Dni), "Documento ya existe");
 
             return View(propietario);
         }
-
-
         if (propietario.Id == 0)
         {
+
             _repositorioPropietario.InsertarPropietario(propietario);
+            TempData["MensajeExito"] = "Propietario insertado correctamente";
         }
         else
         {
             _repositorioPropietario.ActualizarPropietario(propietario);
+            TempData["MensajeExito"] = "Propietario actualizado correctamente";
         }
         return RedirectToAction("Index");
     }
