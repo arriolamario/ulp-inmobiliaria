@@ -15,7 +15,8 @@
       "launchBrowser": true,
       "applicationUrl": "http://localhost:5182",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Produccion"
+        "ASPNETCORE_ENVIRONMENT": "Produccion",
+        "PORT" : "5182"
       }
     },
     "mario": {
@@ -24,7 +25,8 @@
       "launchBrowser": true,
       "applicationUrl": "http://localhost:5182",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Mario"
+        "ASPNETCORE_ENVIRONMENT": "Mario",
+        "PORT" : "5182"
       }
     },
     "paulo": {
@@ -33,7 +35,8 @@
       "launchBrowser": true,
       "applicationUrl": "http://localhost:5182",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Paulo"
+        "ASPNETCORE_ENVIRONMENT": "Paulo",
+        "PORT" : "5182"
       }
     },
     "https": {
