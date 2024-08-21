@@ -1,2 +1,2 @@
 cd ./InmobiliariaCA 
-dotnet run --launch-profile "mario"
+dotnet run --launch-profile ""
