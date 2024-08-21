@@ -1,7 +1,5 @@
 var builder = WebApplication.CreateBuilder(args);
 
-string name = builder.Environment.EnvironmentName;
-
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
     .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true) // Carga appsettings.json
@@ -10,8 +8,11 @@ builder.Configuration
 
 
 
-var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
-builder.WebHost.UseUrls($"http://*:{port}");
+if(builder.Environment.EnvironmentName == "Production")
+{
+    var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+    builder.WebHost.UseUrls($"http://*:{port}");
+}
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
