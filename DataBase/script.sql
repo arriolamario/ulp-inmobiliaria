@@ -30,6 +30,41 @@ CREATE TABLE IF NOT EXISTS inquilino (
     activo int(1) DEFAULT 1
 );
 
+-- Crear la tabla 'tipo_inmueble'
+CREATE TABLE tipo_inmueble (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    descripcion VARCHAR(100) NOT NULL,
+	fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Crear la tabla 'tipo_inmueble_uso'
+CREATE TABLE tipo_inmueble_uso (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    descripcion VARCHAR(100) NOT NULL,
+	fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Crear la tabla de 'inmueble'
+CREATE TABLE inmueble (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    direccion VARCHAR(255) NOT NULL,
+    id_tipo_inmueble_uso INT NOT NULL,
+    id_tipo_inmueble INT NOT NULL,
+    ambientes INT NOT NULL,
+    coordenada_lat FLOAT NOT NULL,
+    coordenada_lon FLOAT NOT NULL,
+    precio DECIMAL(10, 2) NOT NULL,
+    estado INT NOT NULL DEFAULT 1,
+    id_propietario INT,
+	fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_propietario) REFERENCES Propietario(id),
+    FOREIGN KEY (id_tipo_inmueble_uso) REFERENCES tipo_inmueble_uso(id),
+	FOREIGN KEY (id_tipo_inmueble) REFERENCES tipo_inmueble(id)
+);
+
 -- Insertar datos en la tabla 'propietario'
 INSERT INTO propietario (dni, nombre, apellido, telefono, email, direccion)
 VALUES 
@@ -47,3 +82,5 @@ VALUES
 ('10000003', 'Beatriz', 'Moreno', '555-9876', 'beatriz.moreno@example.com', 'Calle de la Luna 88, Barrio Nuevo', 1),
 ('10000004', 'Fernando', 'Álvarez', '555-3456', 'fernando.alvarez@example.com', 'Plaza del Sol 34, Centro Histórico', 1),
 ('10000005', 'Carmen', 'Fernández', '555-4567', 'carmen.fernandez@example.com', 'Avenida del Mar 78, Playa Norte', 1);
+
+
