@@ -1,0 +1,26 @@
+﻿@model IEnumerable<InmobiliariaCA.Models.Inmueble>
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4">Lista de Inmuebles</h2>
+    <div class="row">
+        @foreach (var inmueble in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <h5 class="card-header">(@inmueble.Id) @inmueble.Direccion</h5>
+                    <div class="card-body">
+                        <h6 class="card-title"><strong>Precio:</strong> @inmueble.Precio</h6>
+                    </div>
+                    <div class="card-footer text-end">
+                        <a href="@Url.Action("Detalle", "Inmueble", new { id = inmueble.Id })"
+                            class="btn btn-info btn text-end">Ver</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <a href="@Url.Action("AltaEditar", "Inmueble")" class="btn btn-success mt-4">Agregar Nuevo Inmueble</a>
+</div>

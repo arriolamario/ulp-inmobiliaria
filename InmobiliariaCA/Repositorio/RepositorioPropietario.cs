@@ -148,4 +148,28 @@ public class RepositorioPropietario : RepositorioBase
         return result;
     }
 
+
+    public List<Propietario> GetPropietarios(List<int> propietariosIds)
+    {
+        List<Propietario> result = new List<Propietario>();
+        string query = @$"select * from propietario where {nameof(Propietario.Id)} in ({string.Join(",", propietariosIds)});";
+        result = this.ExecuteReaderList<Propietario>(query, (reader) => {
+            return new Propietario()
+                        {
+                            Apellido = reader["apellido"].ToString() ?? "",
+                            Dni = reader["dni"].ToString() ?? "",
+                            Email = reader["email"].ToString() ?? "",
+                            Nombre = reader["nombre"].ToString() ?? "",
+                            TelefonoArea = reader["telefono"].ToString()?.Split('-')[0] ?? "",
+                            TelefonoNumero = reader["telefono"].ToString()?.Split('-')[1] ?? "",
+                            Direccion = reader["direccion"].ToString() ?? "",
+                            Id = int.Parse(reader["id"].ToString() ?? "0"),
+                            Estado = int.Parse(reader["estado"].ToString() ?? "0"),
+                            Fecha_Creacion = DateTime.Parse(reader["fecha_creacion"].ToString() ?? "0"),
+                            Fecha_Actualizacion = DateTime.Parse(reader["fecha_actualizacion"].ToString() ?? "0")
+                        }; 
+    });
+        return result;
+    }
+
 }

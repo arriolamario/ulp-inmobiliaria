@@ -3,8 +3,10 @@ using InmobiliariaCA.Models;
 
 public class RepositorioInmueble : RepositorioBase
 {
+    private RepositorioPropietario _repositorioPropietario;
     public RepositorioInmueble(IConfiguration configuration) : base(configuration)
     {
+        _repositorioPropietario = new RepositorioPropietario(configuration);
     }
     public int AltaInmueble(Inmueble inmueble)
     {
@@ -80,6 +82,12 @@ public class RepositorioInmueble : RepositorioBase
             };
         }); 
 
+        List<int> propietariosIds = resultInmuebles.Select(x => x.Id_Propietario).ToList();
+
+        List<Propietario> propietarios = _repositorioPropietario.GetPropietarios(propietariosIds);
+
+        resultInmuebles.ForEach(x => x.Propietario = propietarios.FirstOrDefault(y => y.Id == x.Id_Propietario));
+
         return resultInmuebles;
     }
 
@@ -95,4 +103,7 @@ public class RepositorioInmueble : RepositorioBase
         return result;
     }
 
+    public bool ActualizarInmueble(Inmueble inmueble){
+        throw new Exception("Funcionalidad no implementada");
+    }
 }
