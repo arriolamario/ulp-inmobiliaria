@@ -1,6 +1,6 @@
 -- Crear la base de datos si no existe
-CREATE DATABASE IF NOT EXISTS inmo-ca;
-USE inmo-ca;
+CREATE DATABASE IF NOT EXISTS inmo_ca;
+USE inmo_ca;
 
 -- Crear la tabla 'propietario'
 CREATE TABLE IF NOT EXISTS propietario (

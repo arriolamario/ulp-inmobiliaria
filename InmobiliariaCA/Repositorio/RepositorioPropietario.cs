@@ -99,7 +99,6 @@ public class RepositorioPropietario : RepositorioBase
     {
         bool result = false;
         string query = @$"UPDATE propietario SET 
-                                {nameof(Propietario.Dni)} = @{nameof(Propietario.Dni)}, 
                                 {nameof(Propietario.Nombre)} = @{nameof(Propietario.Nombre)}, 
                                 {nameof(Propietario.Apellido)} = @{nameof(Propietario.Apellido)}, 
                                 {nameof(Propietario.Telefono)} = @{nameof(Propietario.Telefono)}, 
@@ -109,7 +108,6 @@ public class RepositorioPropietario : RepositorioBase
 
         result = 0 < this.ExecuteNonQuery(query, (parameters) => {
             parameters.AddWithValue($"@{nameof(Propietario.Id)}", propietario.Id);
-            parameters.AddWithValue($"@{nameof(Propietario.Dni)}", propietario.Dni);
             parameters.AddWithValue($"@{nameof(Propietario.Nombre)}", propietario.Nombre);
             parameters.AddWithValue($"@{nameof(Propietario.Apellido)}", propietario.Apellido);
             parameters.AddWithValue($"@{nameof(Propietario.Telefono)}", propietario.Telefono);
