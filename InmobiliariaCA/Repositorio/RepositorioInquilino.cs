@@ -106,7 +106,6 @@ public class RepositorioInquilino : RepositorioBase {
     public bool ActualizarInquilino(Inquilino inquilino) {
         bool result = false;
         string query = @$"UPDATE inquilino SET 
-                                {nameof(Inquilino.Dni)} = @{nameof(Inquilino.Dni)}, 
                                 {nameof(Inquilino.Nombre)} = @{nameof(Inquilino.Nombre)}, 
                                 {nameof(Inquilino.Apellido)} = @{nameof(Inquilino.Apellido)}, 
                                 {nameof(Inquilino.Telefono)} = @{nameof(Inquilino.Telefono)}, 
@@ -116,7 +115,6 @@ public class RepositorioInquilino : RepositorioBase {
 
         result = 0 < this.ExecuteNonQuery(query, (parameters) => {
             parameters.AddWithValue($"@{nameof(Inquilino.Id)}", inquilino.Id);
-            parameters.AddWithValue($"@{nameof(Inquilino.Dni)}", inquilino.Dni);
             parameters.AddWithValue($"@{nameof(Inquilino.Nombre)}", inquilino.Nombre);
             parameters.AddWithValue($"@{nameof(Inquilino.Apellido)}", inquilino.Apellido);
             parameters.AddWithValue($"@{nameof(Inquilino.Telefono)}", inquilino.Telefono);
