@@ -1,5 +1,6 @@
 ﻿@model IEnumerable<InmobiliariaCA.Models.Propietario>
 @{
+    Layout = "_Layout";
     ViewData["Title"] = "Home Page";
 }
 
@@ -13,20 +14,10 @@
                     <h5 class="card-header">(@propietario.Id) @propietario.Nombre @propietario.Apellido</h5>
                     <div class="card-body">
                         <h6 class="card-title"><strong>DNI:</strong> @propietario.Dni</h6>
-                        @* <p class="card-text">
-                    <strong>Teléfono:</strong> @propietario.Telefono <br />
-                    <strong>Email:</strong> @propietario.Email <br />
-                    <strong>Dirección:</strong> @propietario.Direccion
-                    </p> *@
-
-                        @* <a href="@Url.Action("Edit", "Propietario", new { id = propietario.Id })"
-                    class="btn btn-warning btn-sm">Editar</a>
-                    <a href="@Url.Action("Delete", "Propietario", new { id = propietario.Id })"
-                    class="btn btn-danger btn-sm">Borrar</a> *@
                     </div>
                     <div class="card-footer text-end">
                         <a href="@Url.Action("Detalle", "Propietario", new { id = propietario.Id })"
-                            class="btn btn-info btn text-end">Ver</a>
+                            class="btn btn-info btn text-end"><i class="material-icons icon">add</i></a>
                     </div>
                 </div>
             </div>

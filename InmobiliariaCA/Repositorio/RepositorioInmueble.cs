@@ -4,9 +4,11 @@ using InmobiliariaCA.Models;
 public class RepositorioInmueble : RepositorioBase
 {
     private RepositorioPropietario _repositorioPropietario;
+    private RepositorioTipos _repositorioTipos;
     public RepositorioInmueble(IConfiguration configuration) : base(configuration)
     {
         _repositorioPropietario = new RepositorioPropietario(configuration);
+        _repositorioTipos = new RepositorioTipos(configuration);
     }
     public int AltaInmueble(Inmueble inmueble)
     {
@@ -64,7 +66,7 @@ public class RepositorioInmueble : RepositorioBase
                                 {nameof(Inmueble.Fecha_Actualizacion)}		
                                 from inmueble where Estado = 1;";
 
-        resultInmuebles = this.ExecuteReaderList<Inmueble>("select * from inmueble", (reader) =>  {
+        resultInmuebles = this.ExecuteReaderList<Inmueble>(query, (reader) =>  {
             return new Inmueble()
             {
                 Id = int.Parse(reader[nameof(Inmueble.Id)].ToString() ?? "0"),
@@ -84,9 +86,15 @@ public class RepositorioInmueble : RepositorioBase
 
         List<int> propietariosIds = resultInmuebles.Select(x => x.Id_Propietario).ToList();
 
-        List<Propietario> propietarios = _repositorioPropietario.GetPropietarios(propietariosIds);
+        var propietarios = _repositorioPropietario.GetPropietarios(propietariosIds);
+        var tiposInmuebles = _repositorioTipos.GetTipoInmueble();
+        var tiposInmueblesUsos = _repositorioTipos.GetTipoInmuebleUso();
 
-        resultInmuebles.ForEach(x => x.Propietario = propietarios.FirstOrDefault(y => y.Id == x.Id_Propietario));
+        resultInmuebles.ForEach(x => {
+            x.Propietario = propietarios.FirstOrDefault(y => y.Id == x.Id_Propietario);
+            x.Tipo = tiposInmuebles.FirstOrDefault(y => y.Id == x.Id_Tipo_Inmueble);
+            x.Tipo_Uso = tiposInmueblesUsos.FirstOrDefault(y => y.Id == x.Id_Tipo_Inmueble_Uso);
+        });
 
         return resultInmuebles;
     }
