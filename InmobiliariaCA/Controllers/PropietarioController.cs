@@ -39,7 +39,7 @@ public class PropietarioController : Controller
     [HttpPost]
     public IActionResult AltaEditar(Propietario propietario)
     {
-        if (_repositorioPropietario.ExistePropietarioPorDni(propietario.Dni))
+        if (_repositorioPropietario.ExistePropietarioPorDni(propietario.Dni) && propietario.Id == 0)
         {
             ModelState.AddModelError(nameof(propietario.Dni), "Documento ya existe");
 

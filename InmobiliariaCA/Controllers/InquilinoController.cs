@@ -35,7 +35,7 @@ public class InquilinoController: Controller {
 
         var existingInquilino = _repositorioInquilino.ExisteInquilinoPorDni(inquilino.Dni);
 
-        if (existingInquilino) {
+        if (existingInquilino && inquilino.Id == 0) {
            
             ModelState.AddModelError("Dni", "El DNI ingresado ya está en uso.");
             var errors = ModelState.Values.SelectMany(v => v.Errors).ToList();
