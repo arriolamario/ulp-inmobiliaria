@@ -7,7 +7,7 @@
 <div class="container mt-5">
     <div class="card shadow-sm">
         <div class="card-header bg-primary text-white">
-            <h2>@(Model == null ? "Formulario de Registro" : "Formulario de Actualización")</h2>
+            <h2>@(Model == null || Model.Id == 0 ? "Formulario de Registro" : "Formulario de Actualización")</h2>
         </div>
         <div class="card-body">
            
@@ -31,7 +31,7 @@
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input asp-for="Dni" class="form-control" placeholder="DNI" readonly="@(Model != null)">
+                            <input asp-for="Dni" class="form-control" placeholder="DNI" readonly="@(Model != null && Model.Id != 0)">
                             <label asp-for="Dni">DNI</label>
                             <span asp-validation-for="Dni" class="text-danger"></span>
                         </div>
@@ -71,11 +71,11 @@
                 <input type="hidden" asp-for="Id" />
 
                 <div class="d-flex justify-content-between">
-                    <a href="@Url.Action(Model == null ? "Index" : "Detalle", "Inquilino", Model == null ? null : new { id = Model.Id })" class="btn btn-secondary">
+                    <a href="@Url.Action(Model == null ? "Index" : "Detalle", "Inquilino", Model == null || Model.Id == 0 ? null : new { id = Model.Id })" class="btn btn-secondary">
                         @(Model == null ? "Volver a la Lista" : "Volver")
                     </a>
                     <button type="submit" class="btn btn-primary">
-                        @(Model == null ? "Registrar" : "Actualizar")
+                        @(Model == null || Model.Id == 0 ? "Registrar" : "Actualizar")
                     </button>
                 </div>
             </form>

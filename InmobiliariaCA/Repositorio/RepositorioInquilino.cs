@@ -91,7 +91,7 @@ public class RepositorioInquilino : RepositorioBase {
                 @{nameof(Inquilino.Direccion)});
              SELECT LAST_INSERT_ID();";
 
-        int result = this.ExecuteNonQuery(query, (parameters) => {
+        int result = this.ExecuteScalar(query, (parameters) => {
             parameters.AddWithValue($"@{nameof(Inquilino.Dni)}", inquilino.Dni);
             parameters.AddWithValue($"@{nameof(Inquilino.Nombre)}", inquilino.Nombre);
             parameters.AddWithValue($"@{nameof(Inquilino.Apellido)}", inquilino.Apellido);
@@ -114,7 +114,7 @@ public class RepositorioInquilino : RepositorioBase {
                                 {nameof(Inquilino.Direccion)} = @{nameof(Inquilino.Direccion)}
                         where {nameof(Inquilino.Id)} = @{nameof(Inquilino.Id)};";
 
-        result = 0 < this.ExecuteNonQuery(query, (parameters) => {
+        result = 0 < this.ExecuteScalar(query, (parameters) => {
             parameters.AddWithValue($"@{nameof(Inquilino.Id)}", inquilino.Id);
             parameters.AddWithValue($"@{nameof(Inquilino.Dni)}", inquilino.Dni);
             parameters.AddWithValue($"@{nameof(Inquilino.Nombre)}", inquilino.Nombre);

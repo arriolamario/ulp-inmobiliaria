@@ -19,7 +19,6 @@ public class PropietarioController : Controller
 
     public IActionResult Index()
     {
-        ViewBag.Mensaje = TempData["MensajeExito"] ?? TempData["MensajeExito"];
         return View(_repositorioPropietario.GetPropietarios());
     }
 
@@ -42,23 +41,23 @@ public class PropietarioController : Controller
         if (_repositorioPropietario.ExistePropietarioPorDni(propietario.Dni))
         {
             ModelState.AddModelError(nameof(propietario.Dni), "Documento ya existe");
-
+            TempData["ErrorMessage"] = "El propietario ya existe.";
             return View(propietario);
         }
         if (propietario.Id == 0)
         {
-
             _repositorioPropietario.InsertarPropietario(propietario);
-            TempData["MensajeExito"] = "Propietario insertado correctamente";
+            TempData["SuccessMessage"] = "Propietario agregado correctamente.";
         }
         else
         {
             _repositorioPropietario.ActualizarPropietario(propietario);
-            TempData["MensajeExito"] = "Propietario actualizado correctamente";
+            TempData["SuccessMessage"] = "Propietario actualizado correctamente.";
         }
         return RedirectToAction("Index");
     }
 
+    [HttpPost]
     public IActionResult Baja(int Id)
     {
         if (Id == 0)
@@ -66,7 +65,11 @@ public class PropietarioController : Controller
         }
         else
         {
-            _repositorioPropietario.BajaPropietario(Id);
+            var res =_repositorioPropietario.BajaPropietario(Id);
+            if (res)
+                TempData["SuccessMessage"] = "Propietario dado de baja correctamente.";
+            else
+                TempData["ErrorMessage"] = "No se pudo dar de baja al propietario.";
         }
         return RedirectToAction("Index");
     }

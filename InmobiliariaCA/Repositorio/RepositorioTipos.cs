@@ -15,7 +15,7 @@ public class RepositorioTipos : RepositorioBase
                             VALUES (@{nameof(tipoInmueble.Descripcion)});,
                             SELECT LAST_INSERT_ID();";
         
-        result = this.ExecuteNonQuery(query, (parameters) => {
+        result = this.ExecuteScalar(query, (parameters) => {
             parameters.AddWithValue($"@{nameof(TipoInmueble.Descripcion)}", tipoInmueble.Descripcion);
         });
 
@@ -98,7 +98,7 @@ public class RepositorioTipos : RepositorioBase
                             @{nameof(Inmueble.Id_Propietario)});
                             SELECT LAST_INSERT_ID();";
         
-        result = this.ExecuteNonQuery(query, (parameters) => {
+        result = this.ExecuteScalar(query, (parameters) => {
             parameters.AddWithValue($"@{nameof(Inmueble.Direccion)}", inmueble.Direccion);
             parameters.AddWithValue($"@{nameof(Inmueble.Id_Tipo_Inmueble_Uso)}", inmueble.Id_Tipo_Inmueble_Uso);
             parameters.AddWithValue($"@{nameof(Inmueble.Id_Tipo_Inmueble)}", inmueble.Id_Tipo_Inmueble);

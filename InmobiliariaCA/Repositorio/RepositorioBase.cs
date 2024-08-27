@@ -77,7 +77,7 @@ public abstract class RepositorioBase
         return result;
     }
 
-    public int ExecuteNonQuery(string query, Action<MySqlParameterCollection> parameters)
+    public int ExecuteScalar(string query, Action<MySqlParameterCollection> parameters)
     {
         int result = default(int);
 
@@ -92,6 +92,23 @@ public abstract class RepositorioBase
         }
 
         return result;
+    }
+
+    public int ExecuteNonQuery(string query, Action<MySqlParameterCollection> parameters)
+    {
+        int filasAfectadas = default(int);
+
+        using (MySqlConnection connection = new MySqlConnection(connectionString))
+        {
+            connection.Open();
+            using (MySqlCommand command = new MySqlCommand(query, connection))
+            {
+                parameters(command.Parameters);
+                filasAfectadas = Convert.ToInt32(command.ExecuteNonQuery());
+            }
+        }
+
+        return filasAfectadas;
     }
 
 }

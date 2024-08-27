@@ -88,7 +88,7 @@ public class RepositorioPropietario : RepositorioBase
         bool existe = false;
         string query = @$"select count(*) from propietario where {nameof(Propietario.Dni)} = @{nameof(Propietario.Dni)};";
 
-        existe = this.ExecuteNonQuery(query, (parameters) => {
+        existe = this.ExecuteScalar(query, (parameters) => {
             parameters.AddWithValue($"@{nameof(Propietario.Dni)}", dni);
         }) > 0;
         return existe;
@@ -125,7 +125,7 @@ public class RepositorioPropietario : RepositorioBase
                             VALUES(@{nameof(Propietario.Dni)}, @{nameof(Propietario.Nombre)}, @{nameof(Propietario.Apellido)}, @{nameof(Propietario.Telefono)}, @{nameof(Propietario.Email)}, @{nameof(Propietario.Direccion)});
                             SELECT LAST_INSERT_ID();";
 
-        int result = this.ExecuteNonQuery(query, (parameters) => {
+        int result = this.ExecuteScalar(query, (parameters) => {
             parameters.AddWithValue($"@{nameof(Propietario.Dni)}", propietario.Dni);
             parameters.AddWithValue($"@{nameof(Propietario.Nombre)}", propietario.Nombre);
             parameters.AddWithValue($"@{nameof(Propietario.Apellido)}", propietario.Apellido);

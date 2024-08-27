@@ -5,23 +5,31 @@
 }
 
 <div class="container mt-5">
-    <h2 class="mb-4">Lista de Propietarios</h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+          <h2 class="text-primary"><i class="fas fa-users"></i>Lista de Propietarios</h2>
+        <a href="@Url.Action("AltaEditar", "Propietario")" class="btn btn-success shadow-sm">Agregar Nuevo Propietario</a>
+    </div>
     <div class="row">
-        @foreach (var propietario in Model)
-        {
-            <div class="col-md-4 mb-4">
-                <div class="card">
-                    <h5 class="card-header">(@propietario.Id) @propietario.Nombre @propietario.Apellido</h5>
+        @foreach (var propietario in Model) {
+            <div class="col-12 mb-4">
+                <div class="card shadow-sm">
                     <div class="card-body">
-                        <h6 class="card-title"><strong>DNI:</strong> @propietario.Dni</h6>
-                    </div>
-                    <div class="card-footer text-end">
-                        <a href="@Url.Action("Detalle", "Propietario", new { id = propietario.Id })"
-                            class="btn btn-info btn text-end"><i class="material-icons icon">add</i></a>
+                        <h5 class="card-title text-white p-2" style="background-color: #2d94f5;">@propietario.Nombre @propietario.Apellido</h5>
+                        <p class="card-text"><strong>DNI:</strong> @propietario.Dni</p>
+                        <p class="card-text"><strong>Teléfono:</strong> @propietario.Telefono</p>
+                        <p class="card-text"><strong>Email:</strong> @propietario.Email</p>
+                        <p class="card-text"><strong>Dirección:</strong> @propietario.Direccion</p>
+                        <div class="d-flex justify-content-end">
+                            <a href="@Url.Action("Detalle", "Propietario", new { id = propietario.Id })" class="btn btn-info btn-sm mx-1 shadow-sm">Ver</a>
+                            @* <a href="@Url.Action("AltaEditar", "Propietario", new { id = propietario.Id })" class="btn btn-warning btn-sm mx-1 shadow-sm">Editar</a> *@
+                            @* <form asp-action="BajaLogica" method="post" class="d-inline">
+                                <input type="hidden" name="id" value="@propietario.Id" />
+                                <button type="submit" class="btn btn-danger btn-sm mx-1 shadow-sm" onclick="return confirm('¿Estás seguro de que deseas dar de baja a este inquilino?');">Borrar</button>
+                            </form> *@
+                        </div>
                     </div>
                 </div>
             </div>
         }
     </div>
-    <a href="@Url.Action("AltaEditar", "Propietario")" class="btn btn-success mt-4">Agregar Nuevo Propietario</a>
 </div>
