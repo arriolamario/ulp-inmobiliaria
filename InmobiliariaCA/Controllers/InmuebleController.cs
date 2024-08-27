@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using InmobiliariaCA.Models;
 using InmobiliariaCA.Repositorio;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace InmobiliariaCA.Controllers;
 
@@ -30,6 +31,10 @@ public class InmuebleController : Controller
 
     public IActionResult AltaEditar(int Id)
     {
+        var tiposInmuebles = _repositorioInmueble.GetTipoInmuebles();
+        var tiposInmueblesUsos =  _repositorioInmueble.GetTipoInmueblesUsos();
+        ViewBag.TipoInmuebles = new SelectList(tiposInmuebles ?? new List<TipoInmueble>(), "Id", "Descripcion");
+        ViewBag.TipoInmueblesUsos = new SelectList(tiposInmueblesUsos ?? new List<TipoInmuebleUso>(), "Id", "Descripcion");
         if (Id == 0)
             return View();
 

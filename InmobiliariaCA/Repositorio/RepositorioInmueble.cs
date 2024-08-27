@@ -87,8 +87,8 @@ public class RepositorioInmueble : RepositorioBase
         List<int> propietariosIds = resultInmuebles.Select(x => x.Id_Propietario).ToList();
 
         var propietarios = _repositorioPropietario.GetPropietarios(propietariosIds);
-        var tiposInmuebles = _repositorioTipos.GetTipoInmueble();
-        var tiposInmueblesUsos = _repositorioTipos.GetTipoInmuebleUso();
+        var tiposInmuebles = _repositorioTipos.GetTipoInmuebles();
+        var tiposInmueblesUsos = _repositorioTipos.GetTipoInmueblesUsos();
 
         resultInmuebles.ForEach(x => {
             x.Propietario = propietarios.FirstOrDefault(y => y.Id == x.Id_Propietario);
@@ -113,5 +113,17 @@ public class RepositorioInmueble : RepositorioBase
 
     public bool ActualizarInmueble(Inmueble inmueble){
         throw new Exception("Funcionalidad no implementada");
+    }
+
+    public List<TipoInmueble> GetTipoInmuebles()
+    {
+        var resultList = _repositorioTipos.GetTipoInmuebles();
+        return resultList;
+    }
+
+    public List<TipoInmuebleUso> GetTipoInmueblesUsos()
+    {
+        var resultList = _repositorioTipos.GetTipoInmueblesUsos();
+        return resultList;
     }
 }

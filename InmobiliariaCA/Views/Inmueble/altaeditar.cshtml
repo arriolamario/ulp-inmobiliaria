@@ -1,95 +1,101 @@
-@* @model InmobiliariaCA.Models.Propietario
+@model InmobiliariaCA.Models.Inmueble
 @{
-    ViewData["Title"] = "Formulario de Registro";
+    ViewData["Title"] = Model == null || Model.Id == 0 ? "Formulario de Registro" : "Formulario Actualización";
 }
 
 
-<form asp-action="AltaEditar">
-    <div class="card">
-        <div class="card-header text-center">
-            @if (Model == null || Model.Id == 0)
-            {
-                <h2>Alta</h2>
-            }
-            else
-            {
-                <h2>Editar</h2>
-            }
-
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h2>@(Model == null || Model.Id == 0 ? "Formulario de Registro" : "Formulario de Actualización")</h2>
         </div>
         <div class="card-body">
-            <div class="row">
-                <div class="col">
-                    <div class="form-group">
-                        <label asp-for="Apellido">Apellido</label>
-                        <input asp-for="Apellido" placeholder="Apellido" class="form-control">
-                        <span asp-validation-for="Apellido" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="col">
-                    <div class="form-group">
-                        <label asp-for="Nombre">Nombre</label>
-                        <input asp-for="Nombre" placeholder="Nombre" class="form-control">
-                        <span asp-validation-for="Nombre" class="text-danger"></span>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="form-group">
-                    <label asp-for="Dni">Documento</label>
-                    <input asp-for="Dni" placeholder="Documento" class="form-control" readonly="@(Model != null)">
-                    <span asp-validation-for="Dni" class="text-danger"></span>
-                </div>
-            </div>
-            <div class="row">
-                <div class="form-group">
-                    <label asp-for="Email" class="control-label">Email</label>
-                    <input asp-for="Email" placeholder="Email" class="form-control">
-                    <span asp-validation-for="Email" class="text-danger"></span>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label asp-for="TelefonoArea">Area</label>
-                        <input asp-for="TelefonoArea" placeholder="Area" class="form-control">
-                        <span asp-validation-for="TelefonoArea" class="text-danger"></span>
-                    </div>
-                </div>
-                <div class="col">
-                    <label asp-for="TelefonoNumero">Número</label>
-                    <input asp-for="TelefonoNumero" placeholder="Número" class="form-control">
-                    <span asp-validation-for="TelefonoNumero" class="text-danger"></span>
-                </div>
-            </div>
 
-
-            <div class="row">
-                <div>
-                    <label asp-for="Direccion">Direccion</label>
-                    <input asp-for="Direccion" placeholder="Direccion" class="form-control">
-                    <span asp-validation-for="Direccion" class="text-danger"></span>
+            <form asp-action="CrearActualizar">
+                 <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input asp-for="Direccion" class="form-control" placeholder="Direccion")">
+                            <label asp-for="Direccion">Direccion</label>
+                            <span asp-validation-for="Direccion" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input asp-for="Direccion" class="form-control" placeholder="Direccion">
+                            <label asp-for="Direccion">Direccion</label>
+                            <span asp-validation-for="Direccion" class="text-danger"></span>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <input type="hidden" asp-for="Id" />
-        </div>
-        <div class="card-footer text-center">
-            @if (Model == null || Model.Id == 0)
-            {
-                <button type="submit" class="btn btn-primary">Registrar</button>
-                <a href="@Url.Action("Index", "Propietario")" class="btn btn-warning">Volver a la lista</a>
-            }
-            else
-            {
-                <button type="submit" class="btn btn-primary">Actualizar</button>
-                <a href="@Url.Action("Detalle", "Propietario", new { id = Model.Id })" class="btn btn-warning">Volver</a>
-            }
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            @Html.DropDownListFor(m => m.Id_Tipo_Inmueble, (SelectList)ViewBag.TipoInmuebles, "", new { @class = "form-select", id = "Id_Tipo_Inmueble" })
+                            <label for="Id_Tipo_Inmueble">Tipo</label>
+                            <span asp-validation-for="Id_Tipo_Inmueble" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            @Html.DropDownListFor(m => m.Id_Tipo_Inmueble_Uso, (SelectList)ViewBag.TipoInmueblesUsos, "", new { @class = "form-select", id = "Id_Tipo_Inmueble_Uso" })
+                            <label for="Id_Tipo_Inmueble_Uso">Tipo de Uso</label>
+                            <span asp-validation-for="Id_Tipo_Inmueble_Uso" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input asp-for="Ambientes" class="form-control" placeholder="Ambientes">
+                            <label asp-for="Ambientes">Ambientes</label>
+                            <span asp-validation-for="Ambientes" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input asp-for="Coordenada_Lat" class="form-control" placeholder="Coordenada_Lat">
+                            <label asp-for="Coordenada_Lat">Latitud</label>
+                            <span asp-validation-for="Coordenada_Lat" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input asp-for="Coordenada_Lon" class="form-control" placeholder="Coordenada_Lon">
+                            <label asp-for="Coordenada_Lon">Longitud</label>
+                            <span asp-validation-for="Coordenada_Lon" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input asp-for="Precio" class="form-control" placeholder="Precio">
+                            <label asp-for="Precio">Precio</label>
+                            <span asp-validation-for="Precio" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <input type="hidden" asp-for="Id" />
+
+                <div class="d-flex justify-content-between">
+                    <a href="@Url.Action(Model == null ? "Index" : "Detalle", "Inmueble", Model == null || Model.Id == 0 ? null : new { id = Model.Id })" class="btn btn-secondary">
+                        @(Model == null ? "Volver a la Lista" : "Volver")
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        @(Model == null || Model.Id == 0 ? "Registrar" : "Actualizar")
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
-</form>
+</div>
 
 @section Scripts {
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
-    <script
-        src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
-} *@
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
+}
