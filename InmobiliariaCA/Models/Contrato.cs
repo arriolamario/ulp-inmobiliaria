@@ -51,8 +51,8 @@ namespace InmobiliariaCA.Models
        
         public virtual Inmueble Inmueble { get; set; }
         public virtual Inquilino Inquilino { get; set; }
-        public virtual Usuario UsuarioCreacion { get; set; }
-        public virtual Usuario UsuarioFinalizacion { get; set; }
+        // public virtual Usuario UsuarioCreacion { get; set; }
+        // public virtual Usuario UsuarioFinalizacion { get; set; }
       
     }
 }

@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS inquilino (
 );
 
 -- Crear la tabla 'tipo_inmueble'
-CREATE TABLE tipo_inmueble (
+CREATE TABLE IF NOT EXISTS tipo_inmueble (
     id INT AUTO_INCREMENT PRIMARY KEY,
     descripcion VARCHAR(100) NOT NULL,
 	fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -39,7 +39,7 @@ CREATE TABLE tipo_inmueble (
 );
 
 -- Crear la tabla 'tipo_inmueble_uso'
-CREATE TABLE tipo_inmueble_uso (
+CREATE TABLE IF NOT EXISTS tipo_inmueble_uso (
     id INT AUTO_INCREMENT PRIMARY KEY,
     descripcion VARCHAR(100) NOT NULL,
 	fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -47,23 +47,44 @@ CREATE TABLE tipo_inmueble_uso (
 );
 
 -- Crear la tabla de 'inmueble'
-CREATE TABLE inmueble (
+CREATE TABLE IF NOT EXISTS inmueble (
     id INT AUTO_INCREMENT PRIMARY KEY,
     direccion VARCHAR(255) NOT NULL,
     id_tipo_inmueble_uso INT NOT NULL,
     id_tipo_inmueble INT NOT NULL,
     ambientes INT NOT NULL,
-    coordenada_lat FLOAT NOT NULL,
-    coordenada_lon FLOAT NOT NULL,
+    coordenada_lat VARCHAR(25) NOT NULL,
+    coordenada_lon VARCHAR(25) NOT NULL,
     precio DECIMAL(10, 2) NOT NULL,
     estado INT NOT NULL DEFAULT 1,
     id_propietario INT,
 	fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (id_propietario) REFERENCES Propietario(id),
+    FOREIGN KEY (id_propietario) REFERENCES propietario(id),
     FOREIGN KEY (id_tipo_inmueble_uso) REFERENCES tipo_inmueble_uso(id),
 	FOREIGN KEY (id_tipo_inmueble) REFERENCES tipo_inmueble(id)
 );
+
+CREATE TABLE IF NOT EXISTS usuario (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    nombre VARCHAR(100),
+    apellido VARCHAR(100),
+    telefono VARCHAR(20),
+    avatar_url TEXT,
+    rol ENUM('empleado', 'administrador') NOT NULL,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS pago (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    contrato_id INT NOT NULL,
+    numero_pago INT NOT NULL,
+    fecha_pago DATE NOT NULL,
+    detalle VARCHAR(255),
+    importe DEC
 
 -- Insertar datos en la tabla 'propietario'
 INSERT INTO propietario (dni, nombre, apellido, telefono, email, direccion)
