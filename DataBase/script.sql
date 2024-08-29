@@ -84,7 +84,30 @@ CREATE TABLE IF NOT EXISTS pago (
     numero_pago INT NOT NULL,
     fecha_pago DATE NOT NULL,
     detalle VARCHAR(255),
-    importe DEC
+    importe decimal(10,2) NULL,
+    FOREIGN KEY (contrato_id) REFERENCES contrato(id)
+);
+
+CREATE TABLE IF NOT EXISTS contrato (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_inmueble INT NOT NULL,
+    id_inquilino INT NOT NULL,
+    fecha_desde DATE NOT NULL,
+    fecha_hasta DATE NOT NULL,
+    monto_alquiler DECIMAL(10, 2) NOT NULL,
+    fecha_finalizacion_anticipada DATE,
+    multa DECIMAL(10, 2),
+    estado BOOLEAN NOT NULL DEFAULT TRUE,
+    id_usuario_creacion INT NOT NULL,
+    id_usuario_finalizacion INT,
+    fecha_creacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_inmueble) REFERENCES inmueble(id),
+    FOREIGN KEY (id_inquilino) REFERENCES inquilino(id),
+    FOREIGN KEY (id_usuario_creacion) REFERENCES usuario(id),
+    FOREIGN KEY (id_usuario_finalizacion) REFERENCES usuario(id)
+);
+
 
 -- Insertar datos en la tabla 'propietario'
 INSERT INTO propietario (dni, nombre, apellido, telefono, email, direccion)

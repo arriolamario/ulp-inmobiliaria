@@ -1,8 +1,6 @@
 using System;
 using InmobiliariaCA.Models;
-
-public class Pago
-{
+public class Pago {
     public int Id { get; set; }
     public int ContratoId { get; set; }
     public int NumeroPago { get; set; }

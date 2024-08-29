@@ -2,57 +2,57 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace InmobiliariaCA.Models
-{
-    public class Contrato {
+namespace InmobiliariaCA.Models;
+public class Contrato {
+        [Key]
         public int Id { get; set; }
 
         [Required]
         [ForeignKey("Inmueble")]
-        public int IdInmueble { get; set; }
+        public int Id_Inmueble { get; set; }
 
         [Required]
         [ForeignKey("Inquilino")]
-        public int IdInquilino { get; set; }
+        public int Id_Inquilino { get; set; }
 
         [Required]
         [DataType(DataType.Date)]
-        public DateTime FechaDesde { get; set; }
+        public DateTime Fecha_Desde { get; set; }
 
         [Required]
         [DataType(DataType.Date)]
-        public DateTime FechaHasta { get; set; }
+        public DateTime Fecha_Hasta { get; set; }
 
         [Required]
-        [Column(TypeName = "decimal(10, 2)")]
-        public decimal MontoAlquiler { get; set; }
+        [Column("monto_alquiler", TypeName = "decimal(10, 2)")]
+        public decimal Monto_Alquiler { get; set; }
 
         [DataType(DataType.Date)]
-        public DateTime? FechaFinalizacionAnticipada { get; set; }
+        public DateTime? Fecha_Finalizacion_Anticipada { get; set; }
 
-        [Column(TypeName = "decimal(10, 2)")]
+        [Column("multa", TypeName = "decimal(10, 2)")]
         public decimal? Multa { get; set; }
 
         [Required]
+        [Column("estado")]
         public bool Estado { get; set; } = true;
 
         [Required]
         [ForeignKey("UsuarioCreacion")]
-        public int IdUsuarioCreacion { get; set; }
+        public int Id_Usuario_Creacion { get; set; }
 
         [ForeignKey("UsuarioFinalizacion")]
-        public int? IdUsuarioFinalizacion { get; set; }
+        public int? Id_Usuario_Finalizacion { get; set; }
 
         [DataType(DataType.DateTime)]
-        public DateTime FechaCreacion { get; set; } = DateTime.Now;
+        public DateTime Fecha_Creacion { get; set; } = DateTime.Now;
 
         [DataType(DataType.DateTime)]
-        public DateTime FechaActualizacion { get; set; } = DateTime.Now;
+        public DateTime Fecha_Actualizacion { get; set; } = DateTime.Now;
        
         public virtual Inmueble Inmueble { get; set; }
         public virtual Inquilino Inquilino { get; set; }
-        // public virtual Usuario UsuarioCreacion { get; set; }
-        // public virtual Usuario UsuarioFinalizacion { get; set; }
-      
-    }
+        public virtual Usuario Usuario_Creacion { get; set; }
+        public virtual Usuario Usuario_Finalizacion { get; set; }
+    
 }
