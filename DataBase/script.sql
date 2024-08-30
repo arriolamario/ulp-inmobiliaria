@@ -127,14 +127,27 @@ VALUES
 ('10000004', 'Fernando', 'Álvarez', '555-3456', 'fernando.alvarez@example.com', 'Plaza del Sol 34, Centro Histórico', 1),
 ('10000005', 'Carmen', 'Fernández', '555-4567', 'carmen.fernandez@example.com', 'Avenida del Mar 78, Playa Norte', 1);
 
--- Insertar datos en la tabla 'tipo_inmueble' hasta tener el AMB de tipo inmueble
 insert into tipo_inmueble (descripcion) 
-values ('Tipo Inmueble 1'),
-('Tipo Inmueble 2'),
-('Tipo Inmueble 3');
+values ('Duplex'),
+('Casa'),
+('Dos Ambientes');
 
--- Insertar datos en la tabla 'tipo_inmueble_uso' hasta tener el ABM de tipo inmueble uso
 insert into tipo_inmueble_uso (descripcion) 
-values ('Tipo Inmueble Uso 1'),
-('Tipo Inmueble Uso 2'),
-('Tipo Inmueble Uso 3');
+values ('Comercial'),
+('Laboral'),
+('Personal');
+
+INSERT INTO inmueble ( direccion, id_tipo_inmueble_uso, id_tipo_inmueble, ambientes, coordenada_lat, coordenada_lon, precio, estado, id_propietario) VALUES
+('Calle Falsa 123, Springfield', 1, 1, 3, 34.0522, -118.2437, 1500.00, 1, 1),
+('742 Evergreen Terrace, Springfield', 2, 2, 5, 34.0522, -118.2437, 2500.00, 1, 2),
+('123 Elm Street, West Springfield', 1, 1, 4, 34.0522, -118.2437, 2000.00, 1, 3),
+('555 North Oak Trafficway, Springfield', 2, 3, 6, 34.0522, -118.2437, 3000.00, 1, 4);
+
+INSERT INTO `usuario` (`email`, `password_hash`, `nombre`, `apellido`, `telefono`, `avatar_url`, `rol`)
+VALUES
+('john.doe@example.com', '$2y$10$abcdefg1234567890hijklmnopqrstuv', 'John', 'Doe', '+123456789', 'https://example.com/avatar1.png', 'empleado'),
+('jane.smith@example.com', '$2y$10$1234567890abcdefg1234567890abcd', 'Jane', 'Smith', '+987654321', 'https://example.com/avatar2.png', 'administrador'),
+('maria.lopez@example.com', '$2y$10$hijklmnopqrstuv1234567890abcdefg', 'Maria', 'Lopez', '+1122334455', 'https://example.com/avatar3.png', 'empleado'),
+('carlos.martin@example.com', '$2y$10$1234567890abcdefg1234567890abcd', 'Carlos', 'Martin', '+9988776655', 'https://example.com/avatar4.png', 'empleado'),
+('laura.garcia@example.com', '$2y$10$abcdefg1234567890hijklmnopqrstuv', 'Laura', 'Garcia', '+6655443322', 'https://example.com/avatar5.png', 'administrador');
+
