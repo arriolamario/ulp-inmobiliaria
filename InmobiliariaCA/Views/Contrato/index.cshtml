@@ -20,11 +20,8 @@
                             <p class="card-text"><strong>Fecha Desde:</strong> @contrato.Fecha_Desde.ToShortDateString()</p>
                             <p class="card-text"><strong>Fecha Hasta:</strong> @contrato.Fecha_Hasta.ToShortDateString()</p>
                             <p class="card-text"><strong>Monto de Alquiler:</strong> @contrato.Monto_Alquiler</p>
-                            <p class="card-text"><strong>Estado:</strong> @(contrato.Estado ? "Activo" : "Inactivo")</p>
                             <div class="d-flex justify-content-end">
-                                <a href="@Url.Action("Details", "Contrato", new { id = contrato.Id })" class="btn btn-info btn-sm mx-1 shadow-sm">Detalles</a>
-                                <a href="@Url.Action("Edit", "Contrato", new { id = contrato.Id })" class="btn btn-primary btn-sm mx-1 shadow-sm">Editar</a>
-                                <a href="@Url.Action("Delete", "Contrato", new { id = contrato.Id })" class="btn btn-danger btn-sm mx-1 shadow-sm">Eliminar</a>
+                                <a href="@Url.Action("Detalle", "Contrato", new { id = contrato.Id })" class="btn btn-info btn-sm mx-1 shadow-sm">Ver</a>
                             </div>
                         </div>
                     </div>
@@ -38,7 +35,3 @@
     </div>
 </div>
 
-@section Scripts {
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
-}

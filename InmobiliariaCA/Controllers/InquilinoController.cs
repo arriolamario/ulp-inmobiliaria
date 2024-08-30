@@ -21,7 +21,11 @@ public class InquilinoController: Controller {
     }
 
     public IActionResult Detalle(int Id) {
-        return View(_repositorioInquilino.GetInquilino(Id));
+        var inquilino = _repositorioInquilino.GetInquilino(Id);
+        if(inquilino == null) {
+            return NotFound();
+        }
+        return View();
     }
     public IActionResult AltaEditar(int Id) {
         if (Id == 0)
@@ -31,7 +35,7 @@ public class InquilinoController: Controller {
     }
 
     [HttpPost]
-    public IActionResult CrearActualizar(Inquilino inquilino) {
+    public IActionResult AltaEditar(Inquilino inquilino) {
 
         var existingInquilino = _repositorioInquilino.ExisteInquilinoPorDni(inquilino.Dni);
 

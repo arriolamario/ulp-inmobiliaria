@@ -7,7 +7,13 @@ namespace InmobiliariaCA.Repositorio
     using System;
 
     public class RepositorioContrato : RepositorioBase {
+
+         private RepositorioInmueble _repositorioInmueble;
+        private RepositorioInquilino _repositorioInquilino;
+
         public RepositorioContrato(IConfiguration configuration) : base(configuration) {
+            _repositorioInmueble = new RepositorioInmueble(configuration);
+            _repositorioInquilino = new RepositorioInquilino(configuration);
         }
 
         public List<Contrato> GetContratos() {
@@ -24,12 +30,12 @@ namespace InmobiliariaCA.Repositorio
                                     {nameof(Contrato.Estado)},
                                     {nameof(Contrato.Fecha_Creacion)},
                                     {nameof(Contrato.Fecha_Actualizacion)}
-                              from contrato
-                              where estado = 1;";
+                            from contrato
+                            where estado = 1;";
 
             resultContratos = this.ExecuteReaderList<Contrato>(query, (reader) => {
-                return new Contrato() {
-
+                var contrato = new Contrato() {
+                    Id = int.Parse(reader["id"].ToString() ?? "0"),
                     Id_Inmueble = int.Parse(reader["id_inmueble"].ToString() ?? "0"),
                     Id_Inquilino = int.Parse(reader["id_inquilino"].ToString() ?? "0"),
                     Fecha_Desde = DateTime.Parse(reader["fecha_desde"].ToString() ?? "0"),
@@ -41,6 +47,12 @@ namespace InmobiliariaCA.Repositorio
                     Fecha_Creacion = DateTime.Parse(reader["fecha_creacion"].ToString() ?? "0"),
                     Fecha_Actualizacion = DateTime.Parse(reader["fecha_actualizacion"].ToString() ?? "0")
                 };
+
+                // Cargar los objetos Inmueble e Inquilino usando sus IDs
+                contrato.Inmueble = _repositorioInmueble.GetInmueble(contrato.Id_Inmueble);
+                contrato.Inquilino = _repositorioInquilino.GetInquilino(contrato.Id_Inquilino);
+
+                return contrato;
             });
 
             return resultContratos;
@@ -90,8 +102,11 @@ namespace InmobiliariaCA.Repositorio
                                 {nameof(Contrato.Monto_Alquiler)},
                                 {nameof(Contrato.Fecha_Finalizacion_Anticipada)},
                                 {nameof(Contrato.Multa)},
-                                {nameof(Contrato.Estado)})
-                              VALUES(
+                                {nameof(Contrato.Id_Usuario_Creacion)},
+                                {nameof(Contrato.Id_Usuario_Finalizacion)},
+                                {nameof(Contrato.Fecha_Creacion)},
+                                {nameof(Contrato.Fecha_Actualizacion)})
+                            VALUES(
                                 @{nameof(Contrato.Id_Inmueble)},
                                 @{nameof(Contrato.Id_Inquilino)},
                                 @{nameof(Contrato.Fecha_Desde)},
@@ -99,8 +114,11 @@ namespace InmobiliariaCA.Repositorio
                                 @{nameof(Contrato.Monto_Alquiler)},
                                 @{nameof(Contrato.Fecha_Finalizacion_Anticipada)},
                                 @{nameof(Contrato.Multa)},
-                                @{nameof(Contrato.Estado)});
-                              SELECT LAST_INSERT_ID();";
+                                @{nameof(Contrato.Id_Usuario_Creacion)},
+                                @{nameof(Contrato.Id_Usuario_Finalizacion)},
+                                @{nameof(Contrato.Fecha_Creacion)},
+                                @{nameof(Contrato.Fecha_Actualizacion)});
+                            SELECT LAST_INSERT_ID();";
 
             int result = this.ExecuteNonQuery(query, (parameters) => {
                 parameters.AddWithValue($"@{nameof(Contrato.Id_Inmueble)}", contrato.Id_Inmueble);
@@ -110,25 +128,29 @@ namespace InmobiliariaCA.Repositorio
                 parameters.AddWithValue($"@{nameof(Contrato.Monto_Alquiler)}", contrato.Monto_Alquiler);
                 parameters.AddWithValue($"@{nameof(Contrato.Fecha_Finalizacion_Anticipada)}", (object?)contrato.Fecha_Finalizacion_Anticipada ?? DBNull.Value);
                 parameters.AddWithValue($"@{nameof(Contrato.Multa)}", (object?)contrato.Multa ?? DBNull.Value);
-                parameters.AddWithValue($"@{nameof(Contrato.Estado)}", contrato.Estado);
+                parameters.AddWithValue($"@{nameof(Contrato.Id_Usuario_Creacion)}", 1);//contrato.Id_Usuario_Creacion);
+                parameters.AddWithValue($"@{nameof(Contrato.Id_Usuario_Finalizacion)}", 2);// (object?)contrato.Id_Usuario_Finalizacion ?? DBNull.Value);
+                parameters.AddWithValue($"@{nameof(Contrato.Fecha_Creacion)}", contrato.Fecha_Creacion);
+                parameters.AddWithValue($"@{nameof(Contrato.Fecha_Actualizacion)}", contrato.Fecha_Actualizacion);
             });
 
             return result;
         }
 
-        public bool ActualizarContrato(Contrato contrato) {
-            string query = @$"UPDATE contrato SET 
-                                {nameof(Contrato.Id_Inmueble)} = @{nameof(Contrato.Id_Inmueble)}, 
-                                {nameof(Contrato.Id_Inquilino)} = @{nameof(Contrato.Id_Inquilino)}, 
-                                {nameof(Contrato.Fecha_Desde)} = @{nameof(Contrato.Fecha_Desde)}, 
-                                {nameof(Contrato.Fecha_Hasta)} = @{nameof(Contrato.Fecha_Hasta)}, 
-                                {nameof(Contrato.Monto_Alquiler)} = @{nameof(Contrato.Monto_Alquiler)}, 
-                                {nameof(Contrato.Fecha_Finalizacion_Anticipada)} = @{nameof(Contrato.Fecha_Finalizacion_Anticipada)}, 
-                                {nameof(Contrato.Multa)} = @{nameof(Contrato.Multa)}, 
-                                {nameof(Contrato.Estado)} = @{nameof(Contrato.Estado)}
-                              WHERE {nameof(Contrato.Id)} = @{nameof(Contrato.Id)};";
+        public int ActualizarContrato(Contrato contrato) {
+            string query = @$"UPDATE contrato SET
+                                {nameof(Contrato.Id_Inmueble)} = @{nameof(Contrato.Id_Inmueble)},
+                                {nameof(Contrato.Id_Inquilino)} = @{nameof(Contrato.Id_Inquilino)},
+                                {nameof(Contrato.Fecha_Desde)} = @{nameof(Contrato.Fecha_Desde)},
+                                {nameof(Contrato.Fecha_Hasta)} = @{nameof(Contrato.Fecha_Hasta)},
+                                {nameof(Contrato.Monto_Alquiler)} = @{nameof(Contrato.Monto_Alquiler)},
+                                {nameof(Contrato.Fecha_Finalizacion_Anticipada)} = @{nameof(Contrato.Fecha_Finalizacion_Anticipada)},
+                                {nameof(Contrato.Multa)} = @{nameof(Contrato.Multa)},
+                                {nameof(Contrato.Id_Usuario_Finalizacion)} = @{nameof(Contrato.Id_Usuario_Finalizacion)},
+                                {nameof(Contrato.Fecha_Actualizacion)} = @{nameof(Contrato.Fecha_Actualizacion)}
+                            WHERE {nameof(Contrato.Id)} = @{nameof(Contrato.Id)};";
 
-            bool result = 0 < this.ExecuteNonQuery(query, (parameters) => {
+            int result = this.ExecuteNonQuery(query, (parameters) => {
                 parameters.AddWithValue($"@{nameof(Contrato.Id_Inmueble)}", contrato.Id_Inmueble);
                 parameters.AddWithValue($"@{nameof(Contrato.Id_Inquilino)}", contrato.Id_Inquilino);
                 parameters.AddWithValue($"@{nameof(Contrato.Fecha_Desde)}", contrato.Fecha_Desde);
@@ -136,7 +158,9 @@ namespace InmobiliariaCA.Repositorio
                 parameters.AddWithValue($"@{nameof(Contrato.Monto_Alquiler)}", contrato.Monto_Alquiler);
                 parameters.AddWithValue($"@{nameof(Contrato.Fecha_Finalizacion_Anticipada)}", (object?)contrato.Fecha_Finalizacion_Anticipada ?? DBNull.Value);
                 parameters.AddWithValue($"@{nameof(Contrato.Multa)}", (object?)contrato.Multa ?? DBNull.Value);
-                parameters.AddWithValue($"@{nameof(Contrato.Estado)}", contrato.Estado);
+                parameters.AddWithValue($"@{nameof(Contrato.Id_Usuario_Finalizacion)}", (object?)contrato.Id_Usuario_Finalizacion ?? DBNull.Value);
+                parameters.AddWithValue($"@{nameof(Contrato.Fecha_Actualizacion)}", contrato.Fecha_Actualizacion);
+                parameters.AddWithValue($"@{nameof(Contrato.Id)}", contrato.Id);
             });
 
             return result;
