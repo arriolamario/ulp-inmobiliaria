@@ -1,6 +1,7 @@
 namespace InmobiliariaCA.Models;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 public class Inquilino {
         public int Id { get; set; }
@@ -37,5 +38,8 @@ public class Inquilino {
         public DateTime Fecha_Creacion { get; set; }
         public DateTime Fecha_Actualizacion { get; set; }
         public int Activo { get; set; } = 1;
+
+        [NotMapped]
+        public string NombreCompletoDNI => $"{Dni} - {Nombre} {Apellido}";
   
 }

@@ -1,0 +1,62 @@
+@model InmobiliariaCA.Models.Contrato
+
+@{
+    ViewData["Title"] = Model == null || Model.Id == 0 ? "Crear Contrato" : "Editar Contrato";
+}
+
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h2>@ViewData["Title"]</h2>
+        </div>
+        <div class="card-body">
+            <form asp-action="AltaEditar" method="post">
+                <input type="hidden" asp-for="Id" />
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="Id_Inmueble" class="form-label">Inmueble</label>
+                        <select asp-for="Id_Inmueble" class="form-select" asp-items="ViewBag.Inmuebles">
+                            <option value="">Seleccione un Inmueble</option>
+                        </select>
+                        <span asp-validation-for="Id_Inmueble" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Id_Inquilino" class="form-label">Inquilino</label>
+                        <select asp-for="Id_Inquilino" class="form-select" asp-items="ViewBag.Inquilinos">
+                            <option value="">Seleccione un Inquilino</option>
+                        </select>
+                        <span asp-validation-for="Id_Inquilino" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="Fecha_Desde" class="form-label">Fecha Desde</label>
+                        <input asp-for="Fecha_Desde" type="date" class="form-control" />
+                        <span asp-validation-for="Fecha_Desde" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Fecha_Hasta" class="form-label">Fecha Hasta</label>
+                        <input asp-for="Fecha_Hasta" type="date" class="form-control" />
+                        <span asp-validation-for="Fecha_Hasta" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label asp-for="Monto_Alquiler" class="form-label">Monto del Alquiler</label>
+                        <input asp-for="Monto_Alquiler" class="form-control" placeholder="Ingrese el monto del alquiler">
+                        <span asp-validation-for="Monto_Alquiler" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <a asp-action="Index" class="btn btn-secondary">Volver</a>
+                    <button type="submit" class="btn btn-primary">@(Model == null || Model.Id == 0 ? "Registrar" : "Actualizar") </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
+}
