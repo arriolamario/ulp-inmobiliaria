@@ -21,7 +21,7 @@ public class RepositorioTipos : RepositorioBase
 
         return result;
     }
-    public List<TipoInmueble> GetTipoInmueble()
+    public List<TipoInmueble> GetTipoInmuebles()
     {
         List<TipoInmueble> resultInmuebles = new List<TipoInmueble>();
 
@@ -112,7 +112,7 @@ public class RepositorioTipos : RepositorioBase
 
         return result;
     }
-    public List<TipoInmuebleUso> GetTipoInmuebleUso()
+    public List<TipoInmuebleUso> GetTipoInmueblesUsos()
     {
         List<TipoInmuebleUso> result = new List<TipoInmuebleUso>();
 
