@@ -1,50 +1,88 @@
-@* @model InmobiliariaCA.Models.Propietario
+@model InmobiliariaCA.Models.Inmueble
+@{
+System.Globalization.CultureInfo culturaArgentina = new System.Globalization.CultureInfo("es-AR");
+string precioFormateado = Model.Precio.ToString("C", culturaArgentina);
+}
 <div class="container mt-5">
-    <div class="card">
-        <div class="card-header text-center">
-            <h3 class="card-title">Detalles del Propietario</h3>
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h2>Detalles del Inmueble</h2>
         </div>
         <div class="card-body">
-            <div class="card-text">
-                <strong>Apellido:</strong> @Model.Apellido <br />
-                <strong>Nombre:</strong> @Model.Nombre <br />
-                <strong>Documento:</strong> @Model.Dni <br />
-                <strong>Teléfono:</strong> @Model.Telefono <br />
-                <strong>Email:</strong> @Model.Email <br />
-                <strong id="direccion">Dirección:</strong> @Model.Direccion <br />
-                <strong>Fecha Creacion:</strong> @Model.Fecha_Creacion <br />
-                <strong>Fecha Actualizacion:</strong> @Model.Fecha_Actualizacion <br />
-            </div>
+            <dl class="row">
+                <input type="hidden" id="Coordenada_Lat" value="@Model.Coordenada_Lat" />
+                <input type="hidden" id="Coordenada_Lon" value="@Model.Coordenada_Lon" />
+                <dt class="col-sm-3">Propietario</dt>
+                <dd class="col-sm-9">@Model.Propietario.Apellido @Model.Propietario.Nombre</dd>
+
+                <dt class="col-sm-3">Direccion</dt>
+                <dd class="col-sm-9">@Model.Direccion</dd>
+
+                <dt class="col-sm-3">Tipo</dt>
+                <dd class="col-sm-9">@Model.Tipo?.Descripcion</dd>
+
+                <dt class="col-sm-3">Tipo de Uso</dt>
+                <dd class="col-sm-9">@Model.Tipo_Uso?.Descripcion</dd>
+
+                <dt class="col-sm-3">Ambientes</dt>
+                <dd class="col-sm-9">@Model.Ambientes</dd>
+
+                <dt class="col-sm-3">Precio</dt>
+                <dd class="col-sm-9">@precioFormateado</dd>
+
+                <dd class="col-sm-9"></dd><div id="map" style="height: 500px; width: 100%;"></div></dd>
+            </dl>
         </div>
         <div class="card-footer text-end">
-            <a href="@Url.Action("AltaEditar", "Propietario", new { id = Model.Id })" class="btn btn-warning">Editar</a>
+            <a href="@Url.Action("AltaEditar", "Inmueble", new { id = Model.Id })" class="btn btn-warning">Editar</a>
             <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalBajaLogica">
                 Eliminar
             </button>
-            <a href="@Url.Action("Index", "Propietario")" class="btn btn-primary">Volver a la lista</a>
-
+            <a href="@Url.Action("Index", "Inmueble")" class="btn btn-secondary">Volver a la Lista</a>
         </div>
     </div>
 </div>
-
-<!-- Button trigger modal -->
 
 
 <!-- Modal -->
 <div class="modal fade" id="modalBajaLogica" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Propiestario</h1>
+            <div class="modal-header bg-primary text-white">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Inquilino</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                ¿Esta seguro que desea eliminar a @Model.Apellido @Model.Nombre?
+                ¿Esta seguro que desea eliminar el inmueble?
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                <a href="@Url.Action("Baja", "Propietario", new { id = Model.Id })" class="btn btn-danger">Eliminar</a>
+                <form asp-action="BajaLogica" method="post" class="d-inline">
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                </form>
             </div>
         </div>
     </div>
-</div> *@
+</div>
+
+
+@section Scripts {
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
+        <script>
+        // Inicializar el mapa y establecer las coordenadas iniciales
+        var latitud = document.getElementById("Coordenada_Lat").value;
+        var longitud = document.getElementById("Coordenada_Lon").value;
+        var map = L.map('map').setView([latitud, longitud], 15); // Coordenadas y nivel de zoom
+
+        // Cargar y mostrar un mapa de OpenStreetMap en el contenedor
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Agregar un marcador al mapa y hacerlo arrastrable
+        var marker = L.marker([latitud, longitud], { draggable: false }).addTo(map);
+        </script>
+}

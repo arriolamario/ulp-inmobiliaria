@@ -1,6 +1,9 @@
 @model InmobiliariaCA.Models.Propietario
 
 <div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        
+    </div>
     <div class="card shadow-sm">
         <div class="card-header bg-primary text-white">
             <h2>Detalles del Propietario</h2>
@@ -27,6 +30,7 @@
             </dl>
         </div>
         <div class="card-footer text-end">
+            <a href="@Url.Action("AltaEditar", "Inmueble", new { idPropietario = Model.Id })" class="btn btn-success">Agregar Nuevo Inmueble</a>
             <a href="@Url.Action("AltaEditar", "Propietario", new { id = Model.Id })" class="btn btn-warning">Editar</a>
             <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalBajaLogica">
                 Eliminar

@@ -12,17 +12,12 @@
         <div class="card-body">
 
             <form asp-action="CrearActualizar">
+                <input type="hidden" asp-for="Coordenada_Lon">
+                <input type="hidden" asp-for="Coordenada_Lat">
                  <div class="row mb-3">
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         <div class="form-floating">
                             <input asp-for="Direccion" class="form-control" placeholder="Direccion")">
-                            <label asp-for="Direccion">Direccion</label>
-                            <span asp-validation-for="Direccion" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-floating">
-                            <input asp-for="Direccion" class="form-control" placeholder="Direccion">
                             <label asp-for="Direccion">Direccion</label>
                             <span asp-validation-for="Direccion" class="text-danger"></span>
                         </div>
@@ -56,23 +51,24 @@
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input asp-for="Coordenada_Lat" class="form-control" placeholder="Coordenada_Lat">
-                            <label asp-for="Coordenada_Lat">Latitud</label>
-                            <span asp-validation-for="Coordenada_Lat" class="text-danger"></span>
+                            <input id="Coordenada_Lat_Valor" name="Coordenada_Lat_Valor" class="form-control" placeholder="Latitud" disabled>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input asp-for="Coordenada_Lon" class="form-control" placeholder="Coordenada_Lon">
-                            <label asp-for="Coordenada_Lon">Longitud</label>
-                            <span asp-validation-for="Coordenada_Lon" class="text-danger"></span>
+                            <input id="Coordenada_Lon_Valor" name="Coordenada_Lon_Valor" class="form-control" placeholder="Longitud" disabled>
                         </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <div id="map" style="height: 500px; width: 100%;"></div>
                     </div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input asp-for="Precio" class="form-control" placeholder="Precio">
+                            <input asp-for="Precio" class="form-control" placeholder="Precio" type="number">
                             <label asp-for="Precio">Precio</label>
                             <span asp-validation-for="Precio" class="text-danger"></span>
                         </div>
@@ -80,7 +76,8 @@
                 </div>
 
                 <input type="hidden" asp-for="Id" />
-
+                <input type="hidden" data-val="true" id="Id_Propietario" name="Id_Propietario" value="@ViewBag.idPropietario">
+                
                 <div class="d-flex justify-content-between">
                     <a href="@Url.Action(Model == null ? "Index" : "Detalle", "Inmueble", Model == null || Model.Id == 0 ? null : new { id = Model.Id })" class="btn btn-secondary">
                         @(Model == null ? "Volver a la Lista" : "Volver")
@@ -98,4 +95,25 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
         <script
             src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
+        <script>
+        // Inicializar el mapa y establecer las coordenadas iniciales
+        var map = L.map('map').setView([document.getElementById("Coordenada_Lat").value, document.getElementById("Coordenada_Lon").value], 15); // Coordenadas y nivel de zoom
+
+        // Cargar y mostrar un mapa de OpenStreetMap en el contenedor
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Agregar un marcador al mapa y hacerlo arrastrable
+        var marker = L.marker([document.getElementById("Coordenada_Lat").value, document.getElementById("Coordenada_Lon").value], { draggable: true }).addTo(map);
+
+        // Actualizar las coordenadas cuando el marcador se mueve
+        marker.on('dragend', function (e) {
+            var position = marker.getLatLng();
+            document.getElementById("Coordenada_Lat").value = position.lat;
+            document.getElementById("Coordenada_Lon").value = position.lng;
+            document.getElementById("Coordenada_Lat_Valor").value = position.lat;
+            document.getElementById("Coordenada_Lon_Valor").value = position.lng;
+        });
+        </script>
 }

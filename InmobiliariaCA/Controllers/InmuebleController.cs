@@ -20,7 +20,6 @@ public class InmuebleController : Controller
 
     public IActionResult Index()
     {
-        ViewBag.Mensaje = TempData["MensajeExito"] ?? TempData["MensajeError"];
         return View(_repositorioInmueble.GetInmuebles());
     }
 
@@ -29,35 +28,40 @@ public class InmuebleController : Controller
         return View(_repositorioInmueble.GetInmueble(Id));
     }
 
-    public IActionResult AltaEditar(int Id)
+    public IActionResult AltaEditar(int Id, int idPropietario)
     {
         var tiposInmuebles = _repositorioInmueble.GetTipoInmuebles();
-        var tiposInmueblesUsos =  _repositorioInmueble.GetTipoInmueblesUsos();
+        var tiposInmueblesUsos = _repositorioInmueble.GetTipoInmueblesUsos();
         ViewBag.TipoInmuebles = new SelectList(tiposInmuebles ?? new List<TipoInmueble>(), "Id", "Descripcion");
         ViewBag.TipoInmueblesUsos = new SelectList(tiposInmueblesUsos ?? new List<TipoInmuebleUso>(), "Id", "Descripcion");
         if (Id == 0)
-            return View();
-
-        return View(_repositorioInmueble.GetInmueble(Id));
+        {
+            ViewBag.idPropietario = idPropietario;
+            return View(new Inmueble());
+        }
+        var inmueble = _repositorioInmueble.GetInmueble(Id);
+        ViewBag.idPropietario = inmueble?.Id_Propietario;
+        return View(inmueble);
     }
 
     [HttpPost]
-    public IActionResult AltaEditar(Inmueble inmueble)
+    public IActionResult CrearActualizar(Inmueble inmueble)
     {
         if (inmueble.Id == 0)
         {
             _repositorioInmueble.AltaInmueble(inmueble);
-            TempData["MensajeExito"] = "Inmueble insertado correctamente";
+            TempData["SuccessMessage"] = "Inmueble insertado correctamente";
         }
         else
         {
             _repositorioInmueble.ActualizarInmueble(inmueble);
-            TempData["MensajeExito"] = "Inmueble actualizado correctamente";
+            TempData["SuccessMessage"] = "Inmueble actualizado correctamente";
         }
         return RedirectToAction("Index");
     }
 
-    public IActionResult Baja(int Id)
+    [HttpPost]
+    public IActionResult BajaLogica(int Id)
     {
         if (Id == 0)
         {

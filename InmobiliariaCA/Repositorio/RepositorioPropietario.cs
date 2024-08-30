@@ -150,6 +150,7 @@ public class RepositorioPropietario : RepositorioBase
     public List<Propietario> GetPropietarios(List<int> propietariosIds)
     {
         List<Propietario> result = new List<Propietario>();
+        if(propietariosIds.Count == 0) return result;
         string query = @$"select * from propietario where {nameof(Propietario.Id)} in ({string.Join(",", propietariosIds)});";
         result = this.ExecuteReaderList<Propietario>(query, (reader) => {
             return new Propietario()
@@ -166,7 +167,7 @@ public class RepositorioPropietario : RepositorioBase
                             Fecha_Creacion = DateTime.Parse(reader["fecha_creacion"].ToString() ?? "0"),
                             Fecha_Actualizacion = DateTime.Parse(reader["fecha_actualizacion"].ToString() ?? "0")
                         }; 
-    });
+        });
         return result;
     }
 
