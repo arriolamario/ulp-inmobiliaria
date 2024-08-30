@@ -1,26 +1,31 @@
 ﻿@model IEnumerable<InmobiliariaCA.Models.Inmueble>
 @{
     ViewData["Title"] = "Home Page";
+    System.Globalization.CultureInfo culturaArgentina = new System.Globalization.CultureInfo("es-AR");
 }
 
 <div class="container mt-5">
-    <h2 class="mb-4">Lista de Inmuebles</h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+          <h2 class="text-primary"><i class="fas fa-users"></i> Lista de Inmuebles</h2>
+        @* <a href="@Url.Action("AltaEditar", "Inmueble")" class="btn btn-success shadow-sm">Agregar Nuevo Inmueble</a> *@
+    </div>
     <div class="row">
-        @foreach (var inmueble in Model)
-        {
-            <div class="col-md-4 mb-4">
-                <div class="card">
-                    <h5 class="card-header">(@inmueble.Id) @inmueble.Direccion</h5>
+        @foreach (var inmueble in Model) {
+            <div class="col-12 mb-4">
+                <div class="card shadow-sm">
                     <div class="card-body">
-                        <h6 class="card-title"><strong>Precio:</strong> @inmueble.Precio</h6>
-                    </div>
-                    <div class="card-footer text-end">
-                        <a href="@Url.Action("Detalle", "Inmueble", new { id = inmueble.Id })"
-                            class="btn btn-info btn text-end">Ver</a>
+                        <h5 class="card-title text-white p-2" style="background-color: #2d94f5;">@inmueble.Direccion</h5>
+                         <p class="card-text"><strong>Propietario:</strong> @inmueble.Propietario.Apellido @inmueble.Propietario.Nombre</p>
+                         <p class="card-text"><strong>Precio: </strong> @inmueble.Precio.ToString("C", culturaArgentina)</p>
+                        @*<p class="card-text"><strong>Teléfono:</strong> @inquilino.Telefono</p>
+                        <p class="card-text"><strong>Email:</strong> @inquilino.Email</p>
+                        <p class="card-text"><strong>Dirección:</strong> @inquilino.Direccion</p> *@
+                        <div class="d-flex justify-content-end">
+                            <a href="@Url.Action("Detalle", "Inmueble", new { id = inmueble.Id })" class="btn btn-info btn-sm mx-1 shadow-sm">Ver</a>
+                        </div>
                     </div>
                 </div>
             </div>
         }
     </div>
-    <a href="@Url.Action("AltaEditar", "Inmueble")" class="btn btn-success mt-4">Agregar Nuevo Inmueble</a>
 </div>

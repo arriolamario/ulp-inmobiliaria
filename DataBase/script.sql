@@ -53,8 +53,8 @@ CREATE TABLE IF NOT EXISTS inmueble (
     id_tipo_inmueble_uso INT NOT NULL,
     id_tipo_inmueble INT NOT NULL,
     ambientes INT NOT NULL,
-    coordenada_lat VARCHAR(25) NOT NULL,
-    coordenada_lon VARCHAR(25) NOT NULL,
+    coordenada_lat VARCHAR(255) NOT NULL,
+    coordenada_lon VARCHAR(255) NOT NULL,
     precio DECIMAL(10, 2) NOT NULL,
     estado INT NOT NULL DEFAULT 1,
     id_propietario INT,
@@ -127,4 +127,14 @@ VALUES
 ('10000004', 'Fernando', 'Álvarez', '555-3456', 'fernando.alvarez@example.com', 'Plaza del Sol 34, Centro Histórico', 1),
 ('10000005', 'Carmen', 'Fernández', '555-4567', 'carmen.fernandez@example.com', 'Avenida del Mar 78, Playa Norte', 1);
 
+-- Insertar datos en la tabla 'tipo_inmueble' hasta tener el AMB de tipo inmueble
+insert into tipo_inmueble (descripcion) 
+values ('Tipo Inmueble 1'),
+('Tipo Inmueble 2'),
+('Tipo Inmueble 3');
 
+-- Insertar datos en la tabla 'tipo_inmueble_uso' hasta tener el ABM de tipo inmueble uso
+insert into tipo_inmueble_uso (descripcion) 
+values ('Tipo Inmueble Uso 1'),
+('Tipo Inmueble Uso 2'),
+('Tipo Inmueble Uso 3');

@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/InmobiliariaCA.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    
 </head>
 
 <body onload="openModal()">
@@ -32,9 +34,15 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Inquilino"
                                 asp-action="">Inquilinos</a>
                         </li>
+<<<<<<< HEAD
                          <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Contrato"
                                 asp-action="">Contratos</a>
+=======
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Inmueble"
+                                asp-action="">Inmuebles</a>
+>>>>>>> acf106abafeb5cd061bbab6c0fe502eab0e53414
                         </li>
                     </ul>
                 </div>
@@ -88,7 +96,7 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 
