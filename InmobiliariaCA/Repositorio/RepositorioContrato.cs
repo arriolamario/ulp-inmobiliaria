@@ -156,6 +156,7 @@ using System;
                             WHERE {nameof(Contrato.Id)} = @{nameof(Contrato.Id)};";
 
             int result = this.ExecuteNonQuery(query, (parameters) => {
+                parameters.AddWithValue($"@{nameof(Contrato.Id)}", contrato.Id);
                 parameters.AddWithValue($"@{nameof(Contrato.Id_Inmueble)}", contrato.Id_Inmueble);
                 parameters.AddWithValue($"@{nameof(Contrato.Id_Inquilino)}", contrato.Id_Inquilino);
                 parameters.AddWithValue($"@{nameof(Contrato.Fecha_Desde)}", contrato.Fecha_Desde);
