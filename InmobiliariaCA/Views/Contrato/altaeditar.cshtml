@@ -10,24 +10,24 @@
             <h2>@ViewData["Title"]</h2>
         </div>
         <div class="card-body">
-            <form asp-action="AltaEditar" method="post">
-                <input type="hidden" asp-for="Id" />
+            <form asp-action="CrearActualizar">
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <label asp-for="Id_Inmueble" class="form-label">Inmueble</label>
-                        <select asp-for="Id_Inmueble" class="form-select" asp-items="ViewBag.Inmuebles">
-                            <option value="">Seleccione un Inmueble</option>
-                        </select>
-                        <span asp-validation-for="Id_Inmueble" class="text-danger"></span>
+                        <div class="form-floating">
+                            @Html.DropDownListFor(m => m.Id_Inmueble, (SelectList)ViewBag.Inmuebles, "", new { @class = "form-select", id = 1})
+                            <label for="Id_Inmueble">Inmueble</label>
+                            <span asp-validation-for="Id_Inmueble" class="text-danger"></span>
+                        </div>
                     </div>
                     <div class="col-md-6">
-                        <label asp-for="Id_Inquilino" class="form-label">Inquilino</label>
-                        <select asp-for="Id_Inquilino" class="form-select" asp-items="ViewBag.Inquilinos">
-                            <option value="">Seleccione un Inquilino</option>
-                        </select>
-                        <span asp-validation-for="Id_Inquilino" class="text-danger"></span>
+                        <div class="form-floating">
+                            @Html.DropDownListFor(m => m.Id_Inquilino, (SelectList)ViewBag.Inquilinos, "", new { @class = "form-select", id = 1 })
+                            <label for="Id_Inquilino">Inquilino</label>
+                            <span asp-validation-for="Id_Inquilino" class="text-danger"></span>
+                        </div>
                     </div>
                 </div>
+
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label asp-for="Fecha_Desde" class="form-label">Fecha Desde</label>
@@ -40,16 +40,35 @@
                         <span asp-validation-for="Fecha_Hasta" class="text-danger"></span>
                     </div>
                 </div>
+
                 <div class="row mb-3">
-                    <div class="col-md-12">
+                    <div class="col-md-6">
                         <label asp-for="Monto_Alquiler" class="form-label">Monto del Alquiler</label>
-                        <input asp-for="Monto_Alquiler" class="form-control" placeholder="Ingrese el monto del alquiler">
+                        <input asp-for="Monto_Alquiler" class="form-control" placeholder="Ingrese el monto del alquiler"  />
                         <span asp-validation-for="Monto_Alquiler" class="text-danger"></span>
                     </div>
+                    <div class="col-md-6">
+                        <label asp-for="Multa" class="form-label">Multa (opcional)</label>
+                        <input asp-for="Multa" class="form-control" placeholder="Ingrese la multa si aplica" type="number"/>
+                        <span asp-validation-for="Multa" class="text-danger"></span>
+                    </div>
                 </div>
-                <div class="d-flex justify-content-between">
-                    <a asp-action="Index" class="btn btn-secondary">Volver</a>
-                    <button type="submit" class="btn btn-primary">@(Model == null || Model.Id == 0 ? "Registrar" : "Actualizar") </button>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="Fecha_Finalizacion_Anticipada" class="form-label">Fecha Finalización Anticipada (opcional)</label>
+                        <input asp-for="Fecha_Finalizacion_Anticipada" type="date" class="form-control" />
+                        <span asp-validation-for="Fecha_Finalizacion_Anticipada" class="text-danger"></span>
+                    </div>
+                </div>
+
+                  <div class="d-flex justify-content-between">
+                    <a href="@Url.Action(Model == null ? "Index" : "Detalle", "Contrato", Model == null || Model.Id == 0 ? null : new { id = Model.Id })" class="btn btn-secondary">
+                        @(Model == null ? "Volver a la Lista" : "Volver")
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        @(Model == null || Model.Id == 0 ? "Registrar" : "Actualizar")
+                    </button>
                 </div>
             </form>
         </div>
@@ -58,5 +77,6 @@
 
 @section Scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
 }

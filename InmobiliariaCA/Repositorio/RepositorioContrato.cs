@@ -76,7 +76,8 @@ namespace InmobiliariaCA.Repositorio
                               where {nameof(Contrato.Id)} = {id} and estado = 1;";
 
             result = this.ExecuteReader<Contrato>(query, (reader) => {
-                return new Contrato() {
+                Contrato contrato = new Contrato() {
+                    Id = int.Parse(reader["id"].ToString() ?? "0"),
                     Id_Inmueble = int.Parse(reader["id_inmueble"].ToString() ?? "0"),
                     Id_Inquilino = int.Parse(reader["id_inquilino"].ToString() ?? "0"),
                     Fecha_Desde = DateTime.Parse(reader["fecha_desde"].ToString() ?? "0"),
@@ -88,6 +89,11 @@ namespace InmobiliariaCA.Repositorio
                     Fecha_Creacion = DateTime.Parse(reader["fecha_creacion"].ToString() ?? "0"),
                     Fecha_Actualizacion = DateTime.Parse(reader["fecha_actualizacion"].ToString() ?? "0")
                 };
+                // Cargar los objetos Inmueble e Inquilino usando sus IDs
+                contrato.Inmueble = _repositorioInmueble.GetInmueble(contrato.Id_Inmueble);
+                contrato.Inquilino = _repositorioInquilino.GetInquilino(contrato.Id_Inquilino);
+
+                return contrato;
             });
 
             return result;

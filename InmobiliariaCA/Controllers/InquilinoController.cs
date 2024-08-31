@@ -25,7 +25,7 @@ public class InquilinoController: Controller {
         if(inquilino == null) {
             return NotFound();
         }
-        return View();
+        return View(inquilino);
     }
     public IActionResult AltaEditar(int Id) {
         if (Id == 0)
@@ -35,7 +35,7 @@ public class InquilinoController: Controller {
     }
 
     [HttpPost]
-    public IActionResult AltaEditar(Inquilino inquilino) {
+    public IActionResult CrearActualizar(Inquilino inquilino) {
 
         var existingInquilino = _repositorioInquilino.ExisteInquilinoPorDni(inquilino.Dni);
 

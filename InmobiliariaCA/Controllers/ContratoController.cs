@@ -27,6 +27,8 @@ namespace InmobiliariaCA.Controllers {
 
         // GET: Contrato/Details/5
         public IActionResult Detalle(int Id) {
+
+            Console.WriteLine("Id detallle: " + Id);
             var contrato = _repositorioContrato.GetContrato(Id);
             if (contrato == null) {
                 return NotFound();
@@ -46,11 +48,9 @@ namespace InmobiliariaCA.Controllers {
         }
 
         [HttpPost]
-        public IActionResult AltaEditar(Contrato Contrato) {
+        public IActionResult CrearActualizar(Contrato Contrato) {
 
-            //ViewBag.Inquilinos = new SelectList(_repositorioInquilino.GetInquilinos(), "Id", "NombreCompletoDNI");
-            //return View(Contrato);
-
+            Console.WriteLine("Contrato id: " + Contrato.Id);
             if (Contrato.Id == 0) {
                 _repositorioContrato.InsertarContrato(Contrato);
                 TempData["SuccessMessage"] = "Contrato agregado correctamente.";
@@ -61,35 +61,9 @@ namespace InmobiliariaCA.Controllers {
             
             return RedirectToAction("Index");
         }
-
-        public IActionResult Edit(int Id) {
-            var contrato = _repositorioContrato.GetContrato(Id);
-            if (contrato == null) {
-                return NotFound();
-            }
-            return View(contrato);
-        }
-
-        // [HttpPost]
-        // public IActionResult Actualizar(int Id, Contrato Contrato) {
-        //     if (Id != Contrato.Id) {
-        //         return NotFound();
-        //     }
-
-        //     if (ModelState.IsValid) {
-        //         bool result = _repositorioContrato.ActualizarContrato(Contrato);
-        //         if (result) {
-        //             return RedirectToAction(nameof(Index));
-        //         } else {
-        //             ModelState.AddModelError("", "Error al actualizar el contrato");
-        //         }
-        //     }
-        //     return View(Contrato);
-       
-        // }
         
         [HttpPost]
-        public IActionResult DeleteConfirmed(int id) {
+        public IActionResult Baja(int id) {
             bool result = _repositorioContrato.BajaLogicaContrato(id);
             if (result) {
                 return RedirectToAction(nameof(Index));
