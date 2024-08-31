@@ -1,10 +1,8 @@
-namespace InmobiliariaCA.Repositorio
-{
-    using InmobiliariaCA.Models;
-    using MySql.Data.MySqlClient;
-    using Microsoft.Extensions.Configuration;
-    using System.Collections.Generic;
-    using System;
+namespace InmobiliariaCA.Repositorio;
+using InmobiliariaCA.Models;
+using Microsoft.Extensions.Configuration;
+using System.Collections.Generic;
+using System;
 
     public class RepositorioContrato : RepositorioBase {
 
@@ -49,8 +47,8 @@ namespace InmobiliariaCA.Repositorio
                 };
 
                 // Cargar los objetos Inmueble e Inquilino usando sus IDs
-                contrato.Inmueble = _repositorioInmueble.GetInmueble(contrato.Id_Inmueble);
-                contrato.Inquilino = _repositorioInquilino.GetInquilino(contrato.Id_Inquilino);
+                contrato.Inmueble =contrato.Inmueble = _repositorioInmueble.GetInmueble(contrato.Id_Inmueble) ?? throw new InvalidOperationException("Inmueble no se encuentra");
+                contrato.Inquilino = _repositorioInquilino.GetInquilino(contrato.Id_Inquilino) ?? throw new InvalidOperationException("Inquilino no se encuentra");
 
                 return contrato;
             });
@@ -90,12 +88,13 @@ namespace InmobiliariaCA.Repositorio
                     Fecha_Actualizacion = DateTime.Parse(reader["fecha_actualizacion"].ToString() ?? "0")
                 };
                 // Cargar los objetos Inmueble e Inquilino usando sus IDs
-                contrato.Inmueble = _repositorioInmueble.GetInmueble(contrato.Id_Inmueble);
-                contrato.Inquilino = _repositorioInquilino.GetInquilino(contrato.Id_Inquilino);
+                contrato.Inmueble =contrato.Inmueble = _repositorioInmueble.GetInmueble(contrato.Id_Inmueble) ?? throw new InvalidOperationException("Inmueble no se encuentra");
+                contrato.Inquilino = _repositorioInquilino.GetInquilino(contrato.Id_Inquilino) ?? throw new InvalidOperationException("Inquilino no se encuentra");
 
                 return contrato;
             });
-
+            Console.WriteLine(result);
+            Console.WriteLine("ID" + result.Id);
             return result;
         }
 
@@ -166,7 +165,6 @@ namespace InmobiliariaCA.Repositorio
                 parameters.AddWithValue($"@{nameof(Contrato.Multa)}", (object?)contrato.Multa ?? DBNull.Value);
                 parameters.AddWithValue($"@{nameof(Contrato.Id_Usuario_Finalizacion)}", (object?)contrato.Id_Usuario_Finalizacion ?? DBNull.Value);
                 parameters.AddWithValue($"@{nameof(Contrato.Fecha_Actualizacion)}", contrato.Fecha_Actualizacion);
-                parameters.AddWithValue($"@{nameof(Contrato.Id)}", contrato.Id);
             });
 
             return result;
@@ -177,12 +175,11 @@ namespace InmobiliariaCA.Repositorio
                                 {nameof(Contrato.Estado)} = 0
                               WHERE {nameof(Contrato.Id)} = @{nameof(Contrato.Id)};";
 
-            bool result = 0 < this.ExecuteNonQuery(query, (parameters) =>
-            {
+            bool result = 0 < this.ExecuteNonQuery(query, (parameters) => {
                 parameters.AddWithValue($"@{nameof(Contrato.Id)}", id);
             });
 
             return result;
         }        
     }
-}
+
