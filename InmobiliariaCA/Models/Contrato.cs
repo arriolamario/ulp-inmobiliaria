@@ -52,8 +52,8 @@ public class Contrato {
     [DataType(DataType.DateTime)]
     public DateTime Fecha_Actualizacion { get; set; } = DateTime.Now;
 
-    public virtual Inmueble Inmueble { get; set; }
-    public virtual Inquilino Inquilino { get; set; }
-    public virtual Usuario Usuario_Creacion { get; set; }
-    public virtual Usuario Usuario_Finalizacion { get; set; }
+    public virtual Inmueble? Inmueble { get; set; }
+    public virtual Inquilino? Inquilino { get; set; }
+    public virtual Usuario? Usuario_Creacion { get; set; }
+    public virtual Usuario? Usuario_Finalizacion { get; set; }
 }

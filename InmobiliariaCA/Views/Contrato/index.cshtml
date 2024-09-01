@@ -16,8 +16,8 @@
                     <div class="card shadow-sm">
                         <div class="card-body">
                              <h5 class="card-title text-white p-2" style="background-color: #2d94f5;">Nro: @contrato.Id</h5>
-                            <p class="card-text"><strong>Inmueble:</strong> @contrato.Inmueble.NombreInmueble</p>
-                            <p class="card-text"><strong>Inquilino:</strong> @contrato.Inquilino.NombreCompletoDNI</p>
+                            <p class="card-text"><strong>Inmueble:</strong> @contrato.Inmueble?.NombreInmueble</p>
+                            <p class="card-text"><strong>Inquilino:</strong> @contrato.Inquilino?.NombreCompletoDNI</p>
                             <p class="card-text"><strong>Fecha Desde:</strong> @contrato.Fecha_Desde.ToShortDateString()</p>
                             <p class="card-text"><strong>Fecha Hasta:</strong> @contrato.Fecha_Hasta.ToShortDateString()</p>
                             <p class="card-text"><strong>Monto de Alquiler:</strong> @contrato.Monto_Alquiler</p>

@@ -16,7 +16,9 @@
                     <div class="card shadow-sm">
                         <div class="card-body">
                             <h5 class="card-title text-white p-2" style="background-color: #2d94f5;">@inmueble.Direccion</h5>
-                            <p class="card-text"><strong>Propietario:</strong> @inmueble.Propietario.Apellido @inmueble.Propietario.Nombre</p>
+                            @if(inmueble.Propietario != null){
+                                <p class="card-text"><strong>Propietario:</strong> @inmueble.Propietario.Apellido @inmueble.Propietario.Nombre</p>
+                            }
                             <p class="card-text"><strong>Precio: </strong> @inmueble.Precio.ToString("C", culturaArgentina)</p>
                             @*<p class="card-text"><strong>Teléfono:</strong> @inquilino.Telefono</p>
                             <p class="card-text"><strong>Email:</strong> @inquilino.Email</p>
