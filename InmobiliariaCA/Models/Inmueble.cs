@@ -1,5 +1,6 @@
 namespace InmobiliariaCA.Models;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 public class Inmueble
 {
@@ -30,4 +31,7 @@ public class Inmueble
     public Propietario? Propietario { get; set; }
     public DateTime Fecha_Creacion { get; set; }
     public DateTime Fecha_Actualizacion { get; set; }
+    
+    [NotMapped]
+    public string NombreInmueble => $"{Direccion} - {Tipo?.Descripcion}";
 }

@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS inquilino (
 );
 
 -- Crear la tabla 'tipo_inmueble'
-CREATE TABLE IF NOT EXISTS tipo_inmueble (
+CREATE TABLE tipo_inmueble (
     id INT AUTO_INCREMENT PRIMARY KEY,
     descripcion VARCHAR(100) NOT NULL,
 	fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS tipo_inmueble (
 );
 
 -- Crear la tabla 'tipo_inmueble_uso'
-CREATE TABLE IF NOT EXISTS tipo_inmueble_uso (
+CREATE TABLE tipo_inmueble_uso (
     id INT AUTO_INCREMENT PRIMARY KEY,
     descripcion VARCHAR(100) NOT NULL,
 	fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -47,14 +47,14 @@ CREATE TABLE IF NOT EXISTS tipo_inmueble_uso (
 );
 
 -- Crear la tabla de 'inmueble'
-CREATE TABLE IF NOT EXISTS inmueble (
+CREATE TABLE inmueble (
     id INT AUTO_INCREMENT PRIMARY KEY,
     direccion VARCHAR(255) NOT NULL,
     id_tipo_inmueble_uso INT NOT NULL,
     id_tipo_inmueble INT NOT NULL,
     ambientes INT NOT NULL,
-    coordenada_lat VARCHAR(255) NOT NULL,
-    coordenada_lon VARCHAR(255) NOT NULL,
+    coordenada_lat FLOAT NOT NULL,
+    coordenada_lon FLOAT NOT NULL,
     precio DECIMAL(10, 2) NOT NULL,
     estado INT NOT NULL DEFAULT 1,
     id_propietario INT,
@@ -65,49 +65,36 @@ CREATE TABLE IF NOT EXISTS inmueble (
 	FOREIGN KEY (id_tipo_inmueble) REFERENCES tipo_inmueble(id)
 );
 
-CREATE TABLE IF NOT EXISTS usuario (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    password_hash VARCHAR(255) NOT NULL,
-    nombre VARCHAR(100),
-    apellido VARCHAR(100),
-    telefono VARCHAR(20),
-    avatar_url TEXT,
-    rol ENUM('empleado', 'administrador') NOT NULL,
-    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
-
-CREATE TABLE IF NOT EXISTS pago (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    contrato_id INT NOT NULL,
-    numero_pago INT NOT NULL,
-    fecha_pago DATE NOT NULL,
-    detalle VARCHAR(255),
-    importe decimal(10,2) NULL,
-    FOREIGN KEY (contrato_id) REFERENCES contrato(id)
-);
-
 CREATE TABLE IF NOT EXISTS contrato (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    id_inmueble INT NOT NULL,
+    id INT AUTO_INCREMENT PRIMARY KEY, 
+    id_inmueble INT NOT NULL,  
     id_inquilino INT NOT NULL,
-    fecha_desde DATE NOT NULL,
-    fecha_hasta DATE NOT NULL,
+    fecha_desde DATE NOT NULL, 
+    fecha_hasta DATE NOT NULL, 
     monto_alquiler DECIMAL(10, 2) NOT NULL,
-    fecha_finalizacion_anticipada DATE,
-    multa DECIMAL(10, 2),
-    estado BOOLEAN NOT NULL DEFAULT TRUE,
-    id_usuario_creacion INT NOT NULL,
-    id_usuario_finalizacion INT,
-    fecha_creacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    fecha_actualizacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    fecha_finalizacion_anticipada DATE DEFAULT NULL,
+    multa DECIMAL(10, 2) DEFAULT NULL,  
+    estado TINYINT(1) NOT NULL DEFAULT 1, 
+    id_usuario_creacion INT NOT NULL, 
+    id_usuario_finalizacion INT DEFAULT NULL,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (id_inmueble) REFERENCES inmueble(id),
-    FOREIGN KEY (id_inquilino) REFERENCES inquilino(id),
-    FOREIGN KEY (id_usuario_creacion) REFERENCES usuario(id),
+    FOREIGN KEY (id_inquilino) REFERENCES inquilino(id), 
+    FOREIGN KEY (id_usuario_creacion) REFERENCES usuario(id), 
     FOREIGN KEY (id_usuario_finalizacion) REFERENCES usuario(id)
 );
 
+CREATE TABLE IF NOT EXISTS usuario (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL,        
+    email VARCHAR(100) NOT NULL UNIQUE,   
+    contraseña VARCHAR(255) NOT NULL,  
+    rol ENUM('administrador', 'empleado') NOT NULL,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    estado TINYINT(1) NOT NULL DEFAULT 1
+);
 
 -- Insertar datos en la tabla 'propietario'
 INSERT INTO propietario (dni, nombre, apellido, telefono, email, direccion)
@@ -127,27 +114,4 @@ VALUES
 ('10000004', 'Fernando', 'Álvarez', '555-3456', 'fernando.alvarez@example.com', 'Plaza del Sol 34, Centro Histórico', 1),
 ('10000005', 'Carmen', 'Fernández', '555-4567', 'carmen.fernandez@example.com', 'Avenida del Mar 78, Playa Norte', 1);
 
-insert into tipo_inmueble (descripcion) 
-values ('Duplex'),
-('Casa'),
-('Dos Ambientes');
-
-insert into tipo_inmueble_uso (descripcion) 
-values ('Comercial'),
-('Laboral'),
-('Personal');
-
-INSERT INTO inmueble ( direccion, id_tipo_inmueble_uso, id_tipo_inmueble, ambientes, coordenada_lat, coordenada_lon, precio, estado, id_propietario) VALUES
-('Calle Falsa 123, Springfield', 1, 1, 3, 34.0522, -118.2437, 1500.00, 1, 1),
-('742 Evergreen Terrace, Springfield', 2, 2, 5, 34.0522, -118.2437, 2500.00, 1, 2),
-('123 Elm Street, West Springfield', 1, 1, 4, 34.0522, -118.2437, 2000.00, 1, 3),
-('555 North Oak Trafficway, Springfield', 2, 3, 6, 34.0522, -118.2437, 3000.00, 1, 4);
-
-INSERT INTO `usuario` (`email`, `password_hash`, `nombre`, `apellido`, `telefono`, `avatar_url`, `rol`)
-VALUES
-('john.doe@example.com', '$2y$10$abcdefg1234567890hijklmnopqrstuv', 'John', 'Doe', '+123456789', 'https://example.com/avatar1.png', 'empleado'),
-('jane.smith@example.com', '$2y$10$1234567890abcdefg1234567890abcd', 'Jane', 'Smith', '+987654321', 'https://example.com/avatar2.png', 'administrador'),
-('maria.lopez@example.com', '$2y$10$hijklmnopqrstuv1234567890abcdefg', 'Maria', 'Lopez', '+1122334455', 'https://example.com/avatar3.png', 'empleado'),
-('carlos.martin@example.com', '$2y$10$1234567890abcdefg1234567890abcd', 'Carlos', 'Martin', '+9988776655', 'https://example.com/avatar4.png', 'empleado'),
-('laura.garcia@example.com', '$2y$10$abcdefg1234567890hijklmnopqrstuv', 'Laura', 'Garcia', '+6655443322', 'https://example.com/avatar5.png', 'administrador');
 

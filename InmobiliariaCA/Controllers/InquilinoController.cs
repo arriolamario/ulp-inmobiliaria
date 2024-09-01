@@ -21,7 +21,11 @@ public class InquilinoController: Controller {
     }
 
     public IActionResult Detalle(int Id) {
-        return View(_repositorioInquilino.GetInquilino(Id));
+        var inquilino = _repositorioInquilino.GetInquilino(Id);
+        if(inquilino == null) {
+            return NotFound();
+        }
+        return View(inquilino);
     }
     public IActionResult AltaEditar(int Id) {
         if (Id == 0)

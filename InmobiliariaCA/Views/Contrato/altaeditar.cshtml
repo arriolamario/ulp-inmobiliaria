@@ -1,0 +1,84 @@
+@model InmobiliariaCA.Models.Contrato
+
+@{
+    ViewData["Title"] = Model == null || Model.Id == 0 ? "Crear Contrato" : "Editar Contrato";
+}
+
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h2>@ViewData["Title"]</h2>
+        </div>
+        <div class="card-body">
+            <form asp-action="CrearActualizar">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            @Html.DropDownListFor(m => m.Id_Inmueble, (SelectList)ViewBag.Inmuebles, "", new { @class = "form-select", id = 1})
+                            <label for="Id_Inmueble">Inmueble</label>
+                            <span asp-validation-for="Id_Inmueble" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            @Html.DropDownListFor(m => m.Id_Inquilino, (SelectList)ViewBag.Inquilinos, "", new { @class = "form-select", id = 1 })
+                            <label for="Id_Inquilino">Inquilino</label>
+                            <span asp-validation-for="Id_Inquilino" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="Fecha_Desde" class="form-label">Fecha Desde</label>
+                        <input asp-for="Fecha_Desde" type="date" class="form-control" />
+                        <span asp-validation-for="Fecha_Desde" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Fecha_Hasta" class="form-label">Fecha Hasta</label>
+                        <input asp-for="Fecha_Hasta" type="date" class="form-control" />
+                        <span asp-validation-for="Fecha_Hasta" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="Monto_Alquiler" class="form-label">Monto del Alquiler</label>
+                        <input asp-for="Monto_Alquiler" class="form-control" placeholder="Ingrese el monto del alquiler" type="number" />
+                        <span asp-validation-for="Monto_Alquiler" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Multa" class="form-label">Multa (opcional)</label>
+                        <input asp-for="Multa" class="form-control" placeholder="Ingrese la multa si aplica" type="number"/>
+                        <span asp-validation-for="Multa" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="Fecha_Finalizacion_Anticipada" class="form-label">Fecha Finalización Anticipada (opcional)</label>
+                        <input asp-for="Fecha_Finalizacion_Anticipada" type="date" class="form-control" />
+                        <span asp-validation-for="Fecha_Finalizacion_Anticipada" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <input type="hidden" asp-for="Id" />
+
+                  <div class="d-flex justify-content-between">
+                    <a href="@Url.Action(Model == null ? "Index" : "Detalle", "Contrato", Model == null || Model.Id == 0 ? null : new { id = Model.Id })" class="btn btn-secondary">
+                        @(Model == null ? "Volver a la Lista" : "Volver")
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        @(Model == null || Model.Id == 0 ? "Registrar" : "Actualizar")
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
+}
