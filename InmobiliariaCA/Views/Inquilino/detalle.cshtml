@@ -1,6 +1,6 @@
 @model InmobiliariaCA.Models.Inquilino
 <div class="container mt-5">
-<div class="card shadow-sm">
+    <div class="card shadow-sm">
         <div class="card-header bg-primary text-white">
             <h2>Detalles del Inquilino</h2>
         </div>
@@ -27,7 +27,33 @@
         </div>
         <div class="card-footer text-end">
             <a href="@Url.Action("AltaEditar", "Inquilino", new { id = Model.Id })" class="btn btn-warning">Editar</a>
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalBajaLogica">
+                Eliminar
+            </button>
             <a href="@Url.Action("Index", "Inquilino")" class="btn btn-secondary">Volver a la Lista</a>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="modalBajaLogica" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Inquilino</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ¿Esta seguro que desea eliminar a @Model.Apellido @Model.Nombre?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <form asp-action="BajaLogica" method="post" class="d-inline">
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                </form>
+            </div>
         </div>
     </div>
 </div>

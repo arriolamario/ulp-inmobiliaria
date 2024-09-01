@@ -88,7 +88,7 @@ public class RepositorioPropietario : RepositorioBase
         bool existe = false;
         string query = @$"select count(*) from propietario where {nameof(Propietario.Dni)} = @{nameof(Propietario.Dni)};";
 
-        existe = this.ExecuteNonQuery(query, (parameters) => {
+        existe = this.ExecuteScalar(query, (parameters) => {
             parameters.AddWithValue($"@{nameof(Propietario.Dni)}", dni);
         }) > 0;
         return existe;
@@ -123,7 +123,7 @@ public class RepositorioPropietario : RepositorioBase
                             VALUES(@{nameof(Propietario.Dni)}, @{nameof(Propietario.Nombre)}, @{nameof(Propietario.Apellido)}, @{nameof(Propietario.Telefono)}, @{nameof(Propietario.Email)}, @{nameof(Propietario.Direccion)});
                             SELECT LAST_INSERT_ID();";
 
-        int result = this.ExecuteNonQuery(query, (parameters) => {
+        int result = this.ExecuteScalar(query, (parameters) => {
             parameters.AddWithValue($"@{nameof(Propietario.Dni)}", propietario.Dni);
             parameters.AddWithValue($"@{nameof(Propietario.Nombre)}", propietario.Nombre);
             parameters.AddWithValue($"@{nameof(Propietario.Apellido)}", propietario.Apellido);
@@ -143,6 +143,31 @@ public class RepositorioPropietario : RepositorioBase
             parameters.AddWithValue($"@{nameof(Propietario.Id)}", Id);
         });
 
+        return result;
+    }
+
+
+    public List<Propietario> GetPropietarios(List<int> propietariosIds)
+    {
+        List<Propietario> result = new List<Propietario>();
+        if(propietariosIds.Count == 0) return result;
+        string query = @$"select * from propietario where {nameof(Propietario.Id)} in ({string.Join(",", propietariosIds)});";
+        result = this.ExecuteReaderList<Propietario>(query, (reader) => {
+            return new Propietario()
+                        {
+                            Apellido = reader["apellido"].ToString() ?? "",
+                            Dni = reader["dni"].ToString() ?? "",
+                            Email = reader["email"].ToString() ?? "",
+                            Nombre = reader["nombre"].ToString() ?? "",
+                            TelefonoArea = reader["telefono"].ToString()?.Split('-')[0] ?? "",
+                            TelefonoNumero = reader["telefono"].ToString()?.Split('-')[1] ?? "",
+                            Direccion = reader["direccion"].ToString() ?? "",
+                            Id = int.Parse(reader["id"].ToString() ?? "0"),
+                            Estado = int.Parse(reader["estado"].ToString() ?? "0"),
+                            Fecha_Creacion = DateTime.Parse(reader["fecha_creacion"].ToString() ?? "0"),
+                            Fecha_Actualizacion = DateTime.Parse(reader["fecha_actualizacion"].ToString() ?? "0")
+                        }; 
+        });
         return result;
     }
 

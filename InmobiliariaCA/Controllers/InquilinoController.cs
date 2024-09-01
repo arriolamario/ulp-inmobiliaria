@@ -38,6 +38,7 @@ public class InquilinoController: Controller {
         if (existingInquilino && inquilino.Id == 0) {
            
             ModelState.AddModelError("Dni", "El DNI ingresado ya está en uso.");
+            TempData["ErrorMessage"] = "El inquilino ya existe.";
             var errors = ModelState.Values.SelectMany(v => v.Errors).ToList();
             foreach (var error in errors) {
                 Console.WriteLine("Valor de error: " + error.ErrorMessage);
