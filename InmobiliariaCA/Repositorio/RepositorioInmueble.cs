@@ -88,7 +88,7 @@ public class RepositorioInmueble : RepositorioBase
         var tiposInmueblesUsos = _repositorioTipos.GetTipoInmueblesUsos();
 
         resultInmuebles.ForEach(x => {
-            x.Propietario = propietarios.FirstOrDefault(y => y.Id == x.Id_Propietario);
+            x.Propietario = propietarios.FirstOrDefault(y => y.Id == x.Id_Propietario)?? new Propietario();
             x.Tipo = tiposInmuebles.FirstOrDefault(y => y.Id == x.Id_Tipo_Inmueble);
             x.Tipo_Uso = tiposInmueblesUsos.FirstOrDefault(y => y.Id == x.Id_Tipo_Inmueble_Uso);
         });
@@ -141,7 +141,7 @@ public class RepositorioInmueble : RepositorioBase
         var tiposInmuebles = _repositorioTipos.GetTipoInmuebles();
         var tiposInmueblesUsos = _repositorioTipos.GetTipoInmueblesUsos();
         if(result != null){
-            result.Propietario = propietarios.FirstOrDefault(y => y.Id == result.Id_Propietario);
+            result.Propietario = propietarios.FirstOrDefault(y => y.Id == result.Id_Propietario) ?? new Propietario();
             result.Tipo = tiposInmuebles.FirstOrDefault(y => y.Id == result.Id_Tipo_Inmueble);
             result.Tipo_Uso = tiposInmueblesUsos.FirstOrDefault(y => y.Id == result.Id_Tipo_Inmueble_Uso);
 
