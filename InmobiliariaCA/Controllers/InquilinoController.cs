@@ -16,8 +16,15 @@ public class InquilinoController: Controller {
         _repositorioInquilino = new RepositorioInquilino(_Configuration);
     }
 
-    public IActionResult Index() {        
-        return View(_repositorioInquilino.GetInquilinos());
+    public IActionResult Index() {      
+        try {  
+            return View(_repositorioInquilino.GetInquilinos());
+        } catch (Exception ex) {              
+                _logger.LogError("An error occurred while getting renter: {Error}", ex.Message);
+               
+                TempData["ErrorMessage"] = "Error al cargar los contratos. Por favor intente de nuevo más tarde.";
+                return View(new List<Inquilino>());
+            }
     }
 
     public IActionResult Detalle(int Id) {
