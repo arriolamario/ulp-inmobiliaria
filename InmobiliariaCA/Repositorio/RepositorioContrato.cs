@@ -93,8 +93,6 @@ using System;
 
                 return contrato;
             });
-            // Console.WriteLine(result);
-            // Console.WriteLine("ID" + result.Id);
             return result;
         }
 

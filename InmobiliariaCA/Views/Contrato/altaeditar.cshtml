@@ -13,15 +13,25 @@
             <form asp-action="CrearActualizar">
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <div class="form-floating">
-                            @Html.DropDownListFor(m => m.Id_Inmueble, (SelectList)ViewBag.Inmuebles, "", new { @class = "form-select", id = 1})
+                        @*<div class="form-floating">
+                            @Html.DropDownListFor(m => m.Id_Inmueble, (SelectList)ViewBag.Inmuebles, "Seleccione un Inmueble", new { @class = "form-select", id = "id_inmueble" })
                             <label for="Id_Inmueble">Inmueble</label>
+                            <span asp-validation-for="Id_Inmueble" class="text-danger"></span>
+                        </div>*@
+                        <div class="form-floating">
+                            <select asp-for="Id_Inmueble" class="form-select" id="id_inmueble">
+                                <option value="">Seleccione un Inmueble</option>
+                                @foreach (var inmueble in ViewBag.Inmuebles) {
+                                    <option value="@inmueble.Value" data-precio="@ViewBag.InmueblesData[inmueble.Value]">@inmueble.Text</option>
+                                }
+                            </select>
+                            <label for="id_inmueble">Inmueble</label>
                             <span asp-validation-for="Id_Inmueble" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-floating">
-                            @Html.DropDownListFor(m => m.Id_Inquilino, (SelectList)ViewBag.Inquilinos, "", new { @class = "form-select", id = 1 })
+                            @Html.DropDownListFor(m => m.Id_Inquilino, (SelectList)ViewBag.Inquilinos, "Seleccione un Inquilino", new { @class = "form-select", id = 1 })
                             <label for="Id_Inquilino">Inquilino</label>
                             <span asp-validation-for="Id_Inquilino" class="text-danger"></span>
                         </div>
@@ -79,6 +89,14 @@
 
 @section Scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
-    <script
-        src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
+    <script>
+        $(document).ready(function () {            
+            $('#id_inmueble').change(function () {
+                var precio = $(this).find('option:selected').attr('data-precio');
+                precio = precio.replace(',', '.');
+                $('#Monto_Alquiler').val(precio);
+            });
+        });
+    </script>
 }
