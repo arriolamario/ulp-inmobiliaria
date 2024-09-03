@@ -10,21 +10,29 @@
         @* <a href="@Url.Action("AltaEditar", "Inmueble")" class="btn btn-success shadow-sm">Agregar Nuevo Inmueble</a> *@
     </div>
     <div class="row">
-        @foreach (var inmueble in Model) {
-            <div class="col-12 mb-4">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title text-white p-2" style="background-color: #2d94f5;">@inmueble.Direccion</h5>
-                         <p class="card-text"><strong>Propietario:</strong> @inmueble.Propietario.Apellido @inmueble.Propietario.Nombre</p>
-                         <p class="card-text"><strong>Precio: </strong> @inmueble.Precio.ToString("C", culturaArgentina)</p>
-                        @*<p class="card-text"><strong>Teléfono:</strong> @inquilino.Telefono</p>
-                        <p class="card-text"><strong>Email:</strong> @inquilino.Email</p>
-                        <p class="card-text"><strong>Dirección:</strong> @inquilino.Direccion</p> *@
-                        <div class="d-flex justify-content-end">
-                            <a href="@Url.Action("Detalle", "Inmueble", new { id = inmueble.Id })" class="btn btn-info btn-sm mx-1 shadow-sm">Ver</a>
+        @if (Model.Any()) {
+            @foreach (var inmueble in Model) {
+                <div class="col-12 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title text-white p-2" style="background-color: #2d94f5;">@inmueble.Direccion</h5>
+                            @if(inmueble.Propietario != null){
+                                <p class="card-text"><strong>Propietario:</strong> @inmueble.Propietario.Apellido @inmueble.Propietario.Nombre</p>
+                            }
+                            <p class="card-text"><strong>Precio: </strong> @inmueble.Precio.ToString("C", culturaArgentina)</p>
+                            @*<p class="card-text"><strong>Teléfono:</strong> @inquilino.Telefono</p>
+                            <p class="card-text"><strong>Email:</strong> @inquilino.Email</p>
+                            <p class="card-text"><strong>Dirección:</strong> @inquilino.Direccion</p> *@
+                            <div class="d-flex justify-content-end">
+                                <a href="@Url.Action("Detalle", "Inmueble", new { id = inmueble.Id })" class="btn btn-info btn-sm mx-1 shadow-sm">Ver</a>
+                            </div>
                         </div>
                     </div>
                 </div>
+            }
+         } else {
+            <div class="alert alert-info" role="alert">
+                No existen Inmuebles registrados.
             </div>
         }
     </div>

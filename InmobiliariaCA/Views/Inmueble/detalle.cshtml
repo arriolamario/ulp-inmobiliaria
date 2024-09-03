@@ -13,7 +13,9 @@ string precioFormateado = Model.Precio.ToString("C", culturaArgentina);
                 <input type="hidden" id="Coordenada_Lat" value="@Model.Coordenada_Lat" />
                 <input type="hidden" id="Coordenada_Lon" value="@Model.Coordenada_Lon" />
                 <dt class="col-sm-3">Propietario</dt>
-                <dd class="col-sm-9">@Model.Propietario.Apellido @Model.Propietario.Nombre</dd>
+                @if(Model.Propietario != null){
+                    <dd class="col-sm-9">@Model.Propietario.Apellido @Model.Propietario.Nombre</dd>
+                }
 
                 <dt class="col-sm-3">Direccion</dt>
                 <dd class="col-sm-9">@Model.Direccion</dd>

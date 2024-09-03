@@ -1,0 +1,80 @@
+@model InmobiliariaCA.Models.Contrato
+
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h2>Detalles del Contrato</h2>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">Inmueble</dt>
+                <dd class="col-sm-9">@Model.Inmueble?.Direccion</dd>
+
+                <dt class="col-sm-3">Inquilino</dt>
+                <dd class="col-sm-9">@Model.Inquilino?.Nombre @Model.Inquilino?.Apellido</dd>
+
+                <dt class="col-sm-3">Fecha Desde</dt>
+                <dd class="col-sm-9">@Model.Fecha_Desde.ToString("dd/MM/yyyy")</dd>
+
+                <dt class="col-sm-3">Fecha Hasta</dt>
+                <dd class="col-sm-9">@Model.Fecha_Hasta.ToString("dd/MM/yyyy")</dd>
+
+                <dt class="col-sm-3">Monto Alquiler</dt>
+                <dd class="col-sm-9">$@Model.Monto_Alquiler.ToString("N2")</dd>
+
+                <dt class="col-sm-3">Fecha Finalización Anticipada</dt>
+                <dd class="col-sm-9">
+                    @if(Model.Fecha_Finalizacion_Anticipada.HasValue) {
+                        @Model.Fecha_Finalizacion_Anticipada.Value.ToString("dd/MM/yyyy")
+                    } else {
+                        <span>No Aplica</span>
+                    }
+                </dd>
+
+                <dt class="col-sm-3">Multa</dt>
+                <dd class="col-sm-9">
+                    @if(Model.Multa.HasValue) {
+                         <span>$ @Model.Multa.Value.ToString("N2") </span>
+                    } else {
+                        <span>No Aplica</span>
+                    }
+                </dd>
+
+                <dt class="col-sm-3">Fecha de Creación</dt>
+                <dd class="col-sm-9">@Model.Fecha_Creacion.ToString("dd/MM/yyyy")</dd>
+
+                <dt class="col-sm-3">Última Actualización</dt>
+                <dd class="col-sm-9">@Model.Fecha_Actualizacion.ToString("dd/MM/yyyy")</dd>
+            </dl>
+        </div>
+        <div class="card-footer text-end">
+            <a href="@Url.Action("AltaEditar", "Contrato", new { id = Model.Id })" class="btn btn-warning">Editar</a>
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalBajaLogica">
+                Eliminar
+            </button>
+            <a href="@Url.Action("Index", "Contrato")" class="btn btn-secondary">Volver a la Lista</a>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="modalBajaLogica" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Contrato</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ¿Está seguro que desea eliminar el contrato del inmueble @Model.Inmueble?.Direccion con el inquilino @Model.Inquilino?.Nombre @Model.Inquilino?.Apellido?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <form asp-action="Baja" method="post" class="d-inline">
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
