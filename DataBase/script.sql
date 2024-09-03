@@ -108,7 +108,6 @@ CREATE TABLE IF NOT EXISTS contrato (
     FOREIGN KEY (id_usuario_finalizacion) REFERENCES usuario(id)
 );
 
-
 -- Insertar datos en la tabla 'propietario'
 INSERT INTO propietario (dni, nombre, apellido, telefono, email, direccion)
 VALUES 
@@ -143,7 +142,7 @@ INSERT INTO inmueble ( direccion, id_tipo_inmueble_uso, id_tipo_inmueble, ambien
 ('123 Elm Street, West Springfield', 1, 1, 4, 34.0522, -118.2437, 2000.00, 1, 3),
 ('555 North Oak Trafficway, Springfield', 2, 3, 6, 34.0522, -118.2437, 3000.00, 1, 4);
 
-INSERT INTO `usuario` (`email`, `password_hash`, `nombre`, `apellido`, `telefono`, `avatar_url`, `rol`)
+INSERT INTO usuario (email, password_hash, nombre, apellido, telefono, avatar_url, rol)
 VALUES
 ('john.doe@example.com', '$2y$10$abcdefg1234567890hijklmnopqrstuv', 'John', 'Doe', '+123456789', 'https://example.com/avatar1.png', 'empleado'),
 ('jane.smith@example.com', '$2y$10$1234567890abcdefg1234567890abcd', 'Jane', 'Smith', '+987654321', 'https://example.com/avatar2.png', 'administrador'),

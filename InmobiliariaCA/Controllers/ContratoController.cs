@@ -21,20 +21,35 @@ namespace InmobiliariaCA.Controllers {
             _repositorioInmueble = new RepositorioInmueble(_Configuration);
         }
 
-        // GET: Contrato
+        // GET: Contrato        
         public IActionResult Index() {
-            return View(_repositorioContrato.GetContratos());
+            try {
+                var contratos = _repositorioContrato.GetContratos();
+                return View(contratos);
+            } catch (Exception ex) {              
+                _logger.LogError("An error occurred while getting contracts: {Error}", ex.Message);
+               
+                TempData["ErrorMessage"] = "Error al cargar los contratos. Por favor intente de nuevo más tarde.";
+                return View(new List<Contrato>());
+            }
         }
 
         // GET: Contrato/Details/5
         public IActionResult Detalle(int Id) {
+            try {
 
-            Console.WriteLine("Id detallle: " + Id);
-            var contrato = _repositorioContrato.GetContrato(Id);
-            if (contrato == null) {
-                return NotFound();
+                var contrato = _repositorioContrato.GetContrato(Id);
+                if (contrato == null) {
+                    return NotFound();
+                }
+                return View(contrato);
+            } catch (Exception ex) {              
+                _logger.LogError("An error occurred while getting contract: {Error}", ex.Message);
+               
+                TempData["ErrorMessage"] = "Error al cargar la vista de contrato. Por favor intente de nuevo más tarde.";
+                return View();
             }
-            return View(contrato);
+            
         }
 
         public IActionResult AltaEditar(int Id) {

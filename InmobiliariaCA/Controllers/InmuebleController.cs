@@ -20,7 +20,14 @@ public class InmuebleController : Controller
 
     public IActionResult Index()
     {
-        return View(_repositorioInmueble.GetInmuebles());
+        try {
+            return View(_repositorioInmueble.GetInmuebles());
+        } catch (Exception ex) {              
+                _logger.LogError("An error occurred while getting property: {Error}", ex.Message);
+               
+                TempData["ErrorMessage"] = "Error al cargar los inmuebles. Por favor intente de nuevo más tarde.";
+                return View(new List<Inmueble>());
+        }
     }
 
     public IActionResult Detalle(int Id)
