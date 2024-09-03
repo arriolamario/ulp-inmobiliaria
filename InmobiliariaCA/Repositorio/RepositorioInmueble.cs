@@ -96,6 +96,41 @@ public class RepositorioInmueble : RepositorioBase
         return resultInmuebles;
     }
 
+    public List<Inmueble> GetInmueblesSinUso() {
+        List<Inmueble> resultInmuebles = new List<Inmueble>();
+    
+           string query = @$"SELECT i.{nameof(Inmueble.Id)}, 
+                            i.{nameof(Inmueble.Direccion)},
+                            i.{nameof(Inmueble.Id_Tipo_Inmueble_Uso)},
+                            i.{nameof(Inmueble.Id_Tipo_Inmueble)},
+                            i.{nameof(Inmueble.Precio)}
+                      FROM inmueble i
+                      LEFT JOIN contrato c ON c.id_inmueble = i.id 
+                          AND c.estado = 1 
+                          AND c.fecha_hasta > CURDATE()
+                      WHERE i.estado = 1 
+                          AND c.id IS NULL;";
+
+           resultInmuebles = this.ExecuteReaderList<Inmueble>(query, (reader) => {
+           return new Inmueble() {
+                    Id = int.Parse(reader[nameof(Inmueble.Id)].ToString() ?? "0"),
+                    Direccion = reader["direccion"].ToString() ?? "",
+                    Id_Tipo_Inmueble = int.Parse(reader[nameof(Inmueble.Id_Tipo_Inmueble)].ToString() ?? "0"),
+                    Precio = decimal.Parse(reader[nameof(Inmueble.Precio)].ToString() ?? "0")
+                };
+            });
+
+            var tiposInmuebles = _repositorioTipos.GetTipoInmuebles();
+            var tiposInmueblesUsos = _repositorioTipos.GetTipoInmueblesUsos();
+
+            resultInmuebles.ForEach(x => {
+                x.Tipo = tiposInmuebles.FirstOrDefault(y => y.Id == x.Id_Tipo_Inmueble);
+                x.Tipo_Uso = tiposInmueblesUsos.FirstOrDefault(y => y.Id == x.Id_Tipo_Inmueble_Uso);
+            });
+
+            return resultInmuebles;
+    }
+
     public Inmueble? GetInmueble(int Id)
     {
         Inmueble? result = null;

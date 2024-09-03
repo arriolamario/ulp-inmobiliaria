@@ -1,3 +1,4 @@
+using System.Globalization;
 using InmobiliariaCA.Models;
 using InmobiliariaCA.Repositorio;
 using Microsoft.AspNetCore.Mvc;
@@ -38,7 +39,10 @@ namespace InmobiliariaCA.Controllers {
 
         public IActionResult AltaEditar(int Id) {
             ViewBag.Inquilinos = new SelectList(_repositorioInquilino.GetInquilinos(), "Id", "NombreCompletoDNI");
-            ViewBag.Inmuebles = new SelectList(_repositorioInmueble.GetInmuebles(), "Id", "NombreInmueble");
+            
+            var inmuebles = _repositorioInmueble.GetInmueblesSinUso();
+            ViewBag.Inmuebles = new SelectList(inmuebles, "Id", "NombreInmueble", "Precio");
+            ViewBag.InmueblesData = inmuebles.ToDictionary(i => i.Id.ToString(), i => i.Precio.ToString("0.##", CultureInfo.InvariantCulture));
 
             if (Id == 0) {                
                 return View();
