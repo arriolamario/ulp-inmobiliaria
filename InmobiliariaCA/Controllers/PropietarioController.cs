@@ -18,8 +18,15 @@ public class PropietarioController : Controller
     }
 
     public IActionResult Index()
-    {
-        return View(_repositorioPropietario.GetPropietarios());
+    {   
+        try {
+             return View(_repositorioPropietario.GetPropietarios());
+        } catch (Exception ex) {              
+                _logger.LogError("An error occurred while getting propiertor: {Error}", ex.Message);
+               
+                TempData["ErrorMessage"] = "Error al cargar los propietarios. Por favor intente de nuevo más tarde.";
+                return View(new List<Propietario>());
+        }
     }
 
     public IActionResult Detalle(int Id)
