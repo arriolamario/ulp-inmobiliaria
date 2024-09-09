@@ -78,14 +78,21 @@ CREATE TABLE IF NOT EXISTS usuario (
     fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-CREATE TABLE IF NOT EXISTS pago (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    contrato_id INT NOT NULL,
-    numero_pago INT NOT NULL,
-    fecha_pago DATE NOT NULL,
-    detalle VARCHAR(255),
-    importe decimal(10,2) NULL,
-    FOREIGN KEY (contrato_id) REFERENCES contrato(id)
+CREATE TABLE pagos (
+    Id int NOT NULL AUTO_INCREMENT,
+    Contrato_Id int NOT NULL,
+    Numero_Pago int NOT NULL,
+    Fecha_Pago datetime NOT NULL,
+    Detalle varchar(255) NOT NULL DEFAULT '',
+    Importe decimal(10, 2) NOT NULL,
+    Estado varchar(50) NOT NULL DEFAULT '',
+    Creado_Por_Id int NOT NULL,
+    Anulado_Por_Id int DEFAULT NULL,
+    Fecha_Anulacion datetime DEFAULT NULL,
+    PRIMARY KEY (Id),
+    FOREIGN KEY (Contrato_Id) REFERENCES contratos (Id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (Creado_Por_Id) REFERENCES usuarios (Id) ON DELETE NO ACTION ON UPDATE CASCADE,
+    FOREIGN KEY (Anulado_Por_Id) REFERENCES usuarios (Id) ON DELETE NO ACTION ON UPDATE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS contrato (
@@ -143,7 +150,7 @@ INSERT INTO inmueble ( direccion, id_tipo_inmueble_uso, id_tipo_inmueble, ambien
 ('123 Elm Street, West Springfield', 1, 1, 4, 34.0522, -118.2437, 2000.00, 1, 3),
 ('555 North Oak Trafficway, Springfield', 2, 3, 6, 34.0522, -118.2437, 3000.00, 1, 4);
 
-INSERT INTO `usuario` (`email`, `password_hash`, `nombre`, `apellido`, `telefono`, `avatar_url`, `rol`)
+INSERT INTO usuario (email, password_hash, nombre, apellido, telefono, avatar_url, rol)
 VALUES
 ('john.doe@example.com', '$2y$10$abcdefg1234567890hijklmnopqrstuv', 'John', 'Doe', '+123456789', 'https://example.com/avatar1.png', 'empleado'),
 ('jane.smith@example.com', '$2y$10$1234567890abcdefg1234567890abcd', 'Jane', 'Smith', '+987654321', 'https://example.com/avatar2.png', 'administrador'),

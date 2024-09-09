@@ -48,6 +48,10 @@
             </dl>
         </div>
         <div class="card-footer text-end">
+            @*<a href="@Url.Action("AltaPago", "Pago", Model == null || Model.Id == 0 ? null : new { id = Model.Id })" class="btn btn-success">Pagar</a>*@
+            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#pagoModal">
+                Pagar
+            </button>
             <a href="@Url.Action("AltaEditar", "Contrato", new { id = Model.Id })" class="btn btn-warning">Editar</a>
             <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalBajaLogica">
                 Eliminar
@@ -57,7 +61,7 @@
     </div>
 </div>
 
-<!-- Modal -->
+<!-- Modal Eliminacion -->
 <div class="modal fade" id="modalBajaLogica" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -74,6 +78,28 @@
                     <input type="hidden" name="id" value="@Model.Id" />
                     <button type="submit" class="btn btn-danger">Eliminar</button>
                 </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Bootstrap para el pago -->
+<div class="modal fade" id="pagoModal" tabindex="-1" role="dialog" aria-labelledby="pagoModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="pagoModalLabel">Realizar Pago</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Aquí puedes colocar cualquier formulario o información relevante -->
+                <p>Detalles del pago para Contrato Id: @Model.Id</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" onclick="realizarPago(@Model.Id)">Confirmar Pago</button>
             </div>
         </div>
     </div>
