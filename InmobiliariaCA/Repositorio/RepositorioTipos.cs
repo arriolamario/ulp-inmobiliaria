@@ -27,15 +27,18 @@ public class RepositorioTipos : RepositorioBase
 
         string query = @$"select {nameof(TipoInmueble.Id)}, 
                                 {nameof(TipoInmueble.Descripcion)},
+                                {nameof(TipoInmueble.Estado)},
                                 {nameof(TipoInmueble.Fecha_Creacion)},
                                 {nameof(TipoInmueble.Fecha_Actualizacion)}
-                                from tipo_inmueble;";
+                                from tipo_inmueble
+                                where {nameof(TipoInmueble.Estado)} = 1;";
 
         resultInmuebles = this.ExecuteReaderList<TipoInmueble>(query, (reader) =>  {
             return new TipoInmueble()
             {
                 Id = reader.GetInt32(nameof(TipoInmueble.Id)),
                 Descripcion = reader.GetString(nameof(TipoInmueble.Descripcion)),
+                Estado = reader.GetInt32(nameof(TipoInmueble.Estado)),
                 Fecha_Creacion = reader.GetDateTime(nameof(TipoInmueble.Fecha_Creacion)),
                 Fecha_Actualizacion = reader.GetDateTime(nameof(TipoInmueble.Fecha_Actualizacion))
             };
@@ -51,6 +54,7 @@ public class RepositorioTipos : RepositorioBase
         string query = $@"select {nameof(TipoInmueble.Id)},
                                 {nameof(TipoInmueble.Descripcion)},
                                 {nameof(TipoInmueble.Fecha_Creacion)},
+                                {nameof(TipoInmueble.Estado)},
                                 {nameof(TipoInmueble.Fecha_Actualizacion)}
                                 from tipo_inmueble
                                 where {nameof(TipoInmueble.Id)} = @Id;";
@@ -64,6 +68,7 @@ public class RepositorioTipos : RepositorioBase
             {
                 Id = reader.GetInt32(nameof(TipoInmueble.Id)),
                 Descripcion = reader.GetString(nameof(TipoInmueble.Descripcion)),
+                Estado = reader.GetInt32(nameof(TipoInmueble.Estado)),
                 Fecha_Creacion = reader.GetDateTime(nameof(TipoInmueble.Fecha_Creacion)),
                 Fecha_Actualizacion = reader.GetDateTime(nameof(TipoInmueble.Fecha_Actualizacion))
             };
@@ -71,43 +76,41 @@ public class RepositorioTipos : RepositorioBase
 
         return result;
     }
+    
+    public bool ExisteRelacionTipoInmueble(int Id){
+        bool result = false;
+        string query = $@"select count(*) from inmueble i join tipo_inmueble ti on (i.id_tipo_inmueble = ti.id) where ti.id = @Id;";
+
+        result = this.ExecuteScalar(query, (parameters) => {
+            parameters.AddWithValue("@Id", Id);
+        }) > 0;
+        return result;
+    }
+
+    public bool BajaTipoInmueble(int Id)
+    {
+        bool result = false;
+        string query = @$"UPDATE tipo_inmueble SET {nameof(TipoInmueble.Estado)} = 0 WHERE {nameof(TipoInmueble.Id)} = @{nameof(TipoInmueble.Id)};";
+
+        result = 0 < this.ExecuteNonQuery(query, (parameters) => {
+            parameters.AddWithValue($"@{nameof(Propietario.Id)}", Id);
+        });
+
+        return result;
+    }
     #endregion
 
     #region TipoInmuebleUso
-    public int AltaTipoInmuebleUso(Inmueble inmueble)
+    public int AltaTipoInmuebleUso(TipoInmuebleUso tipo)
     {
         int result = 0;
-        string query = @$"INSERT INTO inmueble(
-                            {nameof(Inmueble.Direccion)}, 
-                            {nameof(Inmueble.Id_Tipo_Inmueble_Uso)},
-                            {nameof(Inmueble.Id_Tipo_Inmueble)},
-                            {nameof(Inmueble.Ambientes)},
-                            {nameof(Inmueble.Coordenada_Lat)}, 
-                            {nameof(Inmueble.Coordenada_Lon)}, 
-                            {nameof(Inmueble.Precio)},
-                            {nameof(Inmueble.Estado)},
-                            {nameof(Inmueble.Id_Propietario)})
-                            VALUES (@{nameof(Inmueble.Direccion)},
-                            @{nameof(Inmueble.Id_Tipo_Inmueble_Uso)},
-                            @{nameof(Inmueble.Id_Tipo_Inmueble)},
-                            @{nameof(Inmueble.Ambientes)},
-                            @{nameof(Inmueble.Coordenada_Lat)}, 
-                            @{nameof(Inmueble.Coordenada_Lon)}, 
-                            @{nameof(Inmueble.Precio)},
-                            @{nameof(Inmueble.Estado)},
-                            @{nameof(Inmueble.Id_Propietario)});
+        string query = @$"INSERT INTO tipo_inmueble_uso(
+                            {nameof(TipoInmuebleUso.Descripcion)}) 
+                            VALUES (@{nameof(TipoInmuebleUso.Descripcion)});
                             SELECT LAST_INSERT_ID();";
         
         result = this.ExecuteScalar(query, (parameters) => {
-            parameters.AddWithValue($"@{nameof(Inmueble.Direccion)}", inmueble.Direccion);
-            parameters.AddWithValue($"@{nameof(Inmueble.Id_Tipo_Inmueble_Uso)}", inmueble.Id_Tipo_Inmueble_Uso);
-            parameters.AddWithValue($"@{nameof(Inmueble.Id_Tipo_Inmueble)}", inmueble.Id_Tipo_Inmueble);
-            parameters.AddWithValue($"@{nameof(Inmueble.Ambientes)}", inmueble.Ambientes);
-            parameters.AddWithValue($"@{nameof(Inmueble.Coordenada_Lat)}", inmueble.Coordenada_Lat);
-            parameters.AddWithValue($"@{nameof(Inmueble.Coordenada_Lon)}", inmueble.Coordenada_Lon);
-            parameters.AddWithValue($"@{nameof(Inmueble.Precio)}", inmueble.Precio);
-            parameters.AddWithValue($"@{nameof(Inmueble.Estado)}", inmueble.Estado);
-            parameters.AddWithValue($"@{nameof(Inmueble.Id_Propietario)}", inmueble.Id_Propietario);
+            parameters.AddWithValue($"@{nameof(TipoInmuebleUso.Descripcion)}", tipo.Descripcion);
         });
 
         return result;
@@ -118,15 +121,18 @@ public class RepositorioTipos : RepositorioBase
 
         string query = @$"select {nameof(TipoInmuebleUso.Id)},
                                 {nameof(TipoInmuebleUso.Descripcion)},
+                                {nameof(TipoInmuebleUso.Estado)},
                                 {nameof(TipoInmuebleUso.Fecha_Creacion)},
                                 {nameof(TipoInmuebleUso.Fecha_Actualizacion)}
-                                from tipo_inmueble_uso;";
+                                from tipo_inmueble_uso
+                                where {nameof(TipoInmuebleUso.Estado)} = 1;";
 
         result = this.ExecuteReaderList<TipoInmuebleUso>(query, (reader) =>  {
             return new TipoInmuebleUso()
             {
                 Id = reader.GetInt32(nameof(TipoInmuebleUso.Id)),
                 Descripcion = reader.GetString(nameof(TipoInmuebleUso.Descripcion)),
+                Estado = reader.GetInt32(nameof(TipoInmuebleUso.Estado)),
                 Fecha_Creacion = reader.GetDateTime(nameof(TipoInmuebleUso.Fecha_Creacion)),
                 Fecha_Actualizacion = reader.GetDateTime(nameof(TipoInmuebleUso.Fecha_Actualizacion))
             };
@@ -141,6 +147,7 @@ public class RepositorioTipos : RepositorioBase
 
         string query = $@"select {nameof(TipoInmuebleUso.Id)},
                                 {nameof(TipoInmuebleUso.Descripcion)},
+                                {nameof(TipoInmuebleUso.Estado)},
                                 {nameof(TipoInmuebleUso.Fecha_Creacion)},
                                 {nameof(TipoInmuebleUso.Fecha_Actualizacion)}
                                 from tipo_inmueble_uso
@@ -155,11 +162,34 @@ public class RepositorioTipos : RepositorioBase
             {
                 Id = reader.GetInt32(nameof(TipoInmuebleUso.Id)),
                 Descripcion = reader.GetString(nameof(TipoInmuebleUso.Descripcion)),
+                Estado = reader.GetInt32(nameof(TipoInmuebleUso.Estado)),
                 Fecha_Creacion = reader.GetDateTime(nameof(TipoInmuebleUso.Fecha_Creacion)),
                 Fecha_Actualizacion = reader.GetDateTime(nameof(TipoInmuebleUso.Fecha_Actualizacion))
             };
         });
 
+        return result;
+    }
+
+    public bool BajaTipoInmuebleUso(int Id)
+    {
+        bool result = false;
+        string query = @$"UPDATE tipo_inmueble_uso SET {nameof(TipoInmuebleUso.Estado)} = 0 WHERE {nameof(TipoInmuebleUso.Id)} = @{nameof(TipoInmuebleUso.Id)};";
+
+        result = 0 < this.ExecuteNonQuery(query, (parameters) => {
+            parameters.AddWithValue($"@{nameof(Propietario.Id)}", Id);
+        });
+
+        return result;
+    }
+
+    public bool ExisteRelacionTipoInmuebleUso(int Id){
+        bool result = false;
+        string query = $@"select count(*) from inmueble i join tipo_inmueble_uso ti on (i.id_tipo_inmueble_uso = ti.id) where ti.id = @Id;";
+
+        result = this.ExecuteScalar(query, (parameters) => {
+            parameters.AddWithValue("@Id", Id);
+        }) > 0;
         return result;
     }
     #endregion

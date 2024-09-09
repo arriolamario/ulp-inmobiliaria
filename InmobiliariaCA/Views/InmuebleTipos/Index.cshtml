@@ -1,0 +1,94 @@
+﻿@model InmobiliariaCA.Models.TiposViewModel
+
+<div class="container">
+    <div>
+        <h2 class="my-4">Lista de Tipos de Inmuebles</h2>
+
+        <table class="table table-striped table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Descripcion</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.TiposInmuebles.Count; i++)
+                {
+                    <tr>
+                        <td>@Model.TiposInmuebles[i].Id</td>
+                        <td>@Model.TiposInmuebles[i].Descripcion</td>
+                        <td>
+                            <a asp-action="EditarInmueble" asp-route-id="@Model.TiposInmuebles[i].Id"
+                                class="btn btn-primary btn-sm">Editar</a>
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalBajaLogica" onclick="setDeleteModal('@Model.TiposInmuebles[i].Id', '@Model.TiposInmuebles[i].Descripcion', 'tipoInmueble')">
+                                Eliminar
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div>
+        <h2 class="my-4">Lista de Tipos de Inmuebles Usos</h2>
+
+        <table class="table table-striped table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Descripcion</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.TiposInmueblesUsos.Count; i++)
+                {
+                    <tr>
+                        <td>@Model.TiposInmueblesUsos[i].Id</td>
+                        <td>@Model.TiposInmueblesUsos[i].Descripcion</td>
+                        <td>
+                            <a asp-action="EditarInmuebleUso" asp-route-id="@Model.TiposInmueblesUsos[i].Id"
+                                class="btn btn-primary btn-sm">Editar</a>
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalBajaLogica" onclick="setDeleteModal('@Model.TiposInmueblesUsos[i].Id', '@Model.TiposInmueblesUsos[i].Descripcion', 'tipoInmuebleUso')">
+                                Eliminar
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="modalBajaLogica" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h1 class="modal-title fs-5" id="tituloModal"></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" >
+                <p id="descripcionModal" name="descripcionModal"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <form asp-action="BajaLogica" method="post" class="d-inline">
+                    <input type="hidden" id="eliminarId" name="eliminarId" value="123"/>
+                    <input type="hidden" id="eliminarTipo" name="eliminarTipo" value="123"/>
+                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function setDeleteModal(id, descripcion, tipo) {
+        document.getElementById('eliminarId').value = id;
+        document.getElementById('descripcionModal').innerText = "¿Esta seguro que desea eliminar el Tipo " + descripcion + "?";
+        document.getElementById('tituloModal').innerText = tipo == "tipoInmueble" ? "Tipo de Inmueble" : "Tipo de Inmueble Uso";
+        document.getElementById('eliminarTipo').value = tipo;
+    }
+</script>
