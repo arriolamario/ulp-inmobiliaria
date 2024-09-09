@@ -3,7 +3,10 @@
 <div class="container">
     <div>
         <h2 class="my-4">Lista de Tipos de Inmuebles</h2>
-
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAltaEditar"
+            onclick="setAltaEditarModal('0', '', 'tipoInmueble', 'alta')">
+            Agregar
+        </button>
         <table class="table table-striped table-bordered">
             <thead class="thead-dark">
                 <tr>
@@ -18,9 +21,14 @@
                         <td>@Model.TiposInmuebles[i].Id</td>
                         <td>@Model.TiposInmuebles[i].Descripcion</td>
                         <td>
-                            <a asp-action="EditarInmueble" asp-route-id="@Model.TiposInmuebles[i].Id"
-                                class="btn btn-primary btn-sm">Editar</a>
-                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalBajaLogica" onclick="setDeleteModal('@Model.TiposInmuebles[i].Id', '@Model.TiposInmuebles[i].Descripcion', 'tipoInmueble')">
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                data-bs-target="#modalAltaEditar"
+                                onclick="setAltaEditarModal('@Model.TiposInmuebles[i].Id', '@Model.TiposInmuebles[i].Descripcion', 'tipoInmueble', 'editar')">
+                                Editar
+                            </button>
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                data-bs-target="#modalBajaLogica"
+                                onclick="setDeleteModal('@Model.TiposInmuebles[i].Id', '@Model.TiposInmuebles[i].Descripcion', 'tipoInmueble')">
                                 Eliminar
                             </button>
                         </td>
@@ -31,7 +39,10 @@
     </div>
     <div>
         <h2 class="my-4">Lista de Tipos de Inmuebles Usos</h2>
-
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAltaEditar"
+            onclick="setAltaEditarModal('0', '', 'tipoInmuebleUso', 'alta')">
+            Agregar
+        </button>
         <table class="table table-striped table-bordered">
             <thead class="thead-dark">
                 <tr>
@@ -46,9 +57,14 @@
                         <td>@Model.TiposInmueblesUsos[i].Id</td>
                         <td>@Model.TiposInmueblesUsos[i].Descripcion</td>
                         <td>
-                            <a asp-action="EditarInmuebleUso" asp-route-id="@Model.TiposInmueblesUsos[i].Id"
-                                class="btn btn-primary btn-sm">Editar</a>
-                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalBajaLogica" onclick="setDeleteModal('@Model.TiposInmueblesUsos[i].Id', '@Model.TiposInmueblesUsos[i].Descripcion', 'tipoInmuebleUso')">
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                data-bs-target="#modalAltaEditar"
+                                onclick="setAltaEditarModal('@Model.TiposInmueblesUsos[i].Id', '@Model.TiposInmueblesUsos[i].Descripcion', 'tipoInmuebleUso', 'editar')">
+                                Editar
+                            </button>
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                data-bs-target="#modalBajaLogica"
+                                onclick="setDeleteModal('@Model.TiposInmueblesUsos[i].Id', '@Model.TiposInmueblesUsos[i].Descripcion', 'tipoInmuebleUso')">
                                 Eliminar
                             </button>
                         </td>
@@ -60,7 +76,7 @@
 </div>
 
 
-<!-- Modal -->
+<!-- Modal Baja Logica -->
 <div class="modal fade" id="modalBajaLogica" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -68,17 +84,48 @@
                 <h1 class="modal-title fs-5" id="tituloModal"></h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body" >
+            <div class="modal-body">
                 <p id="descripcionModal" name="descripcionModal"></p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                 <form asp-action="BajaLogica" method="post" class="d-inline">
-                    <input type="hidden" id="eliminarId" name="eliminarId" value="123"/>
-                    <input type="hidden" id="eliminarTipo" name="eliminarTipo" value="123"/>
+                    <input type="hidden" id="eliminarId" name="eliminarId" value="123" />
+                    <input type="hidden" id="eliminarTipo" name="eliminarTipo" value="123" />
                     <button type="submit" class="btn btn-danger">Eliminar</button>
                 </form>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Alta Edicion -->
+<div class="modal fade" id="modalAltaEditar" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-action="AltaEdicion" method="post" class="d-inline">
+                <div class="modal-header bg-primary text-white">
+                    <h1 class="modal-title fs-5" id="tituloAltaModificarModal"></h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="descripcionAltaModificarModal" name="descripcionAltaModificarModal"></p>
+                    <div class="input-group input-group-sm mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="inputGroup-sizing-sm">Descripcion</span>
+                        </div>
+                        <input type="text" class="form-control" aria-label="Small"
+                            aria-describedby="inputGroup-sizing-sm" name="descripcion" id="descripcion">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <input type="hidden" id="altaEditarId" name="altaEditarId" value="0" />
+                    <input type="hidden" id="altaEditarTipo" name="altaEditarTipo" value="" />
+                    <button type="submit" class="btn btn-danger" id="btnAltaEditar"
+                        name="btnAltaEditar">Eliminar</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -90,5 +137,14 @@
         document.getElementById('descripcionModal').innerText = "¿Esta seguro que desea eliminar el Tipo " + descripcion + "?";
         document.getElementById('tituloModal').innerText = tipo == "tipoInmueble" ? "Tipo de Inmueble" : "Tipo de Inmueble Uso";
         document.getElementById('eliminarTipo').value = tipo;
+    }
+
+    function setAltaEditarModal(id, descripcion, tipo, metodo) {
+        document.getElementById('altaEditarId').value = id;
+        document.getElementById('descripcion').value = descripcion;
+        document.getElementById('descripcionAltaModificarModal').innerText = metodo == "alta" ? "Agregar" : "Modificar";
+        document.getElementById('btnAltaEditar').innerText = metodo == "alta" ? "Agregar" : "Modificar";
+        document.getElementById('tituloAltaModificarModal').innerText = tipo == "tipoInmueble" ? "Tipo de Inmueble" : "Tipo de Inmueble Uso";
+        document.getElementById('altaEditarTipo').value = tipo;
     }
 </script>
