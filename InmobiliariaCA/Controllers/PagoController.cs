@@ -16,7 +16,7 @@ public class PagoController : Controller {
     }
 
     public IActionResult Index() {
-        return View();
+        return View(_repositorioPago.GetPagos());
     }
 
     public IActionResult Detalle(int Id) {
@@ -37,16 +37,10 @@ public class PagoController : Controller {
 
     [HttpPost]
     public IActionResult CrearActualizar(Pago pago) {
-        // if (!ModelState.IsValid) {
-        //     TempData["ErrorMessage"] = "Datos del formulario no son válidos.";
-        //     return RedirectToAction("Index");
-        // }
-        Console.WriteLine("Id" + pago.Id);
-        Console.WriteLine("Contrato_Id" + pago.Contrato_Id);
-        Console.WriteLine("Detalle: " + pago.Detalle);
-         Console.WriteLine("Id Import: " + pago.Importe);
-        Console.WriteLine("Id Numero_Pago: " + pago.Numero_Pago);
-         Console.WriteLine("Id Fecxha Pago: " + pago.Fecha_Pago);   
+        if (!ModelState.IsValid) {
+            TempData["ErrorMessage"] = "Datos del formulario no son válidos.";
+            return RedirectToAction("Index");
+        }
         if (pago.Id == 0) {
             _repositorioPago.InsertarPago(pago);
             TempData["SuccessMessage"] = "Pago agregado correctamente.";

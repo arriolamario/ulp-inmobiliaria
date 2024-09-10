@@ -79,20 +79,21 @@ CREATE TABLE IF NOT EXISTS usuario (
 );
 
 CREATE TABLE pago (
-    Id int NOT NULL AUTO_INCREMENT,
-    Contrato_Id int NOT NULL,
-    Numero_Pago int NOT NULL UNIQUE,
-    Fecha_Pago datetime NOT NULL,
-    Detalle varchar(255) NOT NULL DEFAULT '',
-    Importe decimal(10, 2) NOT NULL,
-    Estado varchar(50) NOT NULL DEFAULT '',
-    Creado_Por_Id int NOT NULL,
-    Anulado_Por_Id int DEFAULT NULL,
-    Fecha_Anulacion datetime DEFAULT NULL,
+    id int NOT NULL AUTO_INCREMENT,
+    contrato_id int NOT NULL,
+    numero_pago int NOT NULL UNIQUE,
+    fecha_pago datetime NOT NULL,
+    detalle varchar(255) NOT NULL DEFAULT '',
+    importe decimal(10, 2) NOT NULL,
+    multa decimal(10, 2) NOT NULL,
+    estado varchar(50) NOT NULL DEFAULT '',
+    creado_por_id int NOT NULL,
+    anulado_por_id int DEFAULT NULL,
+    fecha_anulacion datetime DEFAULT NULL,
     PRIMARY KEY (Id),
-    FOREIGN KEY (Contrato_Id) REFERENCES contrato (Id) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (Creado_Por_Id) REFERENCES usuario (Id) ON DELETE NO ACTION ON UPDATE CASCADE,
-    FOREIGN KEY (Anulado_Por_Id) REFERENCES usuario (Id) ON DELETE NO ACTION ON UPDATE CASCADE
+    FOREIGN KEY (contrato_id) REFERENCES contrato (Id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (creado_por_id) REFERENCES usuario (Id) ON DELETE NO ACTION ON UPDATE CASCADE,
+    FOREIGN KEY (anulado_por_id) REFERENCES usuario (Id) ON DELETE NO ACTION ON UPDATE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS contrato (
@@ -109,6 +110,7 @@ CREATE TABLE IF NOT EXISTS contrato (
     id_usuario_finalizacion INT,
     fecha_creacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     fecha_actualizacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    pagado BOOLEAN NOT NULL DEFAULT FALSE,
     FOREIGN KEY (id_inmueble) REFERENCES inmueble(id),
     FOREIGN KEY (id_inquilino) REFERENCES inquilino(id),
     FOREIGN KEY (id_usuario_creacion) REFERENCES usuario(id),

@@ -18,4 +18,5 @@ public class Usuario
     public virtual ICollection<Pago> PagosCreados { get; set; } = new List<Pago>();
     public virtual ICollection<Pago> PagosAnulados { get; set; } = new List<Pago>();
     public virtual ICollection<Contrato> ContratosCreados { get; set; } = new List<Contrato>();
+    public string NombreCompleto => $"{Apellido}, {Nombre}";
 }

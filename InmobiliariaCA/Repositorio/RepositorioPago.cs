@@ -6,40 +6,45 @@ using System.Collections.Generic;
 namespace InmobiliariaCA.Repositorio;
 
 public class RepositorioPago : RepositorioBase {
+
+    public RepositorioContrato _repositorioContrato;
+
     public RepositorioPago(IConfiguration configuration) : base(configuration) {
+        _repositorioContrato = new RepositorioContrato(configuration);
     }
 
     public List<Pago> GetPagos() {
-        List<Pago> resultPagos = new List<Pago>();
+        
+            List<Pago> resultPagos = new List<Pago>();
 
-        string query = @$"SELECT {nameof(Pago.Id)},
-                          {nameof(Pago.Contrato_Id)},
-                          {nameof(Pago.Numero_Pago)},
-                          {nameof(Pago.Fecha_Pago)},
-                          {nameof(Pago.Detalle)},
-                          {nameof(Pago.Importe)},
-                          {nameof(Pago.Estado)},
-                          {nameof(Pago.Creado_Por_Id)},
-                          {nameof(Pago.Anulado_Por_Id)},
-                          {nameof(Pago.Fecha_Anulacion)}
-                          FROM pago;";
+                    string query = @$"SELECT {nameof(Pago.Id)},
+                                    {nameof(Pago.Contrato_Id)},
+                                    {nameof(Pago.Numero_Pago)},
+                                    {nameof(Pago.Fecha_Pago)},
+                                    {nameof(Pago.Detalle)},
+                                    {nameof(Pago.Importe)},
+                                    {nameof(Pago.Estado)},
+                                    {nameof(Pago.Creado_Por_Id)},
+                                    {nameof(Pago.Anulado_Por_Id)},
+                                    {nameof(Pago.Fecha_Anulacion)}
+                                    FROM pago;";
 
-        resultPagos = this.ExecuteReaderList<Pago>(query, (reader) => {
-            return new Pago() {
-                Id = int.Parse(reader["Id"].ToString() ?? "0"),
-                Contrato_Id = int.Parse(reader["Contrato_Id"].ToString() ?? "0"),
-                Numero_Pago = int.Parse(reader["Numero_Pago"].ToString() ?? "0"),
-                Fecha_Pago = DateTime.Parse(reader["Fecha_Pago"].ToString() ?? "0"),
-                Detalle = reader["Detalle"].ToString() ?? "",
-                Importe = decimal.Parse(reader["Importe"].ToString() ?? "0"),
-                Estado = reader["Estado"].ToString() ?? "",
-                Creado_Por_Id = int.Parse(reader["Creado_Por_Id"].ToString() ?? "0"),
-                Anulado_Por_Id = reader.IsDBNull(reader.GetOrdinal("Anulado_Por_Id")) ? (int?)null : int.Parse(reader["AnuladoPorId"].ToString() ?? "0"),
-                Fecha_Anulacion = reader.IsDBNull(reader.GetOrdinal("Fecha_Anulacion")) ? (DateTime?)null : DateTime.Parse(reader["FechaAnulacion"].ToString() ?? "0")
-            };
-        });
-
-        return resultPagos;
+                    resultPagos = this.ExecuteReaderList<Pago>(query, (reader) => {
+                        return new Pago() {
+                            Id = int.Parse(reader["Id"].ToString() ?? "0"),
+                            Contrato_Id = int.Parse(reader["Contrato_Id"].ToString() ?? "0"),
+                            Numero_Pago = int.Parse(reader["Numero_Pago"].ToString() ?? "0"),
+                            Fecha_Pago = DateTime.Parse(reader["Fecha_Pago"].ToString() ?? "0"),
+                            Detalle = reader["Detalle"].ToString() ?? "",
+                            Importe = decimal.Parse(reader["Importe"].ToString() ?? "0"),
+                            Estado = reader["Estado"].ToString() ?? "",
+                            Creado_Por_Id = int.Parse(reader["Creado_Por_Id"].ToString() ?? "0"),
+                            Anulado_Por_Id = reader.IsDBNull(reader.GetOrdinal("Anulado_Por_Id")) ? (int?)null : int.Parse(reader["AnuladoPorId"].ToString() ?? "0"),
+                            Fecha_Anulacion = reader.IsDBNull(reader.GetOrdinal("Fecha_Anulacion")) ? (DateTime?)null : DateTime.Parse(reader["FechaAnulacion"].ToString() ?? "0")
+                        };
+                    });
+                    return resultPagos;
+        
     }
 
     public Pago? GetPago(int Id) {
@@ -95,7 +100,6 @@ public class RepositorioPago : RepositorioBase {
                           @{nameof(Pago.Creado_Por_Id)}
                 );
         SELECT LAST_INSERT_ID();";
-        Console.WriteLine("query: " + query);
 
         int result = this.ExecuteScalar(query, (parameters) => {
             parameters.AddWithValue($"{nameof(Pago.Contrato_Id)}", pago.Contrato_Id);
@@ -106,6 +110,11 @@ public class RepositorioPago : RepositorioBase {
             parameters.AddWithValue($"{nameof(Pago.Estado)}", 1);
             parameters.AddWithValue($"{nameof(Pago.Creado_Por_Id)}", 1);
         });
+
+        //_repositorioContrato.ActualizarContratoPagado(pago.Contrato_Id);
+         if (_repositorioContrato.ActualizarContratoPagado(pago.Contrato_Id) == 0) {
+                throw new Exception("No se pudo actualizar el estado de pagado del contrato.");
+        }
 
         return result;
     }

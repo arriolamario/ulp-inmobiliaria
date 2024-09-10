@@ -1,5 +1,5 @@
+namespace InmobiliariaCA.Models;
 using System;
-using InmobiliariaCA.Models;
 public class Pago {
     public int Id { get; set; }
     public int Contrato_Id { get; set; }

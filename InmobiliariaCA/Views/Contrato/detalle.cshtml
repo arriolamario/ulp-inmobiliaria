@@ -88,41 +88,48 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="pagoModalLabel">Realizar Pago</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form id="formPago" action="@Url.Action("CrearActualizar", "Pago")" method="post" onsubmit="return validarFormularioPago();">
-                <div class="modal-body">
-                    <input type="hidden" name="Contrato_Id" value="@Model.Id">
-                    <div class="mb-3">
-                        <label for="Numero_Pago" class="form-label">Número de Pago</label>
-                        <input type="number" class="form-control" id="Numero_Pago" name="Numero_Pago" value="@ViewBag.NumeroPago" readonly>
-                    </div>
-                    <div class="mb-3">
-                        <label for="Fecha_Pago" class="form-label">Fecha de Pago</label>
-                        <input type="date" class="form-control" id="Fecha_Pago" name="Fecha_Pago" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="Detalle" class="form-label">Detalle</label>
-                        <input type="text" class="form-control" id="Detalle" name="Detalle">
-                    </div>
-                    <div class="mb-3">
-                        <label for="Importe" class="form-label">Monto del Alquiler</label>
-                        <input type="text" class="form-control" id="Importe" name="Importe" value="1000" readonly>
-                    </div>
+                    <h5 class="modal-title" id="pagoModalLabel">Realizar Pago</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="submit" class="btn btn-primary">Confirmar Pago</button>
+            @if(Model.Pagado) {
+                <div class="alert alert-success" role="alert">
+                    El contrato ya se encuentra pagado.
                 </div>
-            </form>
+            } else {
+                
+                <form id="formPago" action="@Url.Action("CrearActualizar", "Pago")" method="post" onsubmit="return validarFormularioPago();">
+                    <div class="modal-body">
+                        <input type="hidden" name="Contrato_Id" value="@Model.Id">
+                        <div class="mb-3">
+                            <label for="Numero_Pago" class="form-label">Número de Pago</label>
+                            <input type="number" class="form-control" id="Numero_Pago" name="Numero_Pago" value="@ViewBag.NumeroPago" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="Fecha_Pago" class="form-label">Fecha de Pago</label>
+                            <input type="date" class="form-control" id="Fecha_Pago" name="Fecha_Pago" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="Detalle" class="form-label">Detalle</label>
+                            <input type="text" class="form-control" id="Detalle" name="Detalle">
+                        </div>
+                        <div class="mb-3">
+                            <label for="Importe" class="form-label">Monto del Alquiler</label>
+                            <input type="text" class="form-control" id="Importe" name="Importe" value="1000" readonly>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-primary">Confirmar Pago</button>
+                    </div>
+                </form>
+            }
         </div>
     </div>
 </div>
 
 <script>
     function validarFormularioPago() {
-        @* // Obtén valores del formulario
+        // Obtén valores del formulario
         let fechaPago = document.getElementById('FechaPago').value;
         let detalle = document.getElementById('Detalle').value;
 
@@ -136,8 +143,8 @@
         if (detalle.trim() === '') {
             alert('Por favor, introduzca un detalle para el pago.');
             return false;
-        } *@
+        }
 
-        return true; // Retorna true si todo está correcto
+        return true; 
     }
 </script>

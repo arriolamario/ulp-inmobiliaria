@@ -1,0 +1,41 @@
+@model IEnumerable<InmobiliariaCA.Models.Pago>
+@{
+    ViewData["Title"] = "Lista de Pagos";
+}
+
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-primary"><i class="fas fa-money-bill-wave"></i> Lista de Pagos</h2>
+        <a href="@Url.Action("Crear", "Pago")" class="btn btn-success shadow-sm">Agregar Nuevo Pago</a>
+    </div>
+    <div class="row">
+        @if (Model.Any()) {
+            foreach (var pago in Model) {
+                <div class="col-12 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <p class="card-text"><strong>Contrato ID:</strong> @pago.Contrato_Id</p>
+                            <p class="card-text"><strong>Número de Pago:</strong> @pago.Numero_Pago</p>
+                            <p class="card-text"><strong>Fecha de Pago:</strong> @pago.Fecha_Pago.ToString("dd/MM/yyyy")</p>
+                            <p class="card-text"><strong>Detalle:</strong> @pago.Detalle</p>
+                            <p class="card-text"><strong>Importe:</strong> $@pago.Importe</p>
+                            <p class="card-text"><strong>Estado:</strong> @pago.Estado</p>
+                            <p class="card-text"><strong>Creado Por:</strong> @pago.CreadoPor?.NombreCompleto</p>
+                             @if (pago.Anulado_Por_Id.HasValue) {
+                                <p class="card-text"><strong>Anulado Por:</strong> @pago.AnuladoPor?.NombreCompleto</p>
+                                <p class="card-text"><strong>Fecha Anulación:</strong> @pago.Fecha_Anulacion?.ToString("dd/MM/yyyy")</p>
+                            }
+                            <div class="d-flex justify-content-end">
+                                <a href="@Url.Action("Detalle", "Pago", new { id = pago.Id })" class="btn btn-info btn-sm mx-1 shadow-sm">Ver Detalles</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        } else {
+            <div class="alert alert-info" role="alert">
+                No existen pagos realizados.
+            </div>
+        }
+    </div>
+</div>
