@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Globalization;
 
 namespace InmobiliariaCA.Models;
 public class Contrato {
@@ -56,4 +57,6 @@ public class Contrato {
     public virtual Inquilino? Inquilino { get; set; }
     public virtual Usuario? Usuario_Creacion { get; set; }
     public virtual Usuario? Usuario_Finalizacion { get; set; }
+    
+    public string MontoAlquilerString() => Monto_Alquiler.ToString("C", CultureInfo.CreateSpecificCulture("es-AR"));
 }

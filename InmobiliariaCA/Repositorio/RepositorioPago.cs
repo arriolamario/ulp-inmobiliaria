@@ -76,6 +76,7 @@ public class RepositorioPago : RepositorioBase {
     }
 
     public int InsertarPago(Pago pago) {
+        
         string query = @$"INSERT INTO pago (
                           {nameof(Pago.Contrato_Id)},
                           {nameof(Pago.Numero_Pago)},
@@ -83,20 +84,18 @@ public class RepositorioPago : RepositorioBase {
                           {nameof(Pago.Detalle)},
                           {nameof(Pago.Importe)},
                           {nameof(Pago.Estado)},
-                          {nameof(Pago.Creado_Por_Id)},
-                          {nameof(Pago.Anulado_Por_Id)},
-                          {nameof(Pago.Fecha_Anulacion)}
-        VALUES (
-                          {nameof(Pago.Contrato_Id)},
-                          {nameof(Pago.Numero_Pago)},
-                          {nameof(Pago.Fecha_Pago)},
-                          {nameof(Pago.Detalle)},
-                          {nameof(Pago.Importe)},
-                          {nameof(Pago.Estado)},
-                          {nameof(Pago.Creado_Por_Id)},
-                          {nameof(Pago.Anulado_Por_Id)},
-                          {nameof(Pago.Fecha_Anulacion)});
+                          {nameof(Pago.Creado_Por_Id)}
+                ) VALUES (
+                          @{nameof(Pago.Contrato_Id)},
+                          @{nameof(Pago.Numero_Pago)},
+                          @{nameof(Pago.Fecha_Pago)},
+                          @{nameof(Pago.Detalle)},
+                          @{nameof(Pago.Importe)},
+                          @{nameof(Pago.Estado)},
+                          @{nameof(Pago.Creado_Por_Id)}
+                );
         SELECT LAST_INSERT_ID();";
+        Console.WriteLine("query: " + query);
 
         int result = this.ExecuteScalar(query, (parameters) => {
             parameters.AddWithValue($"{nameof(Pago.Contrato_Id)}", pago.Contrato_Id);
@@ -104,10 +103,8 @@ public class RepositorioPago : RepositorioBase {
             parameters.AddWithValue($"{nameof(Pago.Fecha_Pago)}", pago.Fecha_Pago);
             parameters.AddWithValue($"{nameof(Pago.Detalle)}", pago.Detalle);
             parameters.AddWithValue($"{nameof(Pago.Importe)}", pago.Importe);
-            parameters.AddWithValue($"{nameof(Pago.Estado)}", pago.Estado);
-            parameters.AddWithValue($"{nameof(Pago.Creado_Por_Id)}", pago.Creado_Por_Id);
-            parameters.AddWithValue($"{nameof(Pago.Anulado_Por_Id)}", pago.Anulado_Por_Id);
-            parameters.AddWithValue($"{nameof(Pago.Fecha_Anulacion)}", pago.Fecha_Anulacion);
+            parameters.AddWithValue($"{nameof(Pago.Estado)}", 1);
+            parameters.AddWithValue($"{nameof(Pago.Creado_Por_Id)}", 1);
         });
 
         return result;

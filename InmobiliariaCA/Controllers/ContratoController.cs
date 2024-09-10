@@ -28,8 +28,10 @@ namespace InmobiliariaCA.Controllers {
 
         // GET: Contrato/Details/5
         public IActionResult Detalle(int Id) {
-
-            Console.WriteLine("Id detallle: " + Id);
+            Random random = new Random();
+            int numeroPago = random.Next(100000, 999999);
+            ViewBag.NumeroPago = numeroPago;
+            
             var contrato = _repositorioContrato.GetContrato(Id);
             if (contrato == null) {
                 return NotFound();

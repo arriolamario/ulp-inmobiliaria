@@ -78,10 +78,10 @@ CREATE TABLE IF NOT EXISTS usuario (
     fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-CREATE TABLE pagos (
+CREATE TABLE pago (
     Id int NOT NULL AUTO_INCREMENT,
     Contrato_Id int NOT NULL,
-    Numero_Pago int NOT NULL,
+    Numero_Pago int NOT NULL UNIQUE,
     Fecha_Pago datetime NOT NULL,
     Detalle varchar(255) NOT NULL DEFAULT '',
     Importe decimal(10, 2) NOT NULL,
@@ -90,9 +90,9 @@ CREATE TABLE pagos (
     Anulado_Por_Id int DEFAULT NULL,
     Fecha_Anulacion datetime DEFAULT NULL,
     PRIMARY KEY (Id),
-    FOREIGN KEY (Contrato_Id) REFERENCES contratos (Id) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (Creado_Por_Id) REFERENCES usuarios (Id) ON DELETE NO ACTION ON UPDATE CASCADE,
-    FOREIGN KEY (Anulado_Por_Id) REFERENCES usuarios (Id) ON DELETE NO ACTION ON UPDATE CASCADE
+    FOREIGN KEY (Contrato_Id) REFERENCES contrato (Id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (Creado_Por_Id) REFERENCES usuario (Id) ON DELETE NO ACTION ON UPDATE CASCADE,
+    FOREIGN KEY (Anulado_Por_Id) REFERENCES usuario (Id) ON DELETE NO ACTION ON UPDATE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS contrato (
