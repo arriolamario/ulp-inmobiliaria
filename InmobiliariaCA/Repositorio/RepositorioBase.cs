@@ -105,7 +105,16 @@ public abstract class RepositorioBase
             using (MySqlCommand command = new MySqlCommand(query, connection))
             {
                 parameters(command.Parameters);
-                filasAfectadas = Convert.ToInt32(command.ExecuteNonQuery());
+                int result;
+                try
+                {
+                    result = command.ExecuteNonQuery();
+                }
+                catch (Exception)
+                {
+                    result = 0;                    
+                }
+                filasAfectadas = Convert.ToInt32(result);
             }
         }
 

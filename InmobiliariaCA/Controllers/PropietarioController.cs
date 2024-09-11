@@ -16,14 +16,17 @@ public class PropietarioController : Controller
     }
 
     public IActionResult Index()
-    {   
-        try {
-             return View(_repositorioPropietario.GetPropietarios());
-        } catch (Exception ex) {              
-                _logger.LogError("An error occurred while getting propiertor: {Error}", ex.Message);
-               
-                TempData["ErrorMessage"] = "Error al cargar los propietarios. Por favor intente de nuevo más tarde.";
-                return View(new List<Propietario>());
+    {
+        try
+        {
+            List<Propietario> listPropietarios = _repositorioPropietario.GetPropietarios();
+            return View(listPropietarios);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("An error occurred while getting propiertor: {Error}", ex.Message);
+            TempData["ErrorMessage"] = "Error al cargar los propietarios. Por favor intente de nuevo más tarde.";
+            return View(new List<Propietario>());
         }
     }
 
@@ -67,10 +70,11 @@ public class PropietarioController : Controller
     {
         if (Id == 0)
         {
+            TempData["ErrorMessage"] = "No se pudo dar de baja al propietario.";
         }
         else
         {
-            var res =_repositorioPropietario.BajaPropietario(Id);
+            var res = _repositorioPropietario.BajaPropietario(Id);
             if (res)
                 TempData["SuccessMessage"] = "Propietario dado de baja correctamente.";
             else
