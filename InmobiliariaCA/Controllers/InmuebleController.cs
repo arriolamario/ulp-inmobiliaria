@@ -75,7 +75,12 @@ public class InmuebleController : Controller
         }
         else
         {
-            _repositorioInmueble.BajaLogicaInmueble(Id);
+            if(_repositorioInmueble.BajaInmueble(Id)){
+                TempData["SuccessMessage"] = "Se elimino correctamente el inmueble";
+            }
+            else{
+                TempData["ErrorMessage"] = "No se puede eliminar el inmueble";
+            }
         }
         return RedirectToAction("Index");
     }

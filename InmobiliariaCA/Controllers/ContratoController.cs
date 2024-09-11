@@ -83,7 +83,7 @@ namespace InmobiliariaCA.Controllers {
         
         [HttpPost]
         public IActionResult Baja(int id) {
-            bool result = _repositorioContrato.BajaLogicaContrato(id);
+            bool result = _repositorioContrato.BajaContrato(id);
             if (result) {
                 return RedirectToAction(nameof(Index));
             } else {

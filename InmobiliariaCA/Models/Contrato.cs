@@ -35,10 +35,6 @@ public class Contrato {
     [Range(0, double.MaxValue, ErrorMessage = "La multa debe ser un valor positivo.")]
     public decimal? Multa { get; set; }
 
-    [Required]
-    [Column("estado")]
-    public bool Estado { get; set; } = true;
-
     [Required(ErrorMessage = "El usuario de creación es obligatorio.")]
     [ForeignKey("UsuarioCreacion")]
     public int Id_Usuario_Creacion { get; set; }

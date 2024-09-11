@@ -10,25 +10,26 @@
         <a href="@Url.Action("AltaEditar", "Propietario")" class="btn btn-success shadow-sm">Agregar Nuevo Propietario</a>
     </div>
     <div class="row">
-        @foreach (var propietario in Model) {
-            <div class="col-12 mb-4">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title text-white p-2" style="background-color: #2d94f5;">@propietario.Nombre @propietario.Apellido</h5>
-                        <p class="card-text"><strong>DNI:</strong> @propietario.Dni</p>
-                        <p class="card-text"><strong>Teléfono:</strong> @propietario.Telefono</p>
-                        <p class="card-text"><strong>Email:</strong> @propietario.Email</p>
-                        <p class="card-text"><strong>Dirección:</strong> @propietario.Direccion</p>
-                        <div class="d-flex justify-content-end">
-                            <a href="@Url.Action("Detalle", "Propietario", new { id = propietario.Id })" class="btn btn-info btn-sm mx-1 shadow-sm">Ver</a>
-                            @* <a href="@Url.Action("AltaEditar", "Propietario", new { id = propietario.Id })" class="btn btn-warning btn-sm mx-1 shadow-sm">Editar</a> *@
-                            @* <form asp-action="BajaLogica" method="post" class="d-inline">
-                                <input type="hidden" name="id" value="@propietario.Id" />
-                                <button type="submit" class="btn btn-danger btn-sm mx-1 shadow-sm" onclick="return confirm('¿Estás seguro de que deseas dar de baja a este inquilino?');">Borrar</button>
-                            </form> *@
+        @if (Model.Count() > 0) {
+            @foreach (var propietario in Model) {
+                <div class="col-12 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title text-white p-2" style="background-color: #2d94f5;">@propietario.Nombre @propietario.Apellido</h5>
+                            <p class="card-text"><strong>DNI:</strong> @propietario.Dni</p>
+                            <p class="card-text"><strong>Teléfono:</strong> @propietario.Telefono</p>
+                            <p class="card-text"><strong>Email:</strong> @propietario.Email</p>
+                            <p class="card-text"><strong>Dirección:</strong> @propietario.Direccion</p>
+                            <div class="d-flex justify-content-end">
+                                <a href="@Url.Action("Detalle", "Propietario", new { id = propietario.Id })" class="btn btn-info btn-sm mx-1 shadow-sm">Ver</a>
+                            </div>
                         </div>
                     </div>
                 </div>
+            }
+        } else {
+            <div class="alert alert-info" role="alert">
+                No existen propiestarios registrados.
             </div>
         }
     </div>

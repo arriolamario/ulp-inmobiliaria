@@ -69,7 +69,7 @@ public class InquilinoController: Controller {
 
     [HttpPost]
     public IActionResult BajaLogica(int id) {
-        var success = _repositorioInquilino.BajaLogicaInquilino(id);
+        var success = _repositorioInquilino.BajaInquilino(id);
         
         if (success) {
             TempData["SuccessMessage"] = "Inquilino dado de baja correctamente.";
