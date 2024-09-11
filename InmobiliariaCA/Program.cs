@@ -1,3 +1,5 @@
+using InmobiliariaCA.Repositorio;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration
@@ -15,6 +17,16 @@ if(builder.Environment.EnvironmentName == "Production")
 }
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+//Registro de servicios
+// Transient: Se crea una nueva instancia cada vez que se solicita.
+// Scoped: Se crea una instancia por cada solicitud HTTP.
+// Singleton: Se crea una sola instancia para toda la aplicación.
+builder.Services.AddScoped<IRepositorioContrato, RepositorioContrato>();
+builder.Services.AddScoped<IRepositorioInmueble, RepositorioInmueble>();
+builder.Services.AddScoped<IRepositorioInquilino, RepositorioInquilino>();
+builder.Services.AddScoped<IRepositorioPropietario, RepositorioPropietario>();
+builder.Services.AddScoped<IRepositorioTipos, RepositorioTipos>();
 
 
 var app = builder.Build();

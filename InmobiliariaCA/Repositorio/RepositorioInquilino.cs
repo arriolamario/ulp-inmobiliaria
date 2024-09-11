@@ -4,7 +4,8 @@ using InmobiliariaCA.Models;
 using MySql.Data.MySqlClient;
 using Microsoft.Extensions.Configuration;
 
-public class RepositorioInquilino : RepositorioBase {
+public class RepositorioInquilino : RepositorioBase, IRepositorioInquilino
+{
     public RepositorioInquilino(IConfiguration configuration) : base(configuration) {
     }
 
@@ -23,7 +24,7 @@ public class RepositorioInquilino : RepositorioBase {
                     from inquilino
                     where activo = 1;";
 
-        resultInquilinos = this.ExecuteReaderList<Inquilino>(query, (reader) => {
+        resultInquilinos = this.ExecuteReaderList<Inquilino>(query, (parameters) => {}, (reader) => {
             return new Inquilino()
             {
                 Apellido = reader["apellido"].ToString() ?? "",

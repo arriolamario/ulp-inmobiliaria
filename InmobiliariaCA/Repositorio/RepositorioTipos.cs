@@ -1,7 +1,7 @@
 namespace InmobiliariaCA.Repositorio;
 using InmobiliariaCA.Models;
 
-public class RepositorioTipos : RepositorioBase
+public class RepositorioTipos : RepositorioBase, IRepositorioTipos
 {
     public RepositorioTipos(IConfiguration configuration) : base(configuration)
     {
@@ -33,7 +33,9 @@ public class RepositorioTipos : RepositorioBase
                                 from tipo_inmueble
                                 where {nameof(TipoInmueble.Estado)} = 1;";
 
-        resultInmuebles = this.ExecuteReaderList<TipoInmueble>(query, (reader) =>  {
+        resultInmuebles = this.ExecuteReaderList<TipoInmueble>(query, 
+            (parameters) => {},
+            (reader) =>  {
             return new TipoInmueble()
             {
                 Id = reader.GetInt32(nameof(TipoInmueble.Id)),
@@ -139,7 +141,7 @@ public class RepositorioTipos : RepositorioBase
                                 from tipo_inmueble_uso
                                 where {nameof(TipoInmuebleUso.Estado)} = 1;";
 
-        result = this.ExecuteReaderList<TipoInmuebleUso>(query, (reader) =>  {
+        result = this.ExecuteReaderList<TipoInmuebleUso>(query, (parameters) => {}, (reader) =>  {
             return new TipoInmuebleUso()
             {
                 Id = reader.GetInt32(nameof(TipoInmuebleUso.Id)),
