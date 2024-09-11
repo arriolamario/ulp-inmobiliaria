@@ -11,5 +11,5 @@ public interface IRepositorioInquilino
     int InsertarInquilino(Inquilino inquilino);
     bool ActualizarInquilino(Inquilino inquilino);
     bool ExisteInquilinoPorDni(string dni);
-    bool BajaLogicaInquilino(int id);
+    bool BajaInquilino(int id);
 }
