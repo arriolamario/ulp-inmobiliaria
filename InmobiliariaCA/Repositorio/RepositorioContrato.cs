@@ -4,14 +4,15 @@ using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 using System;
 
-    public class RepositorioContrato : RepositorioBase {
+    public class RepositorioContrato : RepositorioBase, IRepositorioContrato
+    {
 
-         private RepositorioInmueble _repositorioInmueble;
-        private RepositorioInquilino _repositorioInquilino;
+        private IRepositorioInmueble _repositorioInmueble;
+        private IRepositorioInquilino _repositorioInquilino;
 
-        public RepositorioContrato(IConfiguration configuration) : base(configuration) {
-            _repositorioInmueble = new RepositorioInmueble(configuration);
-            _repositorioInquilino = new RepositorioInquilino(configuration);
+        public RepositorioContrato(IConfiguration configuration, IRepositorioInmueble repositorioInmueble, IRepositorioInquilino repositorioInquilino) : base(configuration) {
+            _repositorioInmueble = repositorioInmueble;
+            _repositorioInquilino = repositorioInquilino;
         }
 
         public List<Contrato> GetContratos() {
@@ -29,7 +30,7 @@ using System;
                                     {nameof(Contrato.Fecha_Actualizacion)}
                             from contrato;";
 
-            resultContratos = this.ExecuteReaderList<Contrato>(query, (reader) => {
+            resultContratos = this.ExecuteReaderList<Contrato>(query, (parameters) => {}, (reader) => {
                 var contrato = new Contrato() {
                     Id = int.Parse(reader["id"].ToString() ?? "0"),
                     Id_Inmueble = int.Parse(reader["id_inmueble"].ToString() ?? "0"),

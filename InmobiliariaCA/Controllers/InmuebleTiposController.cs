@@ -8,14 +8,12 @@ namespace InmobiliariaCA.Controllers;
 public class InmuebleTiposController : Controller
 {
     private readonly ILogger<HomeController> _logger;
-    private IConfiguration _Configuration;
-    private RepositorioTipos _repositorioTipos;
+    private IRepositorioTipos _repositorioTipos;
 
-    public InmuebleTiposController(ILogger<HomeController> logger, IConfiguration configuration)
+    public InmuebleTiposController(ILogger<HomeController> logger, IRepositorioTipos repositorioTipos)
     {
         _logger = logger;
-        _Configuration = configuration;
-        _repositorioTipos = new RepositorioTipos(_Configuration);
+        _repositorioTipos = repositorioTipos;
     }
 
     public IActionResult Index()

@@ -6,19 +6,23 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace InmobiliariaCA.Controllers {
     public class ContratoController : Controller {
-        private RepositorioContrato _repositorioContrato;
-        private RepositorioInquilino _repositorioInquilino;
-        private RepositorioInmueble _repositorioInmueble;
+        private IRepositorioContrato _repositorioContrato;
+        private IRepositorioInquilino _repositorioInquilino;
+        private IRepositorioInmueble _repositorioInmueble;
         private readonly ILogger<HomeController> _logger;
-        private IConfiguration _Configuration;
+        // private IConfiguration _Configuration;
 
-        public ContratoController(ILogger<HomeController> logger, IConfiguration configuration) {
+        public ContratoController(ILogger<HomeController> logger, 
+                        IRepositorioContrato repositorioContrato,
+                        IRepositorioInquilino repositorioInquilino,
+                        IRepositorioInmueble repositorioInmueble) 
+        {
             
             _logger = logger;
-            _Configuration = configuration;
-            _repositorioContrato = new RepositorioContrato(_Configuration);
-            _repositorioInquilino = new RepositorioInquilino(_Configuration);
-            _repositorioInmueble = new RepositorioInmueble(_Configuration);
+            //_Configuration = configuration;
+            _repositorioContrato = repositorioContrato;
+            _repositorioInquilino = repositorioInquilino;
+            _repositorioInmueble = repositorioInmueble;
         }
 
         // GET: Contrato        

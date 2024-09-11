@@ -1,14 +1,14 @@
 namespace InmobiliariaCA.Repositorio;
 using InmobiliariaCA.Models;
 
-public class RepositorioInmueble : RepositorioBase
+public class RepositorioInmueble : RepositorioBase, IRepositorioInmueble
 {
-    private RepositorioPropietario _repositorioPropietario;
-    private RepositorioTipos _repositorioTipos;
-    public RepositorioInmueble(IConfiguration configuration) : base(configuration)
+    private IRepositorioPropietario _repositorioPropietario;
+    private IRepositorioTipos _repositorioTipos;
+    public RepositorioInmueble(IConfiguration configuration, IRepositorioPropietario repositorioPropietario, IRepositorioTipos repositorioTipos) : base(configuration)
     {
-        _repositorioPropietario = new RepositorioPropietario(configuration);
-        _repositorioTipos = new RepositorioTipos(configuration);
+        _repositorioPropietario = repositorioPropietario;
+        _repositorioTipos = repositorioTipos;
     }
     public int AltaInmueble(Inmueble inmueble)
     {
@@ -62,7 +62,7 @@ public class RepositorioInmueble : RepositorioBase
                                 {nameof(Inmueble.Fecha_Actualizacion)}		
                                 from inmueble;";
 
-        resultInmuebles = this.ExecuteReaderList<Inmueble>(query, (reader) =>  {
+        resultInmuebles = this.ExecuteReaderList<Inmueble>(query, (parameters) => {}, (reader) =>  {
             return new Inmueble()
             {
                 Id = int.Parse(reader[nameof(Inmueble.Id)].ToString() ?? "0"),
@@ -94,6 +94,55 @@ public class RepositorioInmueble : RepositorioBase
         return resultInmuebles;
     }
 
+    public List<Inmueble> GetInmuebles(int idPropietario)
+    {
+        List<Inmueble> resultInmuebles = new List<Inmueble>();
+
+        string query = @$"select {nameof(Inmueble.Id)}, 
+                                {nameof(Inmueble.Direccion)},
+                                {nameof(Inmueble.Id_Tipo_Inmueble_Uso)},
+                                {nameof(Inmueble.Id_Tipo_Inmueble)},
+                                {nameof(Inmueble.Ambientes)},
+                                {nameof(Inmueble.Coordenada_Lat)}, 
+                                {nameof(Inmueble.Coordenada_Lon)}, 
+                                {nameof(Inmueble.Precio)},
+                                {nameof(Inmueble.Id_Propietario)},
+                                {nameof(Inmueble.Fecha_Creacion)},
+                                {nameof(Inmueble.Fecha_Actualizacion)}		
+                                from inmueble
+                                where {nameof(Inmueble.Id_Propietario)} = @{nameof(Inmueble.Id_Propietario)};";
+
+        resultInmuebles = this.ExecuteReaderList<Inmueble>(query, (parameters) => {}, (reader) =>  {
+            return new Inmueble()
+            {
+                Id = int.Parse(reader[nameof(Inmueble.Id)].ToString() ?? "0"),
+                Direccion = reader["direccion"].ToString() ?? "",
+                Id_Tipo_Inmueble_Uso = int.Parse(reader[nameof(Inmueble.Id_Tipo_Inmueble_Uso)].ToString() ?? "0"),
+                Id_Tipo_Inmueble = int.Parse(reader[nameof(Inmueble.Id_Tipo_Inmueble)].ToString() ?? "0"),
+                Ambientes = int.Parse(reader[nameof(Inmueble.Ambientes)].ToString() ?? "0"),
+                Coordenada_Lat = reader[nameof(Inmueble.Coordenada_Lat)].ToString() ?? "",
+                Coordenada_Lon = reader[nameof(Inmueble.Coordenada_Lon)].ToString() ?? "",
+                Precio = decimal.Parse(reader[nameof(Inmueble.Precio)].ToString() ?? "0"),
+                Id_Propietario = int.Parse(reader[nameof(Inmueble.Id_Propietario)].ToString() ?? "0"),
+                Fecha_Creacion = DateTime.Parse(reader[nameof(Inmueble.Fecha_Creacion)].ToString() ?? "0"),
+                Fecha_Actualizacion = DateTime.Parse(reader[nameof(Inmueble.Fecha_Actualizacion)].ToString() ?? "0")
+            };
+        }); 
+
+        List<int> propietariosIds = resultInmuebles.Select(x => x.Id_Propietario).ToList();
+
+        var propietarios = _repositorioPropietario.GetPropietarios(propietariosIds);
+        var tiposInmuebles = _repositorioTipos.GetTipoInmuebles();
+        var tiposInmueblesUsos = _repositorioTipos.GetTipoInmueblesUsos();
+
+        resultInmuebles.ForEach(x => {
+            x.Propietario = propietarios.FirstOrDefault(y => y.Id == x.Id_Propietario)?? new Propietario();
+            x.Tipo = tiposInmuebles.FirstOrDefault(y => y.Id == x.Id_Tipo_Inmueble);
+            x.Tipo_Uso = tiposInmueblesUsos.FirstOrDefault(y => y.Id == x.Id_Tipo_Inmueble_Uso);
+        });
+
+        return resultInmuebles;
+    }
     public List<Inmueble> GetInmueblesSinUso() {
         List<Inmueble> resultInmuebles = new List<Inmueble>();
     
@@ -104,12 +153,10 @@ public class RepositorioInmueble : RepositorioBase
                             i.{nameof(Inmueble.Precio)}
                       FROM inmueble i
                       LEFT JOIN contrato c ON c.id_inmueble = i.id 
-                          AND c.estado = 1 
                           AND c.fecha_hasta > CURDATE()
-                      WHERE i.estado = 1 
-                          AND c.id IS NULL;";
+                      WHERE c.id IS NULL;";
 
-           resultInmuebles = this.ExecuteReaderList<Inmueble>(query, (reader) => {
+           resultInmuebles = this.ExecuteReaderList<Inmueble>(query, (parameters) => {}, (reader) => {
            return new Inmueble() {
                     Id = int.Parse(reader[nameof(Inmueble.Id)].ToString() ?? "0"),
                     Direccion = reader["direccion"].ToString() ?? "",
