@@ -57,11 +57,10 @@ public class RepositorioInmueble : RepositorioBase
                                 {nameof(Inmueble.Coordenada_Lat)}, 
                                 {nameof(Inmueble.Coordenada_Lon)}, 
                                 {nameof(Inmueble.Precio)},
-                                {nameof(Inmueble.Estado)},
                                 {nameof(Inmueble.Id_Propietario)},
                                 {nameof(Inmueble.Fecha_Creacion)},
                                 {nameof(Inmueble.Fecha_Actualizacion)}		
-                                from inmueble where Estado = 1;";
+                                from inmueble;";
 
         resultInmuebles = this.ExecuteReaderList<Inmueble>(query, (reader) =>  {
             return new Inmueble()
@@ -74,7 +73,6 @@ public class RepositorioInmueble : RepositorioBase
                 Coordenada_Lat = reader[nameof(Inmueble.Coordenada_Lat)].ToString() ?? "",
                 Coordenada_Lon = reader[nameof(Inmueble.Coordenada_Lon)].ToString() ?? "",
                 Precio = decimal.Parse(reader[nameof(Inmueble.Precio)].ToString() ?? "0"),
-                Estado = int.Parse(reader[nameof(Inmueble.Estado)].ToString() ?? "0"),
                 Id_Propietario = int.Parse(reader[nameof(Inmueble.Id_Propietario)].ToString() ?? "0"),
                 Fecha_Creacion = DateTime.Parse(reader[nameof(Inmueble.Fecha_Creacion)].ToString() ?? "0"),
                 Fecha_Actualizacion = DateTime.Parse(reader[nameof(Inmueble.Fecha_Actualizacion)].ToString() ?? "0")
@@ -142,12 +140,10 @@ public class RepositorioInmueble : RepositorioBase
                                 {nameof(Inmueble.Coordenada_Lat)}, 
                                 {nameof(Inmueble.Coordenada_Lon)}, 
                                 {nameof(Inmueble.Precio)},
-                                {nameof(Inmueble.Estado)},
                                 {nameof(Inmueble.Id_Propietario)},
                                 {nameof(Inmueble.Fecha_Creacion)},
                                 {nameof(Inmueble.Fecha_Actualizacion)}		
-                                from inmueble where Estado = 1
-                                and {nameof(Inmueble.Id)} = @{nameof(Inmueble.Id)};";
+                                from inmueble where {nameof(Inmueble.Id)} = @{nameof(Inmueble.Id)};";
 
         result = this.ExecuteReader<Inmueble>(query, (parameters) => {
             parameters.AddWithValue($"@{nameof(Inmueble.Id)}", Id);
@@ -162,7 +158,6 @@ public class RepositorioInmueble : RepositorioBase
                 Coordenada_Lat = reader[nameof(Inmueble.Coordenada_Lat)].ToString() ?? "0",
                 Coordenada_Lon = reader[nameof(Inmueble.Coordenada_Lon)].ToString() ?? "0",
                 Precio = decimal.Parse(reader[nameof(Inmueble.Precio)].ToString() ?? "0"),
-                Estado = int.Parse(reader[nameof(Inmueble.Estado)].ToString() ?? "0"),
                 Id_Propietario = int.Parse(reader[nameof(Inmueble.Id_Propietario)].ToString() ?? "0"),
                 Fecha_Creacion = DateTime.Parse(reader[nameof(Inmueble.Fecha_Creacion)].ToString() ?? "0"),
                 Fecha_Actualizacion = DateTime.Parse(reader[nameof(Inmueble.Fecha_Actualizacion)].ToString() ?? "0")
@@ -184,10 +179,10 @@ public class RepositorioInmueble : RepositorioBase
         return result;
     }
 
-    public bool BajaLogicaInmueble(int id)
+    public bool BajaInmueble(int id)
     {
         bool result = false;
-        string query = @$"UPDATE inmueble SET {nameof(Inmueble.Estado)} = 0 WHERE {nameof(Inmueble.Id)} = @{nameof(Inmueble.Id)};";
+        string query = @$"delete from inmueble where {nameof(Inmueble.Id)} = @{nameof(Inmueble.Id)};";
         result = this.ExecuteNonQuery(query, (parameters) => {
                     parameters.AddWithValue($"@{nameof(Inmueble.Id)}", id);
                 }) > 0;

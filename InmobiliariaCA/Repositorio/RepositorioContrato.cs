@@ -25,11 +25,9 @@ using System;
                                     {nameof(Contrato.Monto_Alquiler)},
                                     {nameof(Contrato.Fecha_Finalizacion_Anticipada)},
                                     {nameof(Contrato.Multa)},
-                                    {nameof(Contrato.Estado)},
                                     {nameof(Contrato.Fecha_Creacion)},
                                     {nameof(Contrato.Fecha_Actualizacion)}
-                            from contrato
-                            where estado = 1;";
+                            from contrato;";
 
             resultContratos = this.ExecuteReaderList<Contrato>(query, (reader) => {
                 var contrato = new Contrato() {
@@ -41,7 +39,6 @@ using System;
                     Monto_Alquiler = decimal.Parse(reader["monto_alquiler"].ToString() ?? "0"),
                     Fecha_Finalizacion_Anticipada = reader["fecha_finalizacion_anticipada"] != DBNull.Value ? DateTime.Parse(reader["fecha_finalizacion_anticipada"].ToString() ?? "0") : (DateTime?)null,
                     Multa = reader["multa"] != DBNull.Value ? decimal.Parse(reader["multa"].ToString() ?? "0") : (decimal?)null,
-                    Estado = reader["estado"].ToString() == "1",
                     Fecha_Creacion = DateTime.Parse(reader["fecha_creacion"].ToString() ?? "0"),
                     Fecha_Actualizacion = DateTime.Parse(reader["fecha_actualizacion"].ToString() ?? "0")
                 };
@@ -67,7 +64,6 @@ using System;
                                     {nameof(Contrato.Monto_Alquiler)},
                                     {nameof(Contrato.Fecha_Finalizacion_Anticipada)},
                                     {nameof(Contrato.Multa)},
-                                    {nameof(Contrato.Estado)},
                                     {nameof(Contrato.Fecha_Creacion)},
                                     {nameof(Contrato.Fecha_Actualizacion)}
                               from contrato
@@ -83,7 +79,6 @@ using System;
                     Monto_Alquiler = decimal.Parse(reader["monto_alquiler"].ToString() ?? "0"),
                     Fecha_Finalizacion_Anticipada = reader["fecha_finalizacion_anticipada"] != DBNull.Value ? DateTime.Parse(reader["fecha_finalizacion_anticipada"].ToString() ?? "0") : (DateTime?)null,
                     Multa = reader["multa"] != DBNull.Value ? decimal.Parse(reader["multa"].ToString() ?? "0") : (decimal?)null,
-                    Estado = reader["estado"].ToString() == "1",
                     Fecha_Creacion = DateTime.Parse(reader["fecha_creacion"].ToString() ?? "0"),
                     Fecha_Actualizacion = DateTime.Parse(reader["fecha_actualizacion"].ToString() ?? "0")
                 };
@@ -169,10 +164,9 @@ using System;
             return result;
         }
 
-        public bool BajaLogicaContrato(int id) {
-            string query = @$"UPDATE contrato SET 
-                                {nameof(Contrato.Estado)} = 0
-                              WHERE {nameof(Contrato.Id)} = @{nameof(Contrato.Id)};";
+        public bool BajaContrato(int id) {
+            string query = @$"delete from contrato 
+                            where {nameof(Contrato.Id)} = @{nameof(Contrato.Id)};";
 
             bool result = 0 < this.ExecuteNonQuery(query, (parameters) => {
                 parameters.AddWithValue($"@{nameof(Contrato.Id)}", id);

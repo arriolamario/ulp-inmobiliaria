@@ -27,94 +27,110 @@ public class InmuebleTiposController : Controller
     }
 
     [HttpPost]
-    public IActionResult BajaLogica(int eliminarId, string eliminarTipo){
+    public IActionResult BajaLogica(int eliminarId, string eliminarTipo)
+    {
 
-        if(eliminarTipo == "tipoInmueble"){
-            if(!_repositorioTipos.ExisteRelacionTipoInmueble(eliminarId)){
-                if(_repositorioTipos.BajaTipoInmueble(eliminarId)){
-                    TempData["SuccessMessage"] = "Se elimino el tipo de inmueble correctamente.";
-                }
-                else{
-                    TempData["ErrorMessage"] = "No se puede eliminar ocurrio un error inesperado";
-                }
+        if (eliminarTipo == "tipoInmueble")
+        {
+            if (_repositorioTipos.BajaTipoInmueble(eliminarId))
+            {
+                TempData["SuccessMessage"] = "Se elimino el tipo de inmueble correctamente.";
             }
-            else{
-                TempData["ErrorMessage"] = "El tipo de inmueble no se puede eliminar, tiene registros relacionados.";
+            else
+            {
+                TempData["ErrorMessage"] = "No se puede eliminar el tipo de inmueble";
             }
         }
-        else if(eliminarTipo == "tipoInmuebleUso"){
-            if(!_repositorioTipos.ExisteRelacionTipoInmuebleUso(eliminarId)){
-                if(_repositorioTipos.BajaTipoInmuebleUso(eliminarId)){
-                    TempData["SuccessMessage"] = "Se elimino el tipo de inmueble uso correctamente.";
-                }
-                else{
-                    TempData["ErrorMessage"] = "No se puede eliminar ocurrio un error inesperado";
-                }
+        else if (eliminarTipo == "tipoInmuebleUso")
+        {
+            if (_repositorioTipos.BajaTipoInmuebleUso(eliminarId))
+            {
+                TempData["SuccessMessage"] = "Se elimino el tipo de inmueble uso correctamente.";
             }
-            else{
-                TempData["ErrorMessage"] = "El tipo de uso no se puede eliminar, tiene registros relacionados.";
+            else
+            {
+                TempData["ErrorMessage"] = "No se puede eliminar el tipo de inmueble uso";
             }
         }
         return Redirect("Index");
     }
 
     [HttpPost]
-    public IActionResult AltaEdicion(int altaEditarId, string altaEditarTipo, string descripcion){
+    public IActionResult AltaEdicion(int altaEditarId, string altaEditarTipo, string descripcion)
+    {
 
-        if(altaEditarTipo == "tipoInmueble" && altaEditarId == 0){
-            TipoInmueble tipoInmueble = new TipoInmueble(){
+        if (altaEditarTipo == "tipoInmueble" && altaEditarId == 0)
+        {
+            TipoInmueble tipoInmueble = new TipoInmueble()
+            {
                 Descripcion = descripcion
             };
             tipoInmueble.Id = _repositorioTipos.AltaTipoInmueble(tipoInmueble);
-            if(tipoInmueble.Id > 0){
+            if (tipoInmueble.Id > 0)
+            {
                 TempData["SuccessMessage"] = "Se agrego correctamente el Tipo de Inmueble";
             }
-            else{
+            else
+            {
                 TempData["ErrorMessage"] = "Ocurrio un error al agregar el tipo inmueble";
             }
         }
-        else if(altaEditarTipo == "tipoInmueble" && altaEditarId > 0){
+        else if (altaEditarTipo == "tipoInmueble" && altaEditarId > 0)
+        {
             var tipoInmueble = _repositorioTipos.GetTipoInmueble(altaEditarId);
-            if(tipoInmueble != null){
+            if (tipoInmueble != null)
+            {
                 tipoInmueble.Descripcion = descripcion;
-                if(_repositorioTipos.UpdateTipoInmueble(tipoInmueble)){
+                if (_repositorioTipos.UpdateTipoInmueble(tipoInmueble))
+                {
                     TempData["SuccessMessage"] = "Se actualizo el Tipo de inmueble";
                 }
-                else{
+                else
+                {
                     TempData["ErrorMessage"] = "No se actualizo el Tipo de inmueble";
 
                 }
             }
-            else{
+            else
+            {
                 TempData["ErrorMessage"] = "No existe el Tipo de Inmueble para actualizar";
             }
-            
+
         }
-        else if(altaEditarTipo == "tipoInmuebleUso" && altaEditarId == 0){
-            TipoInmuebleUso tipoInmuebleUso = new TipoInmuebleUso(){
+        else if (altaEditarTipo == "tipoInmuebleUso" && altaEditarId == 0)
+        {
+            TipoInmuebleUso tipoInmuebleUso = new TipoInmuebleUso()
+            {
                 Descripcion = descripcion
             };
             tipoInmuebleUso.Id = _repositorioTipos.AltaTipoInmuebleUso(tipoInmuebleUso);
-            if(tipoInmuebleUso.Id > 0){
+            if (tipoInmuebleUso.Id > 0)
+            {
                 TempData["SuccessMessage"] = "Se agrego correctamente el Tipo de Inmueble Uso";
             }
-            else{
+            else
+            {
                 TempData["ErrorMessage"] = "Ocurrio un error al agregar el Tipo Inmueble Uso";
             }
         }
-        else if(altaEditarTipo == "tipoInmuebleUso" && altaEditarId > 0){
+        else if (altaEditarTipo == "tipoInmuebleUso" && altaEditarId > 0)
+        {
             var tipoInmuebleUso = _repositorioTipos.GetTipoInmuebleUso(altaEditarId);
-            if(tipoInmuebleUso != null){
+            if (tipoInmuebleUso != null)
+            {
                 tipoInmuebleUso.Descripcion = descripcion;
-                if(_repositorioTipos.UpdateTipoInmuebleUso(tipoInmuebleUso)){
+                if (_repositorioTipos.UpdateTipoInmuebleUso(tipoInmuebleUso))
+                {
                     TempData["SuccessMessage"] = "Se actualizo el Tipo de Inmueble Uso";
                 }
-                else{
+                else
+                {
                     TempData["ErrorMessage"] = "No se actualizo el Tipo de Inmueble Uso";
 
                 }
             }
-            else{
+            else
+            {
                 TempData["ErrorMessage"] = "No existe el Tipo de Inmueble Uso para actualizar";
             }
         }
