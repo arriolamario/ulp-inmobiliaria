@@ -18,8 +18,7 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato
         _repositorioInquilino = repositorioInquilino;
     }
 
-    public List<Contrato> GetContratos()
-    {
+    public List<Contrato> GetContratos() {
         List<Contrato> resultContratos = new List<Contrato>();
 
         string query = @$"select {nameof(Contrato.Id)},
@@ -35,10 +34,8 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato
                                     {nameof(Contrato.Pagado)}
                             from contrato;";
 
-        resultContratos = this.ExecuteReaderList<Contrato>(query, (parameters) => { }, (reader) =>
-        {
-            var contrato = new Contrato()
-            {
+        resultContratos = this.ExecuteReaderList<Contrato>(query, (parameters) => { }, (reader) => {
+            var contrato = new Contrato() {
                 Id = int.Parse(reader[nameof(Contrato.Id)].ToString() ?? "0"),
                 Id_Inmueble = int.Parse(reader[nameof(Contrato.Id_Inmueble)].ToString() ?? "0"),
                 Id_Inquilino = int.Parse(reader[nameof(Contrato.Id_Inquilino)].ToString() ?? "0"),
@@ -62,8 +59,7 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato
         return resultContratos;
     }
 
-    public Contrato? GetContrato(int id)
-    {
+    public Contrato? GetContrato(int id) {
         Contrato? result = null;
 
         string query = @$"select {nameof(Contrato.Id)},
@@ -80,10 +76,8 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato
                               from contrato
                                  where {nameof(Contrato.Id)} = {id};";
 
-        result = this.ExecuteReader<Contrato>(query, (reader) =>
-        {
-            Contrato contrato = new Contrato()
-            {
+        result = this.ExecuteReader<Contrato>(query, (reader) => {
+            Contrato contrato = new Contrato() {
                 Id = int.Parse(reader[nameof(Contrato.Id)].ToString() ?? "0"),
                 Id_Inmueble = int.Parse(reader[nameof(Contrato.Id_Inmueble)].ToString() ?? "0"),
                 Id_Inquilino = int.Parse(reader[nameof(Contrato.Id_Inquilino)].ToString() ?? "0"),
@@ -105,8 +99,7 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato
         return result;
     }
 
-    public int InsertarContrato(Contrato contrato)
-    {
+    public int InsertarContrato(Contrato contrato) {
         string query = @$"INSERT INTO contrato (
                                 {nameof(Contrato.Id_Inmueble)},
                                 {nameof(Contrato.Id_Inquilino)},
@@ -133,8 +126,7 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato
                                 @{nameof(Contrato.Fecha_Actualizacion)});
                             SELECT LAST_INSERT_ID();";
 
-        int result = this.ExecuteNonQuery(query, (parameters) =>
-        {
+        int result = this.ExecuteNonQuery(query, (parameters) => {
             parameters.AddWithValue($"@{nameof(Contrato.Id_Inmueble)}", contrato.Id_Inmueble);
             parameters.AddWithValue($"@{nameof(Contrato.Id_Inquilino)}", contrato.Id_Inquilino);
             parameters.AddWithValue($"@{nameof(Contrato.Fecha_Desde)}", contrato.Fecha_Desde);
@@ -151,8 +143,7 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato
         return result;
     }
 
-    public int ActualizarContrato(Contrato contrato)
-    {
+    public int ActualizarContrato(Contrato contrato) {
         string query = @$"UPDATE contrato SET
                                 {nameof(Contrato.Id_Inmueble)} = @{nameof(Contrato.Id_Inmueble)},
                                 {nameof(Contrato.Id_Inquilino)} = @{nameof(Contrato.Id_Inquilino)},
@@ -165,8 +156,7 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato
                                 {nameof(Contrato.Fecha_Actualizacion)} = @{nameof(Contrato.Fecha_Actualizacion)}
                             WHERE {nameof(Contrato.Id)} = @{nameof(Contrato.Id)};";
 
-        int result = this.ExecuteNonQuery(query, (parameters) =>
-        {
+        int result = this.ExecuteNonQuery(query, (parameters) => {
             parameters.AddWithValue($"@{nameof(Contrato.Id)}", contrato.Id);
             parameters.AddWithValue($"@{nameof(Contrato.Id_Inmueble)}", contrato.Id_Inmueble);
             parameters.AddWithValue($"@{nameof(Contrato.Id_Inquilino)}", contrato.Id_Inquilino);
@@ -182,28 +172,24 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato
         return result;
     }
 
-    public int ActualizarContratoPagado(int Id, int pagado)
-    {
+    public int ActualizarContratoPagado(int Id, int pagado) {
         Console.WriteLine("Id actualiuzar contrato pagado: " + Id);
         string query = @$"UPDATE contrato SET
                                 {nameof(Contrato.Pagado)} = {pagado} 
                             WHERE {nameof(Contrato.Id)} = @{nameof(Contrato.Id)};";
 
-        int result = this.ExecuteNonQuery(query, (parameters) =>
-        {
+        int result = this.ExecuteNonQuery(query, (parameters) => {
             parameters.AddWithValue($"@{nameof(Contrato.Id)}", Id);
         });
 
         return result;
     }
 
-    public bool BajaContrato(int id)
-    {
+    public bool BajaContrato(int id) {
         string query = @$"delete from contrato 
                             where {nameof(Contrato.Id)} = @{nameof(Contrato.Id)};";
 
-        bool result = 0 < this.ExecuteNonQuery(query, (parameters) =>
-        {
+        bool result = 0 < this.ExecuteNonQuery(query, (parameters) => {
             parameters.AddWithValue($"@{nameof(Contrato.Id)}", id);
         });
 
