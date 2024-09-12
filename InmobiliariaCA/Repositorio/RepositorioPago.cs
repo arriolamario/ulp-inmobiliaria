@@ -8,9 +8,11 @@ namespace InmobiliariaCA.Repositorio;
 public class RepositorioPago : RepositorioBase {
 
     public RepositorioContrato _repositorioContrato;
+    //public RepositorioUsuario _repositorioUsuario;
 
     public RepositorioPago(IConfiguration configuration) : base(configuration) {
         _repositorioContrato = new RepositorioContrato(configuration);
+       //gi _repositorioUsuario = new RepositorioUsuario(configuration);
     }
 
     public List<Pago> GetPagos() {
@@ -30,7 +32,7 @@ public class RepositorioPago : RepositorioBase {
                                     FROM pago;";
 
                     resultPagos = this.ExecuteReaderList<Pago>(query, (reader) => {
-                        return new Pago() {
+                        var pago = new Pago() {
                             Id = int.Parse(reader["Id"].ToString() ?? "0"),
                             Contrato_Id = int.Parse(reader["Contrato_Id"].ToString() ?? "0"),
                             Numero_Pago = int.Parse(reader["Numero_Pago"].ToString() ?? "0"),
@@ -42,8 +44,14 @@ public class RepositorioPago : RepositorioBase {
                             Anulado_Por_Id = reader.IsDBNull(reader.GetOrdinal("Anulado_Por_Id")) ? (int?)null : int.Parse(reader["AnuladoPorId"].ToString() ?? "0"),
                             Fecha_Anulacion = reader.IsDBNull(reader.GetOrdinal("Fecha_Anulacion")) ? (DateTime?)null : DateTime.Parse(reader["FechaAnulacion"].ToString() ?? "0")
                         };
+
+                        // Cargar los objetos Contrato usando su ID
+                        pago.Contrato = _repositorioContrato.GetContrato(pago.Contrato_Id) ?? throw new InvalidOperationException("Contrato no se encuentra");
+
+                        return pago;
                     });
-                    return resultPagos;
+
+                     return resultPagos;
         
     }
 
@@ -63,18 +71,23 @@ public class RepositorioPago : RepositorioBase {
                         FROM pago
                          WHERE {nameof(Pago.Id)} = {Id};";
         result = this.ExecuteReader<Pago>(query, (reader) => {
-            return new Pago() {
-                Id = int.Parse(reader["Id"].ToString() ?? "0"),
-                Contrato_Id = int.Parse(reader["Contrato_Id"].ToString() ?? "0"),
-                Numero_Pago = int.Parse(reader["Numero_Pago"].ToString() ?? "0"),
-                Fecha_Pago = DateTime.Parse(reader["Fecha_Pago"].ToString() ?? "0"),
-                Detalle = reader["Detalle"].ToString() ?? "",
-                Importe = decimal.Parse(reader["Importe"].ToString() ?? "0"),
-                Estado = reader["Estado"].ToString() ?? "",
-                Creado_Por_Id = int.Parse(reader["Creado_Por_Id"].ToString() ?? "0"),
-                Anulado_Por_Id = reader.IsDBNull(reader.GetOrdinal("Anulado_Por_Id")) ? (int?)null : int.Parse(reader["AnuladoPorId"].ToString() ?? "0"),
-                Fecha_Anulacion = reader.IsDBNull(reader.GetOrdinal("Fecha_Anulacion")) ? (DateTime?)null : DateTime.Parse(reader["FechaAnulacion"].ToString() ?? "0")
-           };
+             var pago = new Pago() {
+                            Id = int.Parse(reader["Id"].ToString() ?? "0"),
+                            Contrato_Id = int.Parse(reader["Contrato_Id"].ToString() ?? "0"),
+                            Numero_Pago = int.Parse(reader["Numero_Pago"].ToString() ?? "0"),
+                            Fecha_Pago = DateTime.Parse(reader["Fecha_Pago"].ToString() ?? "0"),
+                            Detalle = reader["Detalle"].ToString() ?? "",
+                            Importe = decimal.Parse(reader["Importe"].ToString() ?? "0"),
+                            Estado = reader["Estado"].ToString() ?? "",
+                            Creado_Por_Id = int.Parse(reader["Creado_Por_Id"].ToString() ?? "0"),
+                            Anulado_Por_Id = reader.IsDBNull(reader.GetOrdinal("Anulado_Por_Id")) ? (int?)null : int.Parse(reader["AnuladoPorId"].ToString() ?? "0"),
+                            Fecha_Anulacion = reader.IsDBNull(reader.GetOrdinal("Fecha_Anulacion")) ? (DateTime?)null : DateTime.Parse(reader["FechaAnulacion"].ToString() ?? "0")
+                        };
+
+                        // Cargar los objetos Contrato usando su ID
+                        pago.Contrato = _repositorioContrato.GetContrato(pago.Contrato_Id) ?? throw new InvalidOperationException("Contrato no se encuentra");
+
+                        return pago;
         });
 
         return result;

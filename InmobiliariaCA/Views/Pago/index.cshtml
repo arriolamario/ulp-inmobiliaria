@@ -14,12 +14,11 @@
                 <div class="col-12 mb-4">
                     <div class="card shadow-sm">
                         <div class="card-body">
-                            <p class="card-text"><strong>Contrato ID:</strong> @pago.Contrato_Id</p>
-                            <p class="card-text"><strong>Número de Pago:</strong> @pago.Numero_Pago</p>
+                            <h5 class="card-title text-white p-2" style="background-color: #2d94f5;">Nro Pago: @pago.Numero_Pago</h5>
+                            <p class="card-text"><strong>Número de Contrato:</strong> @pago.Contrato_Id</p>
                             <p class="card-text"><strong>Fecha de Pago:</strong> @pago.Fecha_Pago.ToString("dd/MM/yyyy")</p>
                             <p class="card-text"><strong>Detalle:</strong> @pago.Detalle</p>
                             <p class="card-text"><strong>Importe:</strong> $@pago.Importe</p>
-                            <p class="card-text"><strong>Estado:</strong> @pago.Estado</p>
                             <p class="card-text"><strong>Creado Por:</strong> @pago.CreadoPor?.NombreCompleto</p>
                              @if (pago.Anulado_Por_Id.HasValue) {
                                 <p class="card-text"><strong>Anulado Por:</strong> @pago.AnuladoPor?.NombreCompleto</p>

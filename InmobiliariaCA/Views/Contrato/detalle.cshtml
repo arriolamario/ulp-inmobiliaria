@@ -114,7 +114,7 @@
                         </div>
                         <div class="mb-3">
                             <label for="Importe" class="form-label">Monto del Alquiler</label>
-                            <input type="text" class="form-control" id="Importe" name="Importe" value="1000" readonly>
+                            <input type="text" class="form-control" id="Importe" name="Importe" value="@Model.Monto_Alquiler" readonly>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -127,8 +127,25 @@
     </div>
 </div>
 
-<script>
-    function validarFormularioPago() {
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
+    <script>
+       $(document).ready(function () {
+            $('#botonConfirmarPago').click(function (event) {
+                event.preventDefault();
+
+                var precio = $('#Importe').val();
+                precio = precio.replace(',', '.');
+                $('#Importe').val(precio);
+
+                if (validarFormularioPago()) {
+                    $('#formPago').submit();
+                }
+            });
+        });
+
+        function validarFormularioPago() {
         // Obtén valores del formulario
         let fechaPago = document.getElementById('FechaPago').value;
         let detalle = document.getElementById('Detalle').value;
@@ -147,4 +164,5 @@
 
         return true; 
     }
-</script>
+    </script>
+}
