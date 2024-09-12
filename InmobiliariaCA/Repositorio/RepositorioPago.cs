@@ -23,7 +23,9 @@ public class RepositorioPago : RepositorioBase, IRepositorioPago {
                                     {nameof(Pago.Detalle)},
                                     {nameof(Pago.Importe)},
                                     {nameof(Pago.Estado)},
-                                    {nameof(Pago.Creado_Por_Id)}
+                                    {nameof(Pago.Creado_Por_Id)},
+                                    {nameof(Pago.Anulado_Por_Id)},
+                                    {nameof(Pago.Fecha_Anulacion)}
                                 FROM pago;";
 
                     resultPagos = this.ExecuteReaderList<Pago>(query, (parameters) => {}, (reader) =>
@@ -36,7 +38,9 @@ public class RepositorioPago : RepositorioBase, IRepositorioPago {
                             Detalle = reader[nameof(Pago.Detalle)].ToString() ?? "",
                             Importe = decimal.Parse(reader[nameof(Pago.Importe)].ToString() ?? "0"),
                             Estado = reader[nameof(Pago.Estado)].ToString() ?? "",
-                            Creado_Por_Id = int.Parse(reader[nameof(Pago.Creado_Por_Id)].ToString() ?? "0")
+                            Creado_Por_Id = int.Parse(reader[nameof(Pago.Creado_Por_Id)].ToString() ?? "0"),
+                            Anulado_Por_Id = reader[nameof(Pago.Anulado_Por_Id)] != DBNull.Value ? int.Parse(reader[nameof(Pago.Anulado_Por_Id)].ToString() ?? "0") : (int?)null,
+                            Fecha_Anulacion = reader[nameof(Pago.Fecha_Anulacion)] != DBNull.Value ? DateTime.Parse(reader[nameof(Pago.Fecha_Anulacion)].ToString() ?? "0") : (DateTime?)null
                         };
 
                         // Cargar los objetos Contrato usando su ID
@@ -58,7 +62,9 @@ public class RepositorioPago : RepositorioBase, IRepositorioPago {
                           {nameof(Pago.Detalle)},
                           {nameof(Pago.Importe)},
                           {nameof(Pago.Estado)},
-                          {nameof(Pago.Creado_Por_Id)}
+                          {nameof(Pago.Creado_Por_Id)},
+                          {nameof(Pago.Anulado_Por_Id)},
+                          {nameof(Pago.Fecha_Anulacion)}
                         FROM pago
                          WHERE {nameof(Pago.Id)} = {Id};";
         result = this.ExecuteReader<Pago>(query, (reader) => {
@@ -70,7 +76,10 @@ public class RepositorioPago : RepositorioBase, IRepositorioPago {
                             Detalle = reader[nameof(Pago.Detalle)].ToString() ?? "",
                             Importe = decimal.Parse(reader[nameof(Pago.Importe)].ToString() ?? "0"),
                             Estado = reader[nameof(Pago.Estado)].ToString() ?? "",
-                            Creado_Por_Id = int.Parse(reader[nameof(Pago.Creado_Por_Id)].ToString() ?? "0")
+                            Creado_Por_Id = int.Parse(reader[nameof(Pago.Creado_Por_Id)].ToString() ?? "0"),
+                            Anulado_Por_Id = reader[nameof(Pago.Anulado_Por_Id)] != DBNull.Value ? int.Parse(reader[nameof(Pago.Anulado_Por_Id)].ToString() ?? "0") : (int?)null,
+                            Fecha_Anulacion = reader[nameof(Pago.Fecha_Anulacion)] != DBNull.Value ? DateTime.Parse(reader[nameof(Pago.Fecha_Anulacion)].ToString() ?? "0") : (DateTime?)null
+                        
                         };
 
                         // Cargar los objetos Contrato usando su ID
@@ -109,12 +118,12 @@ public class RepositorioPago : RepositorioBase, IRepositorioPago {
             parameters.AddWithValue($"{nameof(Pago.Fecha_Pago)}", pago.Fecha_Pago);
             parameters.AddWithValue($"{nameof(Pago.Detalle)}", pago.Detalle);
             parameters.AddWithValue($"{nameof(Pago.Importe)}", pago.Importe);
-            parameters.AddWithValue($"{nameof(Pago.Estado)}", 1);
+            parameters.AddWithValue($"{nameof(Pago.Estado)}", "Pagado");
             parameters.AddWithValue($"{nameof(Pago.Creado_Por_Id)}", 1);
         });
 
         //_repositorioContrato.ActualizarContratoPagado(pago.Contrato_Id);
-         if (_repositorioContrato.ActualizarContratoPagado(pago.Contrato_Id) == 0) {
+         if (_repositorioContrato.ActualizarContratoPagado(pago.Contrato_Id, 1) == 0) {
                 throw new Exception("No se pudo actualizar el estado de pagado del contrato.");
         }
 
@@ -149,7 +158,9 @@ public class RepositorioPago : RepositorioBase, IRepositorioPago {
         return result;
     }
 
-    public bool AnularPago(int id, int anuladoPorId) {
+    public bool AnularPago(int id, int anuladoPorId, int contratoId) {
+        Console.WriteLine("Anulando el pago con ID: " + id + " por el usuario con ID: " + anuladoPorId + " en el contrato con ID: " + contratoId);
+
         string query = @$"UPDATE pago SET 
             {nameof(Pago.Estado)} = 'Anulado', 
             {nameof(Pago.Anulado_Por_Id)} = @{nameof(Pago.Anulado_Por_Id)}, 
@@ -160,6 +171,11 @@ public class RepositorioPago : RepositorioBase, IRepositorioPago {
             parameters.AddWithValue($"{nameof(Pago.Id)}", id);
             parameters.AddWithValue($"{nameof(Pago.Anulado_Por_Id)}", anuladoPorId);
         });
+
+        if (_repositorioContrato.ActualizarContratoPagado(contratoId, 0) == 0) {
+                throw new Exception("No se pudo anular el pagado del contrato.");
+        }
+
 
         return result;
     }

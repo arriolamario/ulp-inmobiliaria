@@ -7,11 +7,11 @@ using System;
 public interface IRepositorioContrato
 {
     List<Contrato> GetContratos();
-    Contrato? GetContrato(int id);
-    int InsertarContrato(Contrato contrato);
-    int ActualizarContrato(Contrato contrato);
-    bool BajaContrato(int id);
+    Contrato? GetContrato(int Id);
+    int InsertarContrato(Contrato Contrato);
+    int ActualizarContrato(Contrato Contrato);
+    bool BajaContrato(int Id);
 
-    int ActualizarContratoPagado(int Id);
+    int ActualizarContratoPagado(int Id, int Pagado);
 }
 

@@ -48,4 +48,19 @@ public class PagoController : Controller {
         }
         return RedirectToAction("Index");
     }
+
+    [HttpPost]
+    public IActionResult Anular(int Id, int IdAnulador, int IdContrato) {
+        
+        if (Id == 0) {
+            TempData["ErrorMessage"] = "No se pudo dar de baja al propietario.";
+        } else {
+            var res = _repositorioPago.AnularPago(Id, IdAnulador, IdContrato);
+            if (res)
+                TempData["SuccessMessage"] = "Propietario dado de baja correctamente.";
+            else
+                TempData["ErrorMessage"] = "No se pudo dar de baja al propietario.";
+        }
+        return RedirectToAction("Index");
+    }
 }

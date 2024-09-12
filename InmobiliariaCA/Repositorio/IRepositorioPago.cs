@@ -9,5 +9,5 @@ public interface IRepositorioPago
     int InsertarPago(Pago Pago);
     bool ActualizarPago(Pago Pago);
 
-    bool AnularPago(int Id, int IdAnulador);
+    bool AnularPago(int Id, int IdAnulador, int IdContrato);
 }

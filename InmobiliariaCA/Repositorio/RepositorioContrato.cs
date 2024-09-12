@@ -64,7 +64,6 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato
 
     public Contrato? GetContrato(int id)
     {
-        Console.WriteLine("GetContrato: " + id);
         Contrato? result = null;
 
         string query = @$"select {nameof(Contrato.Id)},
@@ -183,11 +182,11 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato
         return result;
     }
 
-    public int ActualizarContratoPagado(int Id)
+    public int ActualizarContratoPagado(int Id, int pagado)
     {
         Console.WriteLine("Id actualiuzar contrato pagado: " + Id);
         string query = @$"UPDATE contrato SET
-                                {nameof(Contrato.Pagado)} = 1 
+                                {nameof(Contrato.Pagado)} = {pagado} 
                             WHERE {nameof(Contrato.Id)} = @{nameof(Contrato.Id)};";
 
         int result = this.ExecuteNonQuery(query, (parameters) =>
