@@ -10,7 +10,6 @@ namespace InmobiliariaCA.Controllers {
         private IRepositorioInquilino _repositorioInquilino;
         private IRepositorioInmueble _repositorioInmueble;
         private readonly ILogger<HomeController> _logger;
-        // private IConfiguration _Configuration;
 
         public ContratoController(ILogger<HomeController> logger, 
                         IRepositorioContrato repositorioContrato,
@@ -19,7 +18,6 @@ namespace InmobiliariaCA.Controllers {
         {
             
             _logger = logger;
-            //_Configuration = configuration;
             _repositorioContrato = repositorioContrato;
             _repositorioInquilino = repositorioInquilino;
             _repositorioInmueble = repositorioInmueble;
@@ -61,23 +59,30 @@ namespace InmobiliariaCA.Controllers {
         }
 
         public IActionResult AltaEditar(int Id) {
-            ViewBag.Inquilinos = new SelectList(_repositorioInquilino.GetInquilinos(), "Id", "NombreCompletoDNI");
-            
-            var inmuebles = _repositorioInmueble.GetInmueblesSinUso();
-            ViewBag.Inmuebles = new SelectList(inmuebles, "Id", "NombreInmueble", "Precio");
-            ViewBag.InmueblesData = inmuebles.ToDictionary(i => i.Id.ToString(), i => i.Precio.ToString("0.##", CultureInfo.InvariantCulture));
+            ViewBag.Inquilinos = new SelectList(GetInquilinos(), "Id", "NombreCompletoDNI");
+            ViewBag.Inmuebles = GetInmueblesSelectList(Id == 0);
 
-            if (Id == 0) {                
-                return View();
+            if (Id == 0) {
+                return View(new Contrato());
             }
-            
-            return View(_repositorioContrato.GetContrato(Id));
+
+            var contrato = _repositorioContrato.GetContrato(Id);
+            return View(contrato);
+        }
+
+        private IEnumerable<Inquilino> GetInquilinos() {
+            return _repositorioInquilino.GetInquilinos();
+        }
+
+        private SelectList GetInmueblesSelectList(bool sinUso) {
+            var inmuebles = sinUso ? _repositorioInmueble.GetInmueblesSinUso() : _repositorioInmueble.GetInmuebles();
+            ViewBag.InmueblesData = inmuebles.ToDictionary(i => i.Id.ToString(), i => i.Precio.ToString("0.##", CultureInfo.InvariantCulture));
+            return new SelectList(inmuebles, "Id", "NombreInmueble");
         }
 
         [HttpPost]
         public IActionResult CrearActualizar(Contrato Contrato) {
-
-            Console.WriteLine("Contrato id: " + Contrato.Id);
+            
             if (Contrato.Id == 0) {
                 _repositorioContrato.InsertarContrato(Contrato);
                 TempData["SuccessMessage"] = "Contrato agregado correctamente.";

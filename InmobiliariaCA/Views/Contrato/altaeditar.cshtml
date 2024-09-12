@@ -13,13 +13,8 @@
             <form asp-action="CrearActualizar">
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        @*<div class="form-floating">
-                            @Html.DropDownListFor(m => m.Id_Inmueble, (SelectList)ViewBag.Inmuebles, "Seleccione un Inmueble", new { @class = "form-select", id = "id_inmueble" })
-                            <label for="Id_Inmueble">Inmueble</label>
-                            <span asp-validation-for="Id_Inmueble" class="text-danger"></span>
-                        </div>*@
                         <div class="form-floating">
-                            <select asp-for="Id_Inmueble" class="form-select" id="id_inmueble">
+                            <select asp-for="Id_Inmueble" class="form-select" id="id_inmueble" disabled="@(Model?.Id_Inmueble != 0)">
                                 <option value="">Seleccione un Inmueble</option>
                                 @foreach (var inmueble in ViewBag.Inmuebles) {
                                     <option value="@inmueble.Value" data-precio="@ViewBag.InmueblesData[inmueble.Value]">@inmueble.Text</option>
