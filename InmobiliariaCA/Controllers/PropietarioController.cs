@@ -7,19 +7,27 @@ namespace InmobiliariaCA.Controllers;
 public class PropietarioController : Controller
 {
     private readonly ILogger<HomeController> _logger;
-    private IConfiguration _Configuration;
-    private RepositorioPropietario _repositorioPropietario;
+    private IRepositorioPropietario _repositorioPropietario;
 
-    public PropietarioController(ILogger<HomeController> logger, IConfiguration configuration)
+    public PropietarioController(ILogger<HomeController> logger, IRepositorioPropietario repositorioPropietario)
     {
         _logger = logger;
-        _Configuration = configuration;
-        _repositorioPropietario = new RepositorioPropietario(_Configuration);
+        _repositorioPropietario = repositorioPropietario;
     }
 
     public IActionResult Index()
     {
-        return View(_repositorioPropietario.GetPropietarios());
+        try
+        {
+            List<Propietario> listPropietarios = _repositorioPropietario.GetPropietarios();
+            return View(listPropietarios);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError("An error occurred while getting propiertor: {Error}", ex.Message);
+            TempData["ErrorMessage"] = "Error al cargar los propietarios. Por favor intente de nuevo más tarde.";
+            return View(new List<Propietario>());
+        }
     }
 
     public IActionResult Detalle(int Id)
@@ -62,10 +70,11 @@ public class PropietarioController : Controller
     {
         if (Id == 0)
         {
+            TempData["ErrorMessage"] = "No se pudo dar de baja al propietario.";
         }
         else
         {
-            var res =_repositorioPropietario.BajaPropietario(Id);
+            var res = _repositorioPropietario.BajaPropietario(Id);
             if (res)
                 TempData["SuccessMessage"] = "Propietario dado de baja correctamente.";
             else

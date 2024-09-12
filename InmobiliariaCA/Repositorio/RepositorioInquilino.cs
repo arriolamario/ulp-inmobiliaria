@@ -4,7 +4,8 @@ using InmobiliariaCA.Models;
 using MySql.Data.MySqlClient;
 using Microsoft.Extensions.Configuration;
 
-public class RepositorioInquilino : RepositorioBase {
+public class RepositorioInquilino : RepositorioBase, IRepositorioInquilino
+{
     public RepositorioInquilino(IConfiguration configuration) : base(configuration) {
     }
 
@@ -20,10 +21,9 @@ public class RepositorioInquilino : RepositorioBase {
                             {nameof(Inquilino.Direccion)}, 
                             {nameof(Inquilino.Fecha_Creacion)}, 
                             {nameof(Inquilino.Fecha_Actualizacion)} 
-                    from inquilino
-                    where activo = 1;";
+                    from inquilino;";
 
-        resultInquilinos = this.ExecuteReaderList<Inquilino>(query, (reader) => {
+        resultInquilinos = this.ExecuteReaderList<Inquilino>(query, (parameters) => {}, (reader) => {
             return new Inquilino()
             {
                 Apellido = reader["apellido"].ToString() ?? "",
@@ -54,7 +54,7 @@ public class RepositorioInquilino : RepositorioBase {
                             {nameof(Inquilino.Fecha_Creacion)}, 
                             {nameof(Inquilino.Fecha_Actualizacion)} 
                     from inquilino
-                    where {nameof(Inquilino.Id)} = {Id} and activo = 1;";
+                    where {nameof(Inquilino.Id)} = {Id};";
 
         result = this.ExecuteReader<Inquilino>(query, (reader) => {
             return new Inquilino() {
@@ -130,7 +130,7 @@ public class RepositorioInquilino : RepositorioBase {
 
         string query = @$"SELECT * 
                         FROM inquilino
-                        WHERE {nameof(Inquilino.Dni)} = @Dni AND activo = 1;";
+                        WHERE {nameof(Inquilino.Dni)} = @Dni";
      
         existe = this.ExecuteReader<Inquilino>(query, (parameters) => {
             parameters.AddWithValue($"@{nameof(Inquilino.Dni)}", dni);
@@ -141,12 +141,10 @@ public class RepositorioInquilino : RepositorioBase {
         return existe;
     }
 
-    public bool BajaLogicaInquilino(int id) {
+    public bool BajaInquilino(int id) {
         bool result = false;
 
-        string query = @$"UPDATE inquilino SET 
-                            {nameof(Inquilino.Activo)} = 0
-                        WHERE {nameof(Inquilino.Id)} = @{nameof(Inquilino.Id)};";
+        string query = @$"delete from inquilino where {nameof(Inquilino.Id)} = @{nameof(Inquilino.Id)};";
 
         result = 0 < this.ExecuteNonQuery(query, (parameters) => {
             parameters.AddWithValue($"@{nameof(Inquilino.Id)}", id);

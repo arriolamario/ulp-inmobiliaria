@@ -8,19 +8,25 @@ namespace InmobiliariaCA.Controllers;
 public class InmuebleController : Controller
 {
     private readonly ILogger<HomeController> _logger;
-    private IConfiguration _Configuration;
-    private RepositorioInmueble _repositorioInmueble;
+    private IRepositorioInmueble _repositorioInmueble;
 
-    public InmuebleController(ILogger<HomeController> logger, IConfiguration configuration)
+    public InmuebleController(ILogger<HomeController> logger, 
+                        IRepositorioInmueble repositorioInmueble)
     {
         _logger = logger;
-        _Configuration = configuration;
-        _repositorioInmueble = new RepositorioInmueble(_Configuration);
+        _repositorioInmueble = repositorioInmueble;
     }
 
     public IActionResult Index()
     {
-        return View(_repositorioInmueble.GetInmuebles());
+        try {
+            return View(_repositorioInmueble.GetInmuebles());
+        } catch (Exception ex) {              
+                _logger.LogError("An error occurred while getting property: {Error}", ex.Message);
+               
+                TempData["ErrorMessage"] = "Error al cargar los inmuebles. Por favor intente de nuevo más tarde.";
+                return View(new List<Inmueble>());
+        }
     }
 
     public IActionResult Detalle(int Id)
@@ -68,7 +74,12 @@ public class InmuebleController : Controller
         }
         else
         {
-            _repositorioInmueble.BajaLogicaInmueble(Id);
+            if(_repositorioInmueble.BajaInmueble(Id)){
+                TempData["SuccessMessage"] = "Se elimino correctamente el inmueble";
+            }
+            else{
+                TempData["ErrorMessage"] = "No se puede eliminar el inmueble";
+            }
         }
         return RedirectToAction("Index");
     }

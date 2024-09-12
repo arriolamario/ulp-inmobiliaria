@@ -7,17 +7,22 @@ namespace InmobiliariaCA.Controllers;
 public class InquilinoController: Controller {
 
     private readonly ILogger<HomeController> _logger;
-    private IConfiguration _Configuration;
-    private RepositorioInquilino _repositorioInquilino;
+    private IRepositorioInquilino _repositorioInquilino;
 
-    public InquilinoController(ILogger<HomeController> logger, IConfiguration configuration) {
+    public InquilinoController(ILogger<HomeController> logger, IRepositorioInquilino repositorioInquilino) {
         _logger = logger;
-        _Configuration = configuration;
-        _repositorioInquilino = new RepositorioInquilino(_Configuration);
+        _repositorioInquilino = repositorioInquilino;
     }
 
-    public IActionResult Index() {        
-        return View(_repositorioInquilino.GetInquilinos());
+    public IActionResult Index() {      
+        try {  
+            return View(_repositorioInquilino.GetInquilinos());
+        } catch (Exception ex) {              
+                _logger.LogError("An error occurred while getting renter: {Error}", ex.Message);
+               
+                TempData["ErrorMessage"] = "Error al cargar los contratos. Por favor intente de nuevo más tarde.";
+                return View(new List<Inquilino>());
+            }
     }
 
     public IActionResult Detalle(int Id) {
@@ -62,7 +67,7 @@ public class InquilinoController: Controller {
 
     [HttpPost]
     public IActionResult BajaLogica(int id) {
-        var success = _repositorioInquilino.BajaLogicaInquilino(id);
+        var success = _repositorioInquilino.BajaInquilino(id);
         
         if (success) {
             TempData["SuccessMessage"] = "Inquilino dado de baja correctamente.";

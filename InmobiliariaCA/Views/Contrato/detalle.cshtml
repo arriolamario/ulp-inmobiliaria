@@ -8,10 +8,10 @@
         <div class="card-body">
             <dl class="row">
                 <dt class="col-sm-3">Inmueble</dt>
-                <dd class="col-sm-9">@Model.Inmueble?.Direccion</dd>
+                <dd class="col-sm-9">@Model.Inmueble?.NombreInmueble</dd>
 
                 <dt class="col-sm-3">Inquilino</dt>
-                <dd class="col-sm-9">@Model.Inquilino?.Nombre @Model.Inquilino?.Apellido</dd>
+                <dd class="col-sm-9">@Model.Inquilino?.Nombre @Model.Inquilino?.NombreCompletoDNI</dd>
 
                 <dt class="col-sm-3">Fecha Desde</dt>
                 <dd class="col-sm-9">@Model.Fecha_Desde.ToString("dd/MM/yyyy")</dd>

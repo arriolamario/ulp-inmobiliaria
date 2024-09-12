@@ -34,6 +34,7 @@ CREATE TABLE IF NOT EXISTS inquilino (
 CREATE TABLE IF NOT EXISTS tipo_inmueble (
     id INT AUTO_INCREMENT PRIMARY KEY,
     descripcion VARCHAR(100) NOT NULL,
+    estado INT DEFAULT 1,
 	fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
@@ -42,6 +43,7 @@ CREATE TABLE IF NOT EXISTS tipo_inmueble (
 CREATE TABLE IF NOT EXISTS tipo_inmueble_uso (
     id INT AUTO_INCREMENT PRIMARY KEY,
     descripcion VARCHAR(100) NOT NULL,
+    estado INT DEFAULT 1,
 	fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
@@ -78,7 +80,7 @@ CREATE TABLE IF NOT EXISTS usuario (
     fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-CREATE TABLE pago (
+CREATE TABLE IF NOT EXISTS pago (
     id int NOT NULL AUTO_INCREMENT,
     contrato_id int NOT NULL,
     numero_pago int NOT NULL UNIQUE,
@@ -116,7 +118,6 @@ CREATE TABLE IF NOT EXISTS contrato (
     FOREIGN KEY (id_usuario_creacion) REFERENCES usuario(id),
     FOREIGN KEY (id_usuario_finalizacion) REFERENCES usuario(id)
 );
-
 
 -- Insertar datos en la tabla 'propietario'
 INSERT INTO propietario (dni, nombre, apellido, telefono, email, direccion)

@@ -6,37 +6,58 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace InmobiliariaCA.Controllers {
     public class ContratoController : Controller {
-        private RepositorioContrato _repositorioContrato;
-        private RepositorioInquilino _repositorioInquilino;
-        private RepositorioInmueble _repositorioInmueble;
+        private IRepositorioContrato _repositorioContrato;
+        private IRepositorioInquilino _repositorioInquilino;
+        private IRepositorioInmueble _repositorioInmueble;
         private readonly ILogger<HomeController> _logger;
-        private IConfiguration _Configuration;
+        // private IConfiguration _Configuration;
 
-        public ContratoController(ILogger<HomeController> logger, IConfiguration configuration) {
+        public ContratoController(ILogger<HomeController> logger, 
+                        IRepositorioContrato repositorioContrato,
+                        IRepositorioInquilino repositorioInquilino,
+                        IRepositorioInmueble repositorioInmueble) 
+        {
             
             _logger = logger;
-            _Configuration = configuration;
-            _repositorioContrato = new RepositorioContrato(_Configuration);
-            _repositorioInquilino = new RepositorioInquilino(_Configuration);
-            _repositorioInmueble = new RepositorioInmueble(_Configuration);
+            //_Configuration = configuration;
+            _repositorioContrato = repositorioContrato;
+            _repositorioInquilino = repositorioInquilino;
+            _repositorioInmueble = repositorioInmueble;
         }
 
-        // GET: Contrato
+        // GET: Contrato        
         public IActionResult Index() {
-            return View(_repositorioContrato.GetContratos());
+            try {
+                var contratos = _repositorioContrato.GetContratos();
+                return View(contratos);
+            } catch (Exception ex) {              
+                _logger.LogError("An error occurred while getting contracts: {Error}", ex.Message);
+               
+                TempData["ErrorMessage"] = "Error al cargar los contratos. Por favor intente de nuevo más tarde.";
+                return View(new List<Contrato>());
+            }
         }
 
         // GET: Contrato/Details/5
         public IActionResult Detalle(int Id) {
-            Random random = new Random();
-            int numeroPago = random.Next(100000, 999999);
-            ViewBag.NumeroPago = numeroPago;
-            
-            var contrato = _repositorioContrato.GetContrato(Id);
-            if (contrato == null) {
-                return NotFound();
+            try {
+                Random random = new Random();
+                int numeroPago = random.Next(100000, 999999);
+                ViewBag.NumeroPago = numeroPago;
+                
+                var contrato = _repositorioContrato.GetContrato(Id);
+                if (contrato == null) {
+                    return NotFound();
+                }
+                
+                return View(contrato);
+            } catch (Exception ex) {              
+                _logger.LogError("An error occurred while getting contract: {Error}", ex.Message);
+               
+                TempData["ErrorMessage"] = "Error al cargar la vista de contrato. Por favor intente de nuevo más tarde.";
+                return View();
             }
-            return View(contrato);
+            
         }
 
         public IActionResult AltaEditar(int Id) {
@@ -70,7 +91,7 @@ namespace InmobiliariaCA.Controllers {
         
         [HttpPost]
         public IActionResult Baja(int id) {
-            bool result = _repositorioContrato.BajaLogicaContrato(id);
+            bool result = _repositorioContrato.BajaContrato(id);
             if (result) {
                 return RedirectToAction(nameof(Index));
             } else {

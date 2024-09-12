@@ -6,13 +6,11 @@ namespace InmobiliariaCA.Controllers;
 
 public class PagoController : Controller {
     private readonly ILogger<HomeController> _logger;
-    private IConfiguration _Configuration;
-    private RepositorioPago _repositorioPago;
+    private IRepositorioPago _repositorioPago;
 
-    public PagoController(ILogger<HomeController> logger, IConfiguration configuration) {
+    public PagoController(ILogger<HomeController> logger, IRepositorioPago repositorioPago, IConfiguration configuration) {
         _logger = logger;
-        _Configuration = configuration;
-        _repositorioPago = new RepositorioPago(_Configuration);
+        _repositorioPago = repositorioPago;
     }
 
     public IActionResult Index() {

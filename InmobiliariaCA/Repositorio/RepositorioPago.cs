@@ -5,13 +5,10 @@ using System.Collections.Generic;
 
 namespace InmobiliariaCA.Repositorio;
 
-public class RepositorioPago : RepositorioBase {
-
-    public RepositorioContrato _repositorioContrato;
-    //public RepositorioUsuario _repositorioUsuario;
-
-    public RepositorioPago(IConfiguration configuration) : base(configuration) {
-        _repositorioContrato = new RepositorioContrato(configuration);
+public class RepositorioPago : RepositorioBase, IRepositorioPago {
+    private IRepositorioContrato _repositorioContrato;
+    public RepositorioPago(IConfiguration configuration, IRepositorioContrato repositorioContrato) : base(configuration) {
+        _repositorioContrato = repositorioContrato;
        //gi _repositorioUsuario = new RepositorioUsuario(configuration);
     }
 
@@ -26,23 +23,20 @@ public class RepositorioPago : RepositorioBase {
                                     {nameof(Pago.Detalle)},
                                     {nameof(Pago.Importe)},
                                     {nameof(Pago.Estado)},
-                                    {nameof(Pago.Creado_Por_Id)},
-                                    {nameof(Pago.Anulado_Por_Id)},
-                                    {nameof(Pago.Fecha_Anulacion)}
-                                    FROM pago;";
+                                    {nameof(Pago.Creado_Por_Id)}
+                                FROM pago;";
 
-                    resultPagos = this.ExecuteReaderList<Pago>(query, (reader) => {
+                    resultPagos = this.ExecuteReaderList<Pago>(query, (parameters) => {}, (reader) =>
+                    {
                         var pago = new Pago() {
-                            Id = int.Parse(reader["Id"].ToString() ?? "0"),
-                            Contrato_Id = int.Parse(reader["Contrato_Id"].ToString() ?? "0"),
-                            Numero_Pago = int.Parse(reader["Numero_Pago"].ToString() ?? "0"),
-                            Fecha_Pago = DateTime.Parse(reader["Fecha_Pago"].ToString() ?? "0"),
-                            Detalle = reader["Detalle"].ToString() ?? "",
-                            Importe = decimal.Parse(reader["Importe"].ToString() ?? "0"),
-                            Estado = reader["Estado"].ToString() ?? "",
-                            Creado_Por_Id = int.Parse(reader["Creado_Por_Id"].ToString() ?? "0"),
-                            Anulado_Por_Id = reader.IsDBNull(reader.GetOrdinal("Anulado_Por_Id")) ? (int?)null : int.Parse(reader["AnuladoPorId"].ToString() ?? "0"),
-                            Fecha_Anulacion = reader.IsDBNull(reader.GetOrdinal("Fecha_Anulacion")) ? (DateTime?)null : DateTime.Parse(reader["FechaAnulacion"].ToString() ?? "0")
+                            Id = int.Parse(reader[nameof(Pago.Id)].ToString() ?? "0"),
+                            Contrato_Id = int.Parse(reader[nameof(Pago.Contrato_Id)].ToString() ?? "0"),
+                            Numero_Pago = int.Parse(reader[nameof(Pago.Numero_Pago)].ToString() ?? "0"),
+                            Fecha_Pago = DateTime.Parse(reader[nameof(Pago.Fecha_Pago)].ToString() ?? "0"),
+                            Detalle = reader[nameof(Pago.Detalle)].ToString() ?? "",
+                            Importe = decimal.Parse(reader[nameof(Pago.Importe)].ToString() ?? "0"),
+                            Estado = reader[nameof(Pago.Estado)].ToString() ?? "",
+                            Creado_Por_Id = int.Parse(reader[nameof(Pago.Creado_Por_Id)].ToString() ?? "0")
                         };
 
                         // Cargar los objetos Contrato usando su ID
@@ -51,8 +45,7 @@ public class RepositorioPago : RepositorioBase {
                         return pago;
                     });
 
-                     return resultPagos;
-        
+                    return resultPagos;        
     }
 
     public Pago? GetPago(int Id) {
@@ -65,23 +58,19 @@ public class RepositorioPago : RepositorioBase {
                           {nameof(Pago.Detalle)},
                           {nameof(Pago.Importe)},
                           {nameof(Pago.Estado)},
-                          {nameof(Pago.Creado_Por_Id)},
-                          {nameof(Pago.Anulado_Por_Id)},
-                          {nameof(Pago.Fecha_Anulacion)}
+                          {nameof(Pago.Creado_Por_Id)}
                         FROM pago
                          WHERE {nameof(Pago.Id)} = {Id};";
         result = this.ExecuteReader<Pago>(query, (reader) => {
              var pago = new Pago() {
-                            Id = int.Parse(reader["Id"].ToString() ?? "0"),
-                            Contrato_Id = int.Parse(reader["Contrato_Id"].ToString() ?? "0"),
-                            Numero_Pago = int.Parse(reader["Numero_Pago"].ToString() ?? "0"),
-                            Fecha_Pago = DateTime.Parse(reader["Fecha_Pago"].ToString() ?? "0"),
-                            Detalle = reader["Detalle"].ToString() ?? "",
-                            Importe = decimal.Parse(reader["Importe"].ToString() ?? "0"),
-                            Estado = reader["Estado"].ToString() ?? "",
-                            Creado_Por_Id = int.Parse(reader["Creado_Por_Id"].ToString() ?? "0"),
-                            Anulado_Por_Id = reader.IsDBNull(reader.GetOrdinal("Anulado_Por_Id")) ? (int?)null : int.Parse(reader["AnuladoPorId"].ToString() ?? "0"),
-                            Fecha_Anulacion = reader.IsDBNull(reader.GetOrdinal("Fecha_Anulacion")) ? (DateTime?)null : DateTime.Parse(reader["FechaAnulacion"].ToString() ?? "0")
+                            Id = int.Parse(reader[nameof(Pago.Id)].ToString() ?? "0"),
+                            Contrato_Id = int.Parse(reader[nameof(Pago.Contrato_Id)].ToString() ?? "0"),
+                            Numero_Pago = int.Parse(reader[nameof(Pago.Numero_Pago)].ToString() ?? "0"),
+                            Fecha_Pago = DateTime.Parse(reader[nameof(Pago.Fecha_Pago)].ToString() ?? "0"),
+                            Detalle = reader[nameof(Pago.Detalle)].ToString() ?? "",
+                            Importe = decimal.Parse(reader[nameof(Pago.Importe)].ToString() ?? "0"),
+                            Estado = reader[nameof(Pago.Estado)].ToString() ?? "",
+                            Creado_Por_Id = int.Parse(reader[nameof(Pago.Creado_Por_Id)].ToString() ?? "0")
                         };
 
                         // Cargar los objetos Contrato usando su ID

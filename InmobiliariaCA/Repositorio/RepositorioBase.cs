@@ -10,7 +10,7 @@ public abstract class RepositorioBase
         connectionString = configuration.GetConnectionString("DefaultConnection") ?? "";
     }
 
-    public List<T> ExecuteReaderList<T>(string query, Func<MySqlDataReader, T> mapper)
+    public List<T> ExecuteReaderList<T>(string query, Action<MySqlParameterCollection> parameters, Func<MySqlDataReader, T> mapper)
     {
         List<T> result = new List<T>();
 
@@ -20,6 +20,7 @@ public abstract class RepositorioBase
             connection.Open();
             using (MySqlCommand command = new MySqlCommand(query, connection))
             {
+                parameters(command.Parameters);
                 using (MySqlDataReader reader = command.ExecuteReader())
                 {
                     while (reader.Read())
@@ -104,7 +105,16 @@ public abstract class RepositorioBase
             using (MySqlCommand command = new MySqlCommand(query, connection))
             {
                 parameters(command.Parameters);
-                filasAfectadas = Convert.ToInt32(command.ExecuteNonQuery());
+                int result;
+                try
+                {
+                    result = command.ExecuteNonQuery();
+                }
+                catch (Exception)
+                {
+                    result = 0;                    
+                }
+                filasAfectadas = Convert.ToInt32(result);
             }
         }
 

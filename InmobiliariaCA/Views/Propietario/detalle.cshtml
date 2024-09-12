@@ -1,4 +1,7 @@
 @model InmobiliariaCA.Models.Propietario
+@{
+    System.Globalization.CultureInfo culturaArgentina = new System.Globalization.CultureInfo("es-AR");
+}
 
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -39,7 +42,36 @@
         </div>
     </div>
 </div>
-
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+          <h2 class="text-primary"><i class="fas fa-users"></i> Lista de Inmuebles</h2>
+        @* <a href="@Url.Action("AltaEditar", "Inmueble")" class="btn btn-success shadow-sm">Agregar Nuevo Inmueble</a> *@
+    </div>
+    <div class="row">
+        @if (Model.Inmuebles.Any()) {
+            @foreach (var inmueble in Model.Inmuebles) {
+                <div class="col-12 mb-4">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title text-white p-2" style="background-color: #2d94f5;">@inmueble.Direccion</h5>
+                            @if(inmueble.Propietario != null){
+                                <p class="card-text"><strong>Propietario:</strong> @inmueble.Propietario.Apellido @inmueble.Propietario.Nombre</p>
+                            }
+                            <p class="card-text"><strong>Precio: </strong> @inmueble.Precio.ToString("C", culturaArgentina)</p>
+                            <div class="d-flex justify-content-end">
+                                <a href="@Url.Action("Detalle", "Inmueble", new { id = inmueble.Id })" class="btn btn-info btn-sm mx-1 shadow-sm">Ver</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+         } else {
+            <div class="alert alert-info" role="alert">
+                No existen Inmuebles registrados.
+            </div>
+        }
+    </div>
+</div>
 <!-- Modal -->
 <div class="modal fade" id="modalBajaLogica" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">

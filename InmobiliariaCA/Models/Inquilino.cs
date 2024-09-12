@@ -37,8 +37,6 @@ public class Inquilino {
 
         public DateTime Fecha_Creacion { get; set; }
         public DateTime Fecha_Actualizacion { get; set; }
-        public int Activo { get; set; } = 1;
-
         [NotMapped]
         public string NombreCompletoDNI => $"{Dni} - {Nombre} {Apellido}";
   
