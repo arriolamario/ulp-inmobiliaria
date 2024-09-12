@@ -80,6 +80,24 @@ CREATE TABLE IF NOT EXISTS usuario (
     fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS pago (
+    id int NOT NULL AUTO_INCREMENT,
+    contrato_id int NOT NULL,
+    numero_pago int NOT NULL UNIQUE,
+    fecha_pago datetime NOT NULL,
+    detalle varchar(255) NOT NULL DEFAULT '',
+    importe decimal(10, 2) NOT NULL,
+    multa decimal(10, 2) NOT NULL,
+    estado varchar(50) NOT NULL DEFAULT '',
+    creado_por_id int NOT NULL,
+    anulado_por_id int DEFAULT NULL,
+    fecha_anulacion datetime DEFAULT NULL,
+    PRIMARY KEY (Id),
+    FOREIGN KEY (contrato_id) REFERENCES contrato (Id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (creado_por_id) REFERENCES usuario (Id) ON DELETE NO ACTION ON UPDATE CASCADE,
+    FOREIGN KEY (anulado_por_id) REFERENCES usuario (Id) ON DELETE NO ACTION ON UPDATE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS contrato (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_inmueble INT NOT NULL,
@@ -94,21 +112,11 @@ CREATE TABLE IF NOT EXISTS contrato (
     id_usuario_finalizacion INT,
     fecha_creacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     fecha_actualizacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    pagado BOOLEAN NOT NULL DEFAULT FALSE,
     FOREIGN KEY (id_inmueble) REFERENCES inmueble(id),
     FOREIGN KEY (id_inquilino) REFERENCES inquilino(id),
     FOREIGN KEY (id_usuario_creacion) REFERENCES usuario(id),
     FOREIGN KEY (id_usuario_finalizacion) REFERENCES usuario(id)
-);
-
-
-CREATE TABLE IF NOT EXISTS pago (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    contrato_id INT NOT NULL,
-    numero_pago INT NOT NULL,
-    fecha_pago DATE NOT NULL,
-    detalle VARCHAR(255),
-    importe decimal(10,2) NULL,
-    FOREIGN KEY (contrato_id) REFERENCES contrato(id)
 );
 
 -- Insertar datos en la tabla 'propietario'

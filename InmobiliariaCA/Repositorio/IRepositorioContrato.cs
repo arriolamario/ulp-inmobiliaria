@@ -11,5 +11,7 @@ public interface IRepositorioContrato
     int InsertarContrato(Contrato contrato);
     int ActualizarContrato(Contrato contrato);
     bool BajaContrato(int id);
+
+    int ActualizarContratoPagado(int Id);
 }
 

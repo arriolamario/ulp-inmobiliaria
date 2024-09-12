@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Globalization;
 
 namespace InmobiliariaCA.Models;
 public class Contrato {
@@ -48,8 +49,12 @@ public class Contrato {
     [DataType(DataType.DateTime)]
     public DateTime Fecha_Actualizacion { get; set; } = DateTime.Now;
 
+    public bool Pagado { get; set; } = false;
+
     public virtual Inmueble? Inmueble { get; set; }
     public virtual Inquilino? Inquilino { get; set; }
     public virtual Usuario? Usuario_Creacion { get; set; }
     public virtual Usuario? Usuario_Finalizacion { get; set; }
+    
+    public string MontoAlquilerString() => Monto_Alquiler.ToString("C", CultureInfo.CreateSpecificCulture("es-AR"));
 }

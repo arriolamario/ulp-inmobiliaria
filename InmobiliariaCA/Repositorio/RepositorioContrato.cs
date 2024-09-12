@@ -10,7 +10,9 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato
     private IRepositorioInmueble _repositorioInmueble;
     private IRepositorioInquilino _repositorioInquilino;
 
-    public RepositorioContrato(IConfiguration configuration, IRepositorioInmueble repositorioInmueble, IRepositorioInquilino repositorioInquilino) : base(configuration)
+    public RepositorioContrato(IConfiguration configuration, 
+        IRepositorioInmueble repositorioInmueble, 
+        IRepositorioInquilino repositorioInquilino) : base(configuration)
     {
         _repositorioInmueble = repositorioInmueble;
         _repositorioInquilino = repositorioInquilino;
@@ -29,27 +31,29 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato
                                     {nameof(Contrato.Fecha_Finalizacion_Anticipada)},
                                     {nameof(Contrato.Multa)},
                                     {nameof(Contrato.Fecha_Creacion)},
-                                    {nameof(Contrato.Fecha_Actualizacion)}
+                                    {nameof(Contrato.Fecha_Actualizacion)},                    
+                                    {nameof(Contrato.Pagado)}
                             from contrato;";
 
         resultContratos = this.ExecuteReaderList<Contrato>(query, (parameters) => { }, (reader) =>
         {
             var contrato = new Contrato()
             {
-                Id = int.Parse(reader["id"].ToString() ?? "0"),
-                Id_Inmueble = int.Parse(reader["id_inmueble"].ToString() ?? "0"),
-                Id_Inquilino = int.Parse(reader["id_inquilino"].ToString() ?? "0"),
-                Fecha_Desde = DateTime.Parse(reader["fecha_desde"].ToString() ?? "0"),
-                Fecha_Hasta = DateTime.Parse(reader["fecha_hasta"].ToString() ?? "0"),
-                Monto_Alquiler = decimal.Parse(reader["monto_alquiler"].ToString() ?? "0"),
-                Fecha_Finalizacion_Anticipada = reader["fecha_finalizacion_anticipada"] != DBNull.Value ? DateTime.Parse(reader["fecha_finalizacion_anticipada"].ToString() ?? "0") : (DateTime?)null,
-                Multa = reader["multa"] != DBNull.Value ? decimal.Parse(reader["multa"].ToString() ?? "0") : (decimal?)null,
-                Fecha_Creacion = DateTime.Parse(reader["fecha_creacion"].ToString() ?? "0"),
-                Fecha_Actualizacion = DateTime.Parse(reader["fecha_actualizacion"].ToString() ?? "0")
+                Id = int.Parse(reader[nameof(Contrato.Id)].ToString() ?? "0"),
+                Id_Inmueble = int.Parse(reader[nameof(Contrato.Id_Inmueble)].ToString() ?? "0"),
+                Id_Inquilino = int.Parse(reader[nameof(Contrato.Id_Inquilino)].ToString() ?? "0"),
+                Fecha_Desde = DateTime.Parse(reader[nameof(Contrato.Fecha_Desde)].ToString() ?? "0"),
+                Fecha_Hasta = DateTime.Parse(reader[nameof(Contrato.Fecha_Hasta)].ToString() ?? "0"),
+                Monto_Alquiler = decimal.Parse(reader[nameof(Contrato.Monto_Alquiler)].ToString() ?? "0"),
+                Fecha_Finalizacion_Anticipada = reader[nameof(Contrato.Fecha_Finalizacion_Anticipada)] != DBNull.Value ? DateTime.Parse(reader["fecha_finalizacion_anticipada"].ToString() ?? "0") : (DateTime?)null,
+                Multa = reader[nameof(Contrato.Multa)] != DBNull.Value ? decimal.Parse(reader[nameof(Contrato.Multa)].ToString() ?? "0") : (decimal?)null,
+                Fecha_Creacion = DateTime.Parse(reader[nameof(Contrato.Fecha_Creacion)].ToString() ?? "0"),
+                Fecha_Actualizacion = DateTime.Parse(reader[nameof(Contrato.Fecha_Actualizacion)].ToString() ?? "0"),
+                Pagado = reader[nameof(Contrato.Pagado)].ToString() == "1"
             };
 
             // Cargar los objetos Inmueble e Inquilino usando sus IDs
-            contrato.Inmueble = contrato.Inmueble = _repositorioInmueble.GetInmueble(contrato.Id_Inmueble) ?? throw new InvalidOperationException("Inmueble no se encuentra");
+            contrato.Inmueble = _repositorioInmueble.GetInmueble(contrato.Id_Inmueble) ?? throw new InvalidOperationException("Inmueble no se encuentra");
             contrato.Inquilino = _repositorioInquilino.GetInquilino(contrato.Id_Inquilino) ?? throw new InvalidOperationException("Inquilino no se encuentra");
 
             return contrato;
@@ -60,6 +64,7 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato
 
     public Contrato? GetContrato(int id)
     {
+        Console.WriteLine("GetContrato: " + id);
         Contrato? result = null;
 
         string query = @$"select {nameof(Contrato.Id)},
@@ -71,27 +76,29 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato
                                     {nameof(Contrato.Fecha_Finalizacion_Anticipada)},
                                     {nameof(Contrato.Multa)},
                                     {nameof(Contrato.Fecha_Creacion)},
-                                    {nameof(Contrato.Fecha_Actualizacion)}
+                                    {nameof(Contrato.Fecha_Actualizacion)},
+                                    {nameof(Contrato.Pagado)}
                               from contrato
-                              where {nameof(Contrato.Id)} = {id} and estado = 1;";
+                                 where {nameof(Contrato.Id)} = {id};";
 
         result = this.ExecuteReader<Contrato>(query, (reader) =>
         {
             Contrato contrato = new Contrato()
             {
-                Id = int.Parse(reader["id"].ToString() ?? "0"),
-                Id_Inmueble = int.Parse(reader["id_inmueble"].ToString() ?? "0"),
-                Id_Inquilino = int.Parse(reader["id_inquilino"].ToString() ?? "0"),
-                Fecha_Desde = DateTime.Parse(reader["fecha_desde"].ToString() ?? "0"),
-                Fecha_Hasta = DateTime.Parse(reader["fecha_hasta"].ToString() ?? "0"),
-                Monto_Alquiler = decimal.Parse(reader["monto_alquiler"].ToString() ?? "0"),
-                Fecha_Finalizacion_Anticipada = reader["fecha_finalizacion_anticipada"] != DBNull.Value ? DateTime.Parse(reader["fecha_finalizacion_anticipada"].ToString() ?? "0") : (DateTime?)null,
-                Multa = reader["multa"] != DBNull.Value ? decimal.Parse(reader["multa"].ToString() ?? "0") : (decimal?)null,
-                Fecha_Creacion = DateTime.Parse(reader["fecha_creacion"].ToString() ?? "0"),
-                Fecha_Actualizacion = DateTime.Parse(reader["fecha_actualizacion"].ToString() ?? "0")
+                Id = int.Parse(reader[nameof(Contrato.Id)].ToString() ?? "0"),
+                Id_Inmueble = int.Parse(reader[nameof(Contrato.Id_Inmueble)].ToString() ?? "0"),
+                Id_Inquilino = int.Parse(reader[nameof(Contrato.Id_Inquilino)].ToString() ?? "0"),
+                Fecha_Desde = DateTime.Parse(reader[nameof(Contrato.Fecha_Desde)].ToString() ?? "0"),
+                Fecha_Hasta = DateTime.Parse(reader[nameof(Contrato.Fecha_Hasta)].ToString() ?? "0"),
+                Monto_Alquiler = decimal.Parse(reader[nameof(Contrato.Monto_Alquiler)].ToString() ?? "0"),
+                Fecha_Finalizacion_Anticipada = reader[nameof(Contrato.Fecha_Finalizacion_Anticipada)] != DBNull.Value ? DateTime.Parse(reader["fecha_finalizacion_anticipada"].ToString() ?? "0") : (DateTime?)null,
+                Multa = reader[nameof(Contrato.Multa)] != DBNull.Value ? decimal.Parse(reader[nameof(Contrato.Multa)].ToString() ?? "0") : (decimal?)null,
+                Fecha_Creacion = DateTime.Parse(reader[nameof(Contrato.Fecha_Creacion)].ToString() ?? "0"),
+                Fecha_Actualizacion = DateTime.Parse(reader[nameof(Contrato.Fecha_Actualizacion)].ToString() ?? "0"),
+                Pagado = reader[nameof(Contrato.Pagado)].ToString() == "1"
             };
             // Cargar los objetos Inmueble e Inquilino usando sus IDs
-            contrato.Inmueble = contrato.Inmueble = _repositorioInmueble.GetInmueble(contrato.Id_Inmueble) ?? throw new InvalidOperationException("Inmueble no se encuentra");
+            contrato.Inmueble  = _repositorioInmueble.GetInmueble(contrato.Id_Inmueble) ?? throw new InvalidOperationException("Inmueble no se encuentra");
             contrato.Inquilino = _repositorioInquilino.GetInquilino(contrato.Id_Inquilino) ?? throw new InvalidOperationException("Inquilino no se encuentra");
 
             return contrato;
@@ -171,6 +178,21 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato
             parameters.AddWithValue($"@{nameof(Contrato.Multa)}", (object?)contrato.Multa ?? DBNull.Value);
             parameters.AddWithValue($"@{nameof(Contrato.Id_Usuario_Finalizacion)}", (object?)contrato.Id_Usuario_Finalizacion ?? DBNull.Value);
             parameters.AddWithValue($"@{nameof(Contrato.Fecha_Actualizacion)}", contrato.Fecha_Actualizacion);
+        });
+
+        return result;
+    }
+
+    public int ActualizarContratoPagado(int Id)
+    {
+        Console.WriteLine("Id actualiuzar contrato pagado: " + Id);
+        string query = @$"UPDATE contrato SET
+                                {nameof(Contrato.Pagado)} = 1 
+                            WHERE {nameof(Contrato.Id)} = @{nameof(Contrato.Id)};";
+
+        int result = this.ExecuteNonQuery(query, (parameters) =>
+        {
+            parameters.AddWithValue($"@{nameof(Contrato.Id)}", Id);
         });
 
         return result;
