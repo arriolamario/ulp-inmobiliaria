@@ -79,8 +79,24 @@ public class RepositorioUsuario : RepositorioBase, IRepositorioUsuario
         return usuario;
     }
 
-    public int InsertarContrato(Usuario usuario)
+    public int InsertarUsuario(Usuario usuario)
     {
+        string query = $@"INSERT INTO usuario
+                            ({nameof(Usuario.Email)},
+                            {nameof(Usuario.Password_Hash)},
+                            {nameof(Usuario.Nombre)},
+                            {nameof(Usuario.Apellido)},
+                            {nameof(Usuario.Avatar_Url)},
+                            {nameof(Usuario.Rol)})
+                        VALUES
+                            (@{nameof(Usuario.Email)},
+                            @{nameof(Usuario.Password_Hash)},
+                            @{nameof(Usuario.Nombre)},
+                            @{nameof(Usuario.Apellido)},
+                            @{nameof(Usuario.Avatar_Url)},
+                            @{nameof(Usuario.Rol)});";
+        
+        
         return 0;
     }
 

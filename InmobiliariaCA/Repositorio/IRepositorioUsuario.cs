@@ -8,7 +8,7 @@ public interface IRepositorioUsuario
 {
     public List<Usuario> GetUsuarios();
     public Usuario? GetUsuario(int Id);
-    public int InsertarContrato(Usuario usuario);
+    public int InsertarUsuario(Usuario usuario);
     public int ActualizarUsuario(Usuario usuario);
     public bool BajaUsuario(int Id);
 }
