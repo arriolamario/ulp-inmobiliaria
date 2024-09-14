@@ -31,7 +31,9 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato
                                     {nameof(Contrato.Multa)},
                                     {nameof(Contrato.Fecha_Creacion)},
                                     {nameof(Contrato.Fecha_Actualizacion)},                    
-                                    {nameof(Contrato.Pagado)}
+                                    {nameof(Contrato.Pagado)},
+                                    {nameof(Contrato.Cantidad_Cuotas)},
+                                    {nameof(Contrato.Cuotas_Pagas)}
                             from contrato;";
 
         resultContratos = this.ExecuteReaderList<Contrato>(query, (parameters) => { }, (reader) => {
@@ -46,7 +48,9 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato
                 Multa = reader[nameof(Contrato.Multa)] != DBNull.Value ? decimal.Parse(reader[nameof(Contrato.Multa)].ToString() ?? "0") : (decimal?)null,
                 Fecha_Creacion = DateTime.Parse(reader[nameof(Contrato.Fecha_Creacion)].ToString() ?? "0"),
                 Fecha_Actualizacion = DateTime.Parse(reader[nameof(Contrato.Fecha_Actualizacion)].ToString() ?? "0"),
-                Pagado = reader[nameof(Contrato.Pagado)].ToString() == "1"
+                Pagado = reader[nameof(Contrato.Pagado)].ToString() == "1",
+                Cantidad_Cuotas = int.Parse(reader[nameof(Contrato.Cantidad_Cuotas)].ToString() ?? "0"),
+                Cuotas_Pagas = int.Parse(reader[nameof(Contrato.Cuotas_Pagas)].ToString() ?? "0")
             };
 
             // Cargar los objetos Inmueble e Inquilino usando sus IDs
@@ -62,7 +66,7 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato
     public Contrato? GetContrato(int id) {
         Contrato? result = null;
 
-        string query = @$"select {nameof(Contrato.Id)},
+        string query = @$"select  {nameof(Contrato.Id)},
                                     {nameof(Contrato.Id_Inmueble)},
                                     {nameof(Contrato.Id_Inquilino)},
                                     {nameof(Contrato.Fecha_Desde)},
@@ -71,8 +75,10 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato
                                     {nameof(Contrato.Fecha_Finalizacion_Anticipada)},
                                     {nameof(Contrato.Multa)},
                                     {nameof(Contrato.Fecha_Creacion)},
-                                    {nameof(Contrato.Fecha_Actualizacion)},
-                                    {nameof(Contrato.Pagado)}
+                                    {nameof(Contrato.Fecha_Actualizacion)},                    
+                                    {nameof(Contrato.Pagado)},
+                                    {nameof(Contrato.Cantidad_Cuotas)},
+                                    {nameof(Contrato.Cuotas_Pagas)}
                               from contrato
                                  where {nameof(Contrato.Id)} = {id};";
 
@@ -88,7 +94,9 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato
                 Multa = reader[nameof(Contrato.Multa)] != DBNull.Value ? decimal.Parse(reader[nameof(Contrato.Multa)].ToString() ?? "0") : (decimal?)null,
                 Fecha_Creacion = DateTime.Parse(reader[nameof(Contrato.Fecha_Creacion)].ToString() ?? "0"),
                 Fecha_Actualizacion = DateTime.Parse(reader[nameof(Contrato.Fecha_Actualizacion)].ToString() ?? "0"),
-                Pagado = reader[nameof(Contrato.Pagado)].ToString() == "1"
+                Pagado = reader[nameof(Contrato.Pagado)].ToString() == "1",
+                Cantidad_Cuotas = int.Parse(reader[nameof(Contrato.Cantidad_Cuotas)].ToString() ?? "0"),
+                Cuotas_Pagas = int.Parse(reader[nameof(Contrato.Cuotas_Pagas)].ToString() ?? "0")
             };
             // Cargar los objetos Inmueble e Inquilino usando sus IDs
             contrato.Inmueble  = _repositorioInmueble.GetInmueble(contrato.Id_Inmueble) ?? throw new InvalidOperationException("Inmueble no se encuentra");
@@ -111,7 +119,8 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato
                                 {nameof(Contrato.Id_Usuario_Creacion)},
                                 {nameof(Contrato.Id_Usuario_Finalizacion)},
                                 {nameof(Contrato.Fecha_Creacion)},
-                                {nameof(Contrato.Fecha_Actualizacion)})
+                                {nameof(Contrato.Fecha_Actualizacion)},
+                                {nameof(Contrato.Cantidad_Cuotas)})
                             VALUES(
                                 @{nameof(Contrato.Id_Inmueble)},
                                 @{nameof(Contrato.Id_Inquilino)},
@@ -123,7 +132,8 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato
                                 @{nameof(Contrato.Id_Usuario_Creacion)},
                                 @{nameof(Contrato.Id_Usuario_Finalizacion)},
                                 @{nameof(Contrato.Fecha_Creacion)},
-                                @{nameof(Contrato.Fecha_Actualizacion)});
+                                @{nameof(Contrato.Fecha_Actualizacion)},
+                                @{nameof(Contrato.Cantidad_Cuotas)});
                             SELECT LAST_INSERT_ID();";
 
         int result = this.ExecuteNonQuery(query, (parameters) => {
@@ -138,6 +148,7 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato
             parameters.AddWithValue($"@{nameof(Contrato.Id_Usuario_Finalizacion)}", 2);// (object?)contrato.Id_Usuario_Finalizacion ?? DBNull.Value);
             parameters.AddWithValue($"@{nameof(Contrato.Fecha_Creacion)}", contrato.Fecha_Creacion);
             parameters.AddWithValue($"@{nameof(Contrato.Fecha_Actualizacion)}", contrato.Fecha_Actualizacion);
+            parameters.AddWithValue($"@{nameof(Contrato.Cantidad_Cuotas)}", CantidadCuotas(contrato));
         });
 
         return result;
@@ -175,8 +186,9 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato
     public int ActualizarContratoPagado(int Id, int pagado) {
         Console.WriteLine("Id actualiuzar contrato pagado: " + Id);
         string query = @$"UPDATE contrato SET
-                                {nameof(Contrato.Pagado)} = {pagado} 
-                            WHERE {nameof(Contrato.Id)} = @{nameof(Contrato.Id)};";
+                                {nameof(Contrato.Pagado)} = {pagado}
+                            
+                            WHERE {nameof(Contrato.Id)} = @{nameof(Contrato.Id)} AND Cuotas_Pagas < Cantidad_Cuotas;";
 
         int result = this.ExecuteNonQuery(query, (parameters) => {
             parameters.AddWithValue($"@{nameof(Contrato.Id)}", Id);
@@ -195,5 +207,11 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato
 
         return result;
     }
+
+    private int CantidadCuotas(Contrato contrato) {
+        int meses = ((contrato.Fecha_Hasta.Year - contrato.Fecha_Desde.Year) * 12) + contrato.Fecha_Hasta.Month - contrato.Fecha_Desde.Month;
+        return Math.Max(meses, 1);
+    }
+
 }
 

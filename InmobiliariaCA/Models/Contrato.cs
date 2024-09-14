@@ -18,11 +18,11 @@ public class Contrato {
 
     [Required(ErrorMessage = "La fecha de inicio es obligatoria.")]
     [DataType(DataType.Date)]
-    public DateTime Fecha_Desde { get; set; }
+    public DateTime Fecha_Desde { get; set; } = DateTime.Today;
 
     [Required(ErrorMessage = "La fecha de finalización es obligatoria.")]
     [DataType(DataType.Date)]
-       public DateTime Fecha_Hasta { get; set; }
+    public DateTime Fecha_Hasta { get; set; } = DateTime.Today;
 
     [Required(ErrorMessage = "El monto del alquiler es obligatorio.")]
     [Column("monto_alquiler", TypeName = "decimal(10, 2)")]
@@ -49,6 +49,9 @@ public class Contrato {
     [DataType(DataType.DateTime)]
     public DateTime Fecha_Actualizacion { get; set; } = DateTime.Now;
 
+    public int Cantidad_Cuotas { get; set; }
+
+    public int Cuotas_Pagas { get; set; }
     public bool Pagado { get; set; } = false;
 
     public virtual Inmueble? Inmueble { get; set; }

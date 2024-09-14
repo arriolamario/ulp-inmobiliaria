@@ -36,12 +36,12 @@
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label asp-for="Fecha_Desde" class="form-label">Fecha Desde</label>
-                        <input asp-for="Fecha_Desde" type="date" class="form-control" />
+                        <input asp-for="Fecha_Desde" type="date" class="form-control"/>
                         <span asp-validation-for="Fecha_Desde" class="text-danger"></span>
                     </div>
                     <div class="col-md-6">
                         <label asp-for="Fecha_Hasta" class="form-label">Fecha Hasta</label>
-                        <input asp-for="Fecha_Hasta" type="date" class="form-control" />
+                        <input asp-for="Fecha_Hasta" type="date" class="form-control"/>
                         <span asp-validation-for="Fecha_Hasta" class="text-danger"></span>
                     </div>
                 </div>
@@ -84,6 +84,7 @@
 
 @section Scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
     <script>
         $(document).ready(function () {            
@@ -91,6 +92,34 @@
                 var precio = $(this).find('option:selected').attr('data-precio');
                 precio = precio.replace(',', '.');
                 $('#Monto_Alquiler').val(precio);
+            });
+
+            var today = new Date().toISOString().split('T')[0];
+            $('#Fecha_Desde').attr('min', today);
+            $('#Fecha_Hasta').change(function() {
+                var fechaDesde = $('#Fecha_Desde').val();
+                var fechaHasta = $(this).val();
+                
+                if (fechaDesde && fechaHasta && fechaHasta < fechaDesde) {
+                    alert('La fecha de finalización debe ser posterior a la fecha de inicio.');
+                    $(this).val('');
+                }
+            });
+            $('#Fecha_Desde').change(function() {
+                var fechaDesde = $(this).val();
+                var fechaHasta = $('#Fecha_Hasta').val();
+                var fechaDesde = $(this).val();
+                var fechaActual = new Date().toISOString().split('T')[0];
+                
+                if (fechaDesde < fechaActual) {
+                    alert('La fecha de inicio no puede ser menor que la fecha actual.');
+                    $(this).val(today); // Resetear al valor mínimo permitido
+                }
+                
+                if (fechaDesde && fechaHasta && fechaHasta < fechaDesde) {
+                    alert('La fecha de finalización debe ser posterior a la fecha de inicio.');
+                    $('#Fecha_Hasta').val('');
+                }
             });
         });
     </script>
