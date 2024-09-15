@@ -12,6 +12,7 @@ public class Usuario
     }
     public Usuario(UsuarioAltaEditarViewModel usuario)
     {
+        this.Id = usuario.Id;
         this.Apellido = usuario.Apellido;
         this.Email = usuario.Email;
         this.Nombre = usuario.Nombre;
