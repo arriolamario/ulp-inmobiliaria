@@ -6,6 +6,17 @@ namespace InmobiliariaCA.Models;
 
 public class Usuario
 {
+    public Usuario()
+    {
+        
+    }
+    public Usuario(UsuarioAltaEditarViewModel usuario)
+    {
+        this.Apellido = usuario.Apellido;
+        this.Email = usuario.Email;
+        this.Nombre = usuario.Nombre;
+        this.Rol = usuario.Rol;
+    }
     public int Id { get; set; }
     public string Email { get; set; } = "";
     public string Password_Hash { get; set; } = "";

@@ -1,20 +1,8 @@
-@model InmobiliariaCA.Models.Usuario
+@model InmobiliariaCA.Models.UsuarioAltaEditarViewModel
 
 @{
     ViewData["Title"] = "Formulario de Registro";
 }
-<h2>Cargar y Recortar Avatar</h2>
-
-<form method="post" action="UploadAvatar" enctype="multipart/form-data">
-    <input type="file" id="avatarInput" name="avatar" accept="image/*" />
-    <div>
-        <img id="avatarImg" />
-    </div>
-    <button type="submit" id="cropButton">Subir Avatar</button>
-
-    <input type="hidden" id="cropData" name="CropData" />
-</form>
-
 
 <div class="container mt-5">
     <div class="card shadow-sm">
@@ -23,11 +11,27 @@
         </div>
         <div class="card-body">
            
-            <form asp-action="CrearActualizar">
+            <form asp-action="AltaEditar">
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <input asp-for="Nombre" class="form-control" placeholder="Nombre")">
+                            <input type="email" asp-for="Email" class="form-control" placeholder="Email")">
+                            <label asp-for="Email">Email</label>
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-floating">
+                            @Html.DropDownListFor(m => m.Rol, (SelectList)ViewBag.Roles, "", new { @class = "form-select", id = "Rol" })
+                            <label for="Rol">Rol</label>
+                            <span asp-validation-for="Rol" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input asp-for="Nombre" class="form-control" placeholder="Nombre">
                             <label asp-for="Nombre">Nombre</label>
                             <span asp-validation-for="Nombre" class="text-danger"></span>
                         </div>
@@ -40,120 +44,22 @@
                         </div>
                     </div>
                 </div>
-                <div class="row mb-3">
-                    @* <div class="col-md-6">
-                        <div class="form-floating">
-                            <input asp-for="Dni" class="form-control" placeholder="DNI" readonly="@(Model != null && Model.Id != 0)">
-                            <label asp-for="Dni">DNI</label>
-                            <span asp-validation-for="Dni" class="text-danger"></span>
-                        </div>
-                    </div> *@
-                    <div class="col-md-6">
-                        <div class="form-floating">
-                            <input asp-for="Email" class="form-control" placeholder="Email">
-                            <label asp-for="Email">Email</label>
-                            <span asp-validation-for="Email" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    @* <div class="col-md-4">
-                        <div class="form-floating">
-                            <input asp-for="TelefonoArea" class="form-control" placeholder="Área">
-                            <label asp-for="TelefonoArea">Área</label>
-                            <span asp-validation-for="TelefonoArea" class="text-danger"></span>
-                        </div>
-                    </div> *@
-                    @* <div class="col-md-8">
-                        <div class="form-floating">
-                            <input asp-for="TelefonoNumero" class="form-control" placeholder="Número">
-                            <label asp-for="TelefonoNumero">Número</label>
-                            <span asp-validation-for="TelefonoNumero" class="text-danger"></span>
-                        </div>
-                    </div> *@
-                </div>
-                <div class="mb-3">
-                    @* <div class="form-floating">
-                        <input asp-for="Direccion" class="form-control" placeholder="Dirección">
-                        <label asp-for="Direccion">Dirección</label>
-                        <span asp-validation-for="Direccion" class="text-danger"></span>
-                    </div> *@
-                </div>
-
                 <input type="hidden" asp-for="Id" />
-
-                <div class="d-flex justify-content-between">
+               <div class="d-flex justify-content-between">
                     <a href="@Url.Action(Model == null ? "Index" : "Detalle", "Usuario", Model == null || Model.Id == 0 ? null : new { id = Model.Id })" class="btn btn-secondary">
                         @(Model == null ? "Volver a la Lista" : "Volver")
                     </a>
                     <button type="submit" class="btn btn-primary">
                         @(Model == null || Model.Id == 0 ? "Registrar" : "Actualizar")
                     </button>
-                </div>
+                </div> 
             </form>
         </div>
     </div>
 </div>
 
 @section Scripts {
-    <link  href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet" />
-    <script  src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
-    <script>
-    var avatarInput = document.getElementById('avatarInput');
-    var avatarPreview = document.getElementById('avatarPreview');
-    var cropper;
-    
-    avatarInput.onchange = function(e) {
-        let image = document.getElementById('avatarImg');
-        let input = document.getElementById('avatarInput');
-        let archivos = input.files;
-        let extensiones = input.value.substring(input.value.lastIndexOf('.'), input.value.length);
-
-        if(!archivos || !archivos.length)
-        {
-            image.src = "";
-            input.value = "";
-        }
-        else{
-            let imagenUrl = URL.createObjectURL(archivos[0]);
-            image.src = imagenUrl;
-
-            cropper = new Cropper(image, )
-        }
-        @* var files = e.target.files;
-        var done = function(url) {
-            console.log(url);
-            avatarPreview.src = url;
-            if (cropper) {
-                cropper.destroy();
-            }
-            cropper = new Cropper(avatarPreview, {
-                aspectRatio: 1,
-                viewMode: 1,
-                crop(event) {
-                    var cropData = cropper.getData(true);
-                    console.log(cropData);
-                    // Asegúrate de que el recorte esté dentro de los límites
-                    if (cropData.width > avatarPreview.naturalWidth || cropData.height > avatarPreview.naturalHeight) {
-                        console.error("El área de recorte es mayor que la imagen.");
-                    } else {
-                        document.getElementById('cropData').value = JSON.stringify(cropData);
-                    }
-                }
-            });
-        };
-        if (files && files.length > 0) {
-            var reader = new FileReader();
-            reader.onload = function(e) {
-                done(reader.result);
-            };
-            reader.readAsDataURL(files[0]);
-        } *@
-    };
-
-    avatarPreview.onload = function() {
-        console.log("Width: " + avatarPreview.naturalWidth + ", Height: " + avatarPreview.naturalHeight);
-    };
-
-</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
 }
