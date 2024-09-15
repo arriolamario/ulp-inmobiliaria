@@ -15,8 +15,7 @@ namespace InmobiliariaCA.Controllers {
                         IRepositorioContrato repositorioContrato,
                         IRepositorioInquilino repositorioInquilino,
                         IRepositorioInmueble repositorioInmueble) 
-        {
-            
+        {            
             _logger = logger;
             _repositorioContrato = repositorioContrato;
             _repositorioInquilino = repositorioInquilino;
@@ -54,8 +53,7 @@ namespace InmobiliariaCA.Controllers {
                
                 TempData["ErrorMessage"] = "Error al cargar la vista de contrato. Por favor intente de nuevo más tarde.";
                 return View();
-            }
-            
+            }            
         }
 
         public IActionResult AltaEditar(int Id) {
@@ -68,16 +66,6 @@ namespace InmobiliariaCA.Controllers {
 
             var contrato = _repositorioContrato.GetContrato(Id);
             return View(contrato);
-        }
-
-        private IEnumerable<Inquilino> GetInquilinos() {
-            return _repositorioInquilino.GetInquilinos();
-        }
-
-        private SelectList GetInmueblesSelectList(bool sinUso) {
-            var inmuebles = sinUso ? _repositorioInmueble.GetInmueblesSinUso() : _repositorioInmueble.GetInmuebles();
-            ViewBag.InmueblesData = inmuebles.ToDictionary(i => i.Id.ToString(), i => i.Precio.ToString("0.##", CultureInfo.InvariantCulture));
-            return new SelectList(inmuebles, "Id", "NombreInmueble");
         }
 
         [HttpPost]
@@ -103,6 +91,41 @@ namespace InmobiliariaCA.Controllers {
                 ModelState.AddModelError("", "Error al eliminar el contrato");
                 return View();
             }
+        }
+
+        public IActionResult TerminarContrato(int Id) {
+            var contrato = _repositorioContrato.GetContrato(Id);
+            if (contrato == null) {
+                return NotFound("El contrato solicitado no existe.");
+            }
+           
+            return View("TerminarContrato", contrato);
+        }
+
+        [HttpPost]
+        public IActionResult FinalizarContrato(Contrato contrato) {
+            var contratoDb = _repositorioContrato.GetContrato(contrato.Id);
+            if (contratoDb == null) {
+                return NotFound("El contrato solicitado no existe.");
+            }
+
+            contratoDb.Fecha_Finalizacion_Anticipada = contrato.Fecha_Finalizacion_Anticipada;
+            contratoDb.MultaCalculada();
+            contratoDb.Estado = EstadoContrato.Finalizado;
+
+            _repositorioContrato.ActualizarContrato(contratoDb);
+
+            return RedirectToAction("Index");
+        }
+
+        private IEnumerable<Inquilino> GetInquilinos() {
+            return _repositorioInquilino.GetInquilinos();
+        }
+
+        private SelectList GetInmueblesSelectList(bool sinUso) {
+            var inmuebles = sinUso ? _repositorioInmueble.GetInmueblesSinUso() : _repositorioInmueble.GetInmuebles();
+            ViewBag.InmueblesData = inmuebles.ToDictionary(i => i.Id.ToString(), i => i.Precio.ToString("0.##", CultureInfo.InvariantCulture));
+            return new SelectList(inmuebles, "Id", "NombreInmueble");
         }
     }
 }

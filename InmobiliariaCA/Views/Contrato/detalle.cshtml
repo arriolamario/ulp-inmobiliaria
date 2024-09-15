@@ -2,8 +2,17 @@
 
 <div class="container mt-5">
     <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
             <h2>Detalles del Contrato</h2>
+            <div>
+                <h3 class="mb-0">Pagos: @Model.Cuotas_Pagas/@Model.Cantidad_Cuotas</h3>
+                @if(@Model.Estado == EstadoContrato.Vigente) {
+                    <span class="badge bg-success">@Model.Estado</span>
+                } else {
+                    <span class="badge bg-danger">@Model.Estado</span>
+                }
+                
+            </div>
         </div>
         <div class="card-body">
             <dl class="row">
@@ -40,28 +49,43 @@
                     }
                 </dd>
 
-                <dt class="col-sm-3">Fecha de Creación</dt>
-                <dd class="col-sm-9">@Model.Fecha_Creacion.ToString("dd/MM/yyyy")</dd>
-
-                <dt class="col-sm-3">Última Actualización</dt>
-                <dd class="col-sm-9">@Model.Fecha_Actualizacion.ToString("dd/MM/yyyy")</dd>
             </dl>
         </div>
-        <div class="card-footer text-end">
-            @*<a href="@Url.Action("AltaPago", "Pago", Model == null || Model.Id == 0 ? null : new { id = Model.Id })" class="btn btn-success">Pagar</a>*@
-            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#pagoModal">
-                Pagar
-            </button>
-            <a href="@Url.Action("AltaEditar", "Contrato", new { id = Model.Id })" class="btn btn-warning">Editar</a>
-            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalBajaLogica">
-                Eliminar
-            </button>
-            <a href="@Url.Action("Index", "Contrato")" class="btn btn-secondary">Volver a la Lista</a>
+        <div class="card-footer d-flex justify-content-between">
+            <div>
+                <a href="@Url.Action(Model.PagosCompletos() ? "RenovarContrato" : "TerminarContrato", "Contrato", new { id = Model.Id })" 
+                class="btn @(Model.PagosCompletos() ? "btn-success" : "btn-danger")">
+                    @(Model.PagosCompletos() ? "Renovar Contrato" : "Terminar Contrato")
+                </a>
+            </div>
+            <div>
+                @if (!Model.PagosCompletos()) {
+                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#pagoModal">
+                        Pagar
+                    </button>
+                    <a href="@Url.Action("AltaEditar", "Contrato", new { id = Model.Id })" class="btn btn-warning">
+                        Editar
+                    </a>
+                }
+                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalBajaLogica">
+                    Eliminar
+                </button>
+                <a href="@Url.Action("Index", "Contrato")" class="btn btn-secondary">
+                    Volver a la Lista
+                </a>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- Modal Eliminacion -->
+<div id="infoContrato" 
+     data-fecha-desde="@Model.Fecha_Desde.ToString("yyyy-MM-ddT00:00:00Z")"
+     data-fecha-hasta="@Model.Fecha_Hasta.ToString("yyyy-MM-ddT00:00:00Z")"
+     data-cuotas-pagas="@Model.Cuotas_Pagas"
+     data-cuotas-totales="@Model.Cantidad_Cuotas">
+</div>
+
+<!-- Modal Anulacion -->
 <div class="modal fade" id="modalBajaLogica" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -90,13 +114,7 @@
             <div class="modal-header">
                     <h5 class="modal-title" id="pagoModalLabel">Realizar Pago</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-            @if(Model.Pagado) {
-                <div class="alert alert-success" role="alert">
-                    El contrato ya se encuentra pagado.
-                </div>
-            } else {
-                
+                </div>                
                 <form id="formPago" action="@Url.Action("CrearActualizar", "Pago")" method="post" onsubmit="return validarFormularioPago();">
                     <div class="modal-body">
                         <input type="hidden" name="Contrato_Id" value="@Model.Id">
@@ -117,12 +135,11 @@
                             <input type="text" class="form-control" id="Importe" name="Importe" value="@Model.Monto_Alquiler" readonly>
                         </div>
                     </div>
-                    <div class="modal-footer">
+                    <div id="botoneraModalPago" class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                         <button type="submit" class="btn btn-primary">Confirmar Pago</button>
                     </div>
                 </form>
-            }
         </div>
     </div>
 </div>
@@ -141,6 +158,47 @@
 
                 if (validarFormularioPago()) {
                     $('#formPago').submit();
+                }
+            });
+
+            $('#botonPrePago').click(function () {
+                console.log("Botón pagar clickeado");
+                const infoContrato = $('#infoContrato');
+                const fechaDesde = new Date(infoContrato.data('fecha-desde'));
+                const fechaHasta = new Date(infoContrato.data('fecha-hasta'));
+                const fechaDesdeCorrecta = new Date(fechaDesde.getUTCFullYear(), fechaDesde.getUTCMonth(), fechaDesde.getUTCDate());
+                const fechaHastaCorrecta = new Date(fechaHasta.getUTCFullYear(), fechaHasta.getUTCMonth(), fechaHasta.getUTCDate());
+
+                const cuotasPagas = parseInt(infoContrato.data('cuotas-pagas'));
+                const cuotasTotales = parseInt(infoContrato.data('cuotas-totales'));
+                const fechaActual = new Date();
+
+                console.log("Fechas y cuotas:", fechaDesde, fechaHasta, cuotasPagas, cuotasTotales);
+                
+
+                if (fechaActual.getMonth() >= fechaDesdeCorrecta.getMonth() && fechaActual <= fechaHastaCorrecta) {
+                    const mesesTranscurridos = ((fechaActual.getFullYear() - fechaDesdeCorrecta.getFullYear()) * 12) + (fechaActual.getMonth() - fechaDesdeCorrecta.getMonth());
+                    
+                    console.log("Meses Transcurridos:", mesesTranscurridos);
+
+                    @* if (cuotasPagas == cuotasTotales) {
+                        $("#pagoModal .modal-body").html('<div class="alert alert-info">Todos los pagos del contrato han sido completados.</div>');
+                        $("#botoneraModalPago").hide();
+                        return;
+                    } *@
+
+                    if (mesesTranscurridos < cuotasPagas) {
+                        $("#pagoModal .modal-body").html('<div class="alert alert-success">El pago para este mes ya ha sido realizado.</div><button id="terminarContratoBtn" class="btn btn-danger">Terminar Contrato</button>');
+                        $("#botoneraModalPago").hide();                        
+                    } else if (mesesTranscurridos < cuotasTotales) {
+                        $("#formPago").show();
+                    } else {
+                        $("#pagoModal .modal-body").html('<div class="alert alert-info">Todos los pagos del contrato han sido completados.</div>');
+                        $("#botoneraModalPago").hide();
+                    }
+                } else {
+                    $("#pagoModal .modal-body").html('<div class="alert alert-warning">No estamos en el periodo de contrato.</div>');
+                    $("#botoneraModalPago").hide();
                 }
             });
         });

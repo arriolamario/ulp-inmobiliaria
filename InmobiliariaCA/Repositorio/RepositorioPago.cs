@@ -37,7 +37,7 @@ public class RepositorioPago : RepositorioBase, IRepositorioPago {
                             Fecha_Pago = DateTime.Parse(reader[nameof(Pago.Fecha_Pago)].ToString() ?? "0"),
                             Detalle = reader[nameof(Pago.Detalle)].ToString() ?? "",
                             Importe = decimal.Parse(reader[nameof(Pago.Importe)].ToString() ?? "0"),
-                            Estado = reader[nameof(Pago.Estado)].ToString() ?? "",
+                            Estado = Enum.TryParse(reader[nameof(Pago.Estado)].ToString(), out EstadoPago estado) ? estado : EstadoPago.Pendiente,
                             Creado_Por_Id = int.Parse(reader[nameof(Pago.Creado_Por_Id)].ToString() ?? "0"),
                             Anulado_Por_Id = reader[nameof(Pago.Anulado_Por_Id)] != DBNull.Value ? int.Parse(reader[nameof(Pago.Anulado_Por_Id)].ToString() ?? "0") : (int?)null,
                             Fecha_Anulacion = reader[nameof(Pago.Fecha_Anulacion)] != DBNull.Value ? DateTime.Parse(reader[nameof(Pago.Fecha_Anulacion)].ToString() ?? "0") : (DateTime?)null
@@ -75,7 +75,7 @@ public class RepositorioPago : RepositorioBase, IRepositorioPago {
                             Fecha_Pago = DateTime.Parse(reader[nameof(Pago.Fecha_Pago)].ToString() ?? "0"),
                             Detalle = reader[nameof(Pago.Detalle)].ToString() ?? "",
                             Importe = decimal.Parse(reader[nameof(Pago.Importe)].ToString() ?? "0"),
-                            Estado = reader[nameof(Pago.Estado)].ToString() ?? "",
+                            Estado = Enum.TryParse(reader[nameof(Pago.Estado)].ToString(), out EstadoPago estado) ? estado : EstadoPago.Pendiente,
                             Creado_Por_Id = int.Parse(reader[nameof(Pago.Creado_Por_Id)].ToString() ?? "0"),
                             Anulado_Por_Id = reader[nameof(Pago.Anulado_Por_Id)] != DBNull.Value ? int.Parse(reader[nameof(Pago.Anulado_Por_Id)].ToString() ?? "0") : (int?)null,
                             Fecha_Anulacion = reader[nameof(Pago.Fecha_Anulacion)] != DBNull.Value ? DateTime.Parse(reader[nameof(Pago.Fecha_Anulacion)].ToString() ?? "0") : (DateTime?)null
@@ -118,7 +118,7 @@ public class RepositorioPago : RepositorioBase, IRepositorioPago {
             parameters.AddWithValue($"{nameof(Pago.Fecha_Pago)}", pago.Fecha_Pago);
             parameters.AddWithValue($"{nameof(Pago.Detalle)}", pago.Detalle);
             parameters.AddWithValue($"{nameof(Pago.Importe)}", pago.Importe);
-            parameters.AddWithValue($"{nameof(Pago.Estado)}", "Pagado");
+            parameters.AddWithValue($"{nameof(Pago.Estado)}", EstadoPago.Pagado);
             parameters.AddWithValue($"{nameof(Pago.Creado_Por_Id)}", 1);
         });
 
@@ -162,7 +162,7 @@ public class RepositorioPago : RepositorioBase, IRepositorioPago {
         Console.WriteLine("Anulando el pago con ID: " + id + " por el usuario con ID: " + anuladoPorId + " en el contrato con ID: " + contratoId);
 
         string query = @$"UPDATE pago SET 
-            {nameof(Pago.Estado)} = 'Anulado', 
+            {nameof(Pago.Estado)} = {EstadoPago.Anulado}, 
             {nameof(Pago.Anulado_Por_Id)} = @{nameof(Pago.Anulado_Por_Id)}, 
             {nameof(Pago.Fecha_Anulacion)} = CURRENT_TIMESTAMP
         WHERE {nameof(Pago.Id)} = @{nameof(Pago.Id)};";

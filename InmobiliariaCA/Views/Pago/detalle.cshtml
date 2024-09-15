@@ -3,7 +3,7 @@
 <div class="container mt-5">
     <div class="card shadow-sm">
         <div class="card-header bg-primary text-white">
-            <h2>Detalles del Pago @(Model.Estado == "Anulado" ? "- Anulado" : "")</h2>
+            <h2>Detalles del Pago @(Model.Estado == EstadoPago.Anulado ? "- Anulado" : "")</h2>
         </div>
         <div class="card-body">
             <dl class="row">
@@ -60,10 +60,10 @@
             @* <a href="@Url.Action("Editar", "Pago", new { id = Model.Id })" class="btn btn-warning">Editar</a> *@
             <button type="button" 
                     class="btn btn-danger" 
-                    data-bs-toggle="@(Model.Estado == "Anulado" ? null : "modal")" 
-                    data-bs-target="@(Model.Estado == "Anulado" ? null : "#modalAnularPago")"
-                    disabled="@(Model.Estado == "Anulado" ? "disabled" : null)">
-                @(Model.Estado == "Anulado" ? "Pago Anulado" : "Anular Pago")
+                    data-bs-toggle="@(Model.Estado == EstadoPago.Anulado ? null : "modal")" 
+                    data-bs-target="@(Model.Estado == EstadoPago.Anulado ? null : "#modalAnularPago")"
+                    disabled="@(Model.Estado == EstadoPago.Anulado ? "disabled" : null)">
+                @(Model.Estado == EstadoPago.Anulado ? "Pago Anulado" : "Anular Pago")
             </button>
             <a href="@Url.Action("Index", "Pago")" class="btn btn-secondary">Volver a la Lista</a>
         </div>

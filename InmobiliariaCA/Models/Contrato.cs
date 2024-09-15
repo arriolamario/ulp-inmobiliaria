@@ -18,11 +18,11 @@ public class Contrato {
 
     [Required(ErrorMessage = "La fecha de inicio es obligatoria.")]
     [DataType(DataType.Date)]
-    public DateTime Fecha_Desde { get; set; }
+    public DateTime Fecha_Desde { get; set; } = DateTime.Today;
 
     [Required(ErrorMessage = "La fecha de finalización es obligatoria.")]
     [DataType(DataType.Date)]
-       public DateTime Fecha_Hasta { get; set; }
+    public DateTime Fecha_Hasta { get; set; } = DateTime.Today;
 
     [Required(ErrorMessage = "El monto del alquiler es obligatorio.")]
     [Column("monto_alquiler", TypeName = "decimal(10, 2)")]
@@ -30,6 +30,7 @@ public class Contrato {
     public decimal Monto_Alquiler { get; set; }
 
     [DataType(DataType.Date)]
+    [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
     public DateTime? Fecha_Finalizacion_Anticipada { get; set; }
 
     [Column("multa", TypeName = "decimal(10, 2)")]
@@ -49,12 +50,34 @@ public class Contrato {
     [DataType(DataType.DateTime)]
     public DateTime Fecha_Actualizacion { get; set; } = DateTime.Now;
 
+    public int Cantidad_Cuotas { get; set; }
+
+    public int Cuotas_Pagas { get; set; }
     public bool Pagado { get; set; } = false;
 
     public virtual Inmueble? Inmueble { get; set; }
     public virtual Inquilino? Inquilino { get; set; }
     public virtual Usuario? Usuario_Creacion { get; set; }
     public virtual Usuario? Usuario_Finalizacion { get; set; }
+
+    public EstadoContrato Estado { get; set; } = EstadoContrato.Vigente;
     
     public string MontoAlquilerString() => Monto_Alquiler.ToString("C", CultureInfo.CreateSpecificCulture("es-AR"));
+
+    public string? MultaString() => Multa?.ToString("C", CultureInfo.CreateSpecificCulture("es-AR"));
+
+    public void MultaCalculada() {
+        if (Fecha_Finalizacion_Anticipada.HasValue) {
+            TimeSpan tiempoTranscurrido = Fecha_Finalizacion_Anticipada.Value.Subtract(Fecha_Desde);
+            TimeSpan tiempoTotal = Fecha_Hasta.Subtract(Fecha_Desde);
+
+            if (tiempoTranscurrido.TotalDays < tiempoTotal.TotalDays / 2) {
+                Multa = Monto_Alquiler * 2;
+            } else {
+                Multa = Monto_Alquiler;
+            }
+        }
+    }
+
+    public bool PagosCompletos() => Cantidad_Cuotas == Cuotas_Pagas;
 }
