@@ -23,7 +23,7 @@ public class Pago {
     [Range(0.01, double.MaxValue, ErrorMessage = "El importe debe ser mayor que cero.")]
     public decimal Importe { get; set; }
 
-    public string Estado { get; set; } = "";
+    public EstadoPago Estado { get; set; } = EstadoPago.Pagado;
     public int Creado_Por_Id { get; set; }
     public int? Anulado_Por_Id { get; set; }
     public DateTime? Fecha_Anulacion { get; set; }

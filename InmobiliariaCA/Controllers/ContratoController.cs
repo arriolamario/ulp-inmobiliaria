@@ -15,8 +15,7 @@ namespace InmobiliariaCA.Controllers {
                         IRepositorioContrato repositorioContrato,
                         IRepositorioInquilino repositorioInquilino,
                         IRepositorioInmueble repositorioInmueble) 
-        {
-            
+        {            
             _logger = logger;
             _repositorioContrato = repositorioContrato;
             _repositorioInquilino = repositorioInquilino;
@@ -54,8 +53,7 @@ namespace InmobiliariaCA.Controllers {
                
                 TempData["ErrorMessage"] = "Error al cargar la vista de contrato. Por favor intente de nuevo más tarde.";
                 return View();
-            }
-            
+            }            
         }
 
         public IActionResult AltaEditar(int Id) {
@@ -113,9 +111,10 @@ namespace InmobiliariaCA.Controllers {
 
             contratoDb.Fecha_Finalizacion_Anticipada = contrato.Fecha_Finalizacion_Anticipada;
             contratoDb.MultaCalculada();
+            contratoDb.Estado = EstadoContrato.Finalizado;
+
             _repositorioContrato.ActualizarContrato(contratoDb);
 
-            //return View("TerminarContrato", contrato);
             return RedirectToAction("Index");
         }
 
@@ -128,6 +127,5 @@ namespace InmobiliariaCA.Controllers {
             ViewBag.InmueblesData = inmuebles.ToDictionary(i => i.Id.ToString(), i => i.Precio.ToString("0.##", CultureInfo.InvariantCulture));
             return new SelectList(inmuebles, "Id", "NombreInmueble");
         }
-
     }
 }

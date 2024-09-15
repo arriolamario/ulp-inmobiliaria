@@ -2,10 +2,16 @@
 
 <div class="container mt-5">
     <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
             <h2>Detalles del Contrato</h2>
-             <div class="text-white">
-                <h3>Pagos: @Model.Cuotas_Pagas/@Model.Cantidad_Cuotas</h3>
+            <div>
+                <h3 class="mb-0">Pagos: @Model.Cuotas_Pagas/@Model.Cantidad_Cuotas</h3>
+                @if(@Model.Estado == EstadoContrato.Vigente) {
+                    <span class="badge bg-success">@Model.Estado</span>
+                } else {
+                    <span class="badge bg-danger">@Model.Estado</span>
+                }
+                
             </div>
         </div>
         <div class="card-body">
@@ -47,31 +53,27 @@
         </div>
         <div class="card-footer d-flex justify-content-between">
             <div>
-                @if (Model.Cantidad_Cuotas == Model.Cuotas_Pagas){
-                    <button onclick="window.location.href='@Url.Action("RenovarContrato", "Contrato", new { id = Model.Id })'" class="btn btn-success">
-                        Renovar Contrato
-                    </button>
-                } else {
-                    <button onclick="window.location.href='@Url.Action("TerminarContrato", "Contrato", new { id = Model.Id })'" class="btn btn-danger">
-                        Terminar Contrato
-                    </button>
-                }
-                
+                <a href="@Url.Action(Model.PagosCompletos() ? "RenovarContrato" : "TerminarContrato", "Contrato", new { id = Model.Id })" 
+                class="btn @(Model.PagosCompletos() ? "btn-success" : "btn-danger")">
+                    @(Model.PagosCompletos() ? "Renovar Contrato" : "Terminar Contrato")
+                </a>
             </div>
-            <div>                
-                <button type="button" class="btn btn-success" data-bs-toggle="modal" id="botonPrePago" data-bs-target="#pagoModal">
-                    Pagar
-                </button>
-                <button onclick="window.location.href='@Url.Action("AltaEditar", "Contrato", new { id = Model.Id })'" class="btn btn-warning">
-                    Editar
-                </button>
+            <div>
+                @if (!Model.PagosCompletos()) {
+                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#pagoModal">
+                        Pagar
+                    </button>
+                    <a href="@Url.Action("AltaEditar", "Contrato", new { id = Model.Id })" class="btn btn-warning">
+                        Editar
+                    </a>
+                }
                 <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalBajaLogica">
                     Eliminar
                 </button>
-                <button onclick="window.location.href='@Url.Action("Index", "Contrato")'" class="btn btn-secondary">
+                <a href="@Url.Action("Index", "Contrato")" class="btn btn-secondary">
                     Volver a la Lista
-                </button>
-            </div>            
+                </a>
+            </div>
         </div>
     </div>
 </div>

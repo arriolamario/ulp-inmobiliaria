@@ -59,6 +59,8 @@ public class Contrato {
     public virtual Inquilino? Inquilino { get; set; }
     public virtual Usuario? Usuario_Creacion { get; set; }
     public virtual Usuario? Usuario_Finalizacion { get; set; }
+
+    public EstadoContrato Estado { get; set; } = EstadoContrato.Vigente;
     
     public string MontoAlquilerString() => Monto_Alquiler.ToString("C", CultureInfo.CreateSpecificCulture("es-AR"));
 
@@ -76,4 +78,6 @@ public class Contrato {
             }
         }
     }
+
+    public bool PagosCompletos() => Cantidad_Cuotas == Cuotas_Pagas;
 }

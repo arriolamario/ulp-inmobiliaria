@@ -107,7 +107,7 @@ CREATE TABLE IF NOT EXISTS contrato (
     monto_alquiler DECIMAL(10, 2) NOT NULL,
     fecha_finalizacion_anticipada DATE,
     multa DECIMAL(10, 2),
-    estado BOOLEAN NOT NULL DEFAULT TRUE,
+    estado ENUM('Cancelado', 'Vigente', 'Finalizado') NOT NULL DEFAULT 'Vigente',
     id_usuario_creacion INT NOT NULL,
     id_usuario_finalizacion INT,
     fecha_creacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,

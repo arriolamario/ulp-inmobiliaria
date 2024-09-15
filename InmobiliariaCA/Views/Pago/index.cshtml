@@ -14,7 +14,7 @@
                 <div class="col-12 mb-4">
                     <div class="card shadow-sm">
                         <div class="card-body">
-                            <h5 class="card-title text-white p-2" style="background-color: @(pago.Estado == "Anulado" ? "#f26060" : "#2d94f5");">Nro Pago: @pago.Numero_Pago</h5>
+                            <h5 class="card-title text-white p-2" style="background-color: @(pago.Estado == EstadoPago.Anulado ? "#f26060" : "#2d94f5");">Nro Pago: @pago.Numero_Pago</h5>
                             <p class="card-text"><strong>Número de Contrato:</strong> @pago.Contrato_Id</p>
                             <p class="card-text"><strong>Fecha de Pago:</strong> @pago.Fecha_Pago.ToString("dd/MM/yyyy")</p>
                             <p class="card-text"><strong>Detalle:</strong> @pago.Detalle</p>

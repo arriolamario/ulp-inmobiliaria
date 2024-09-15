@@ -15,12 +15,13 @@
                 <div class="col-12 mb-4">
                     <div class="card shadow-sm">
                         <div class="card-body">
-                             <h5 class="card-title text-white p-2" style="background-color: #2d94f5;">Nro: @contrato.Id</h5>
+                            <h5 class="card-title text-white p-2" style="background-color: @(contrato.PagosCompletos() ? "#f26060" : "#2d94f5");">Nro Contrato: @contrato.Id</h5>                            
                             <p class="card-text"><strong>Inmueble:</strong> @contrato.Inmueble?.NombreInmueble</p>
                             <p class="card-text"><strong>Inquilino:</strong> @contrato.Inquilino?.NombreCompletoDNI</p>
                             <p class="card-text"><strong>Fecha Desde:</strong> @contrato.Fecha_Desde.ToShortDateString()</p>
                             <p class="card-text"><strong>Fecha Hasta:</strong> @contrato.Fecha_Hasta.ToShortDateString()</p>
                             <p class="card-text"><strong>Monto de Alquiler:</strong> @contrato.Monto_Alquiler</p>
+                            <p class="card-text"><strong>Estado:</strong> @contrato.Estado.ToString()</p>
                             <div class="d-flex justify-content-end">
                                 <a href="@Url.Action("Detalle", "Contrato", new { id = contrato.Id })" class="btn btn-info btn-sm mx-1 shadow-sm">Ver</a>
                             </div>
