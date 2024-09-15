@@ -70,16 +70,6 @@ namespace InmobiliariaCA.Controllers {
             return View(contrato);
         }
 
-        private IEnumerable<Inquilino> GetInquilinos() {
-            return _repositorioInquilino.GetInquilinos();
-        }
-
-        private SelectList GetInmueblesSelectList(bool sinUso) {
-            var inmuebles = sinUso ? _repositorioInmueble.GetInmueblesSinUso() : _repositorioInmueble.GetInmuebles();
-            ViewBag.InmueblesData = inmuebles.ToDictionary(i => i.Id.ToString(), i => i.Precio.ToString("0.##", CultureInfo.InvariantCulture));
-            return new SelectList(inmuebles, "Id", "NombreInmueble");
-        }
-
         [HttpPost]
         public IActionResult CrearActualizar(Contrato Contrato) {
             
@@ -104,5 +94,40 @@ namespace InmobiliariaCA.Controllers {
                 return View();
             }
         }
+
+        public IActionResult TerminarContrato(int Id) {
+            var contrato = _repositorioContrato.GetContrato(Id);
+            if (contrato == null) {
+                return NotFound("El contrato solicitado no existe.");
+            }
+           
+            return View("TerminarContrato", contrato);
+        }
+
+        [HttpPost]
+        public IActionResult FinalizarContrato(Contrato contrato) {
+            var contratoDb = _repositorioContrato.GetContrato(contrato.Id);
+            if (contratoDb == null) {
+                return NotFound("El contrato solicitado no existe.");
+            }
+
+            contratoDb.Fecha_Finalizacion_Anticipada = contrato.Fecha_Finalizacion_Anticipada;
+            contratoDb.MultaCalculada();
+            _repositorioContrato.ActualizarContrato(contratoDb);
+
+            //return View("TerminarContrato", contrato);
+            return RedirectToAction("Index");
+        }
+
+        private IEnumerable<Inquilino> GetInquilinos() {
+            return _repositorioInquilino.GetInquilinos();
+        }
+
+        private SelectList GetInmueblesSelectList(bool sinUso) {
+            var inmuebles = sinUso ? _repositorioInmueble.GetInmueblesSinUso() : _repositorioInmueble.GetInmuebles();
+            ViewBag.InmueblesData = inmuebles.ToDictionary(i => i.Id.ToString(), i => i.Precio.ToString("0.##", CultureInfo.InvariantCulture));
+            return new SelectList(inmuebles, "Id", "NombreInmueble");
+        }
+
     }
 }

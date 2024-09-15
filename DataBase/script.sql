@@ -113,6 +113,8 @@ CREATE TABLE IF NOT EXISTS contrato (
     fecha_creacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     fecha_actualizacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     pagado BOOLEAN NOT NULL DEFAULT FALSE,
+    cantidad_cuotas int DEFAULT NULL,
+    cuotas_pagas int DEFAULT '0',
     FOREIGN KEY (id_inmueble) REFERENCES inmueble(id),
     FOREIGN KEY (id_inquilino) REFERENCES inquilino(id),
     FOREIGN KEY (id_usuario_creacion) REFERENCES usuario(id),

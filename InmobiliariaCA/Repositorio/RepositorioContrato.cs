@@ -186,8 +186,8 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato
     public int ActualizarContratoPagado(int Id, int pagado) {
         Console.WriteLine("Id actualiuzar contrato pagado: " + Id);
         string query = @$"UPDATE contrato SET
-                                {nameof(Contrato.Pagado)} = {pagado}
-                            
+                                {nameof(Contrato.Pagado)} = {pagado},
+                                {nameof(Contrato.Cuotas_Pagas)} = {nameof(Contrato.Cuotas_Pagas)} + 1                        
                             WHERE {nameof(Contrato.Id)} = @{nameof(Contrato.Id)} AND Cuotas_Pagas < Cantidad_Cuotas;";
 
         int result = this.ExecuteNonQuery(query, (parameters) => {

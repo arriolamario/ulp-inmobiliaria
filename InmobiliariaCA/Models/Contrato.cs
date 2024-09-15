@@ -30,6 +30,7 @@ public class Contrato {
     public decimal Monto_Alquiler { get; set; }
 
     [DataType(DataType.Date)]
+    [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
     public DateTime? Fecha_Finalizacion_Anticipada { get; set; }
 
     [Column("multa", TypeName = "decimal(10, 2)")]
@@ -60,4 +61,19 @@ public class Contrato {
     public virtual Usuario? Usuario_Finalizacion { get; set; }
     
     public string MontoAlquilerString() => Monto_Alquiler.ToString("C", CultureInfo.CreateSpecificCulture("es-AR"));
+
+    public string? MultaString() => Multa?.ToString("C", CultureInfo.CreateSpecificCulture("es-AR"));
+
+    public void MultaCalculada() {
+        if (Fecha_Finalizacion_Anticipada.HasValue) {
+            TimeSpan tiempoTranscurrido = Fecha_Finalizacion_Anticipada.Value.Subtract(Fecha_Desde);
+            TimeSpan tiempoTotal = Fecha_Hasta.Subtract(Fecha_Desde);
+
+            if (tiempoTranscurrido.TotalDays < tiempoTotal.TotalDays / 2) {
+                Multa = Monto_Alquiler * 2;
+            } else {
+                Multa = Monto_Alquiler;
+            }
+        }
+    }
 }
