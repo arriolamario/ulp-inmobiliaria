@@ -22,24 +22,12 @@ namespace InmobiliariaCA.Controllers {
             _repositorioInmueble = repositorioInmueble;
         }
 
-        // public IActionResult Index() {
-        //     try {
-        //         var contratos = _repositorioContrato.GetContratos();
-        //         return View(contratos);
-        //     } catch (Exception ex) {              
-        //         _logger.LogError("An error occurred while getting contracts: {Error}", ex.Message);
-               
-        //         TempData["ErrorMessage"] = "Error al cargar los contratos. Por favor intente de nuevo más tarde.";
-        //         return View(new List<Contrato>());
-        //     }
-        // }
-
         // GET: Contratos
         public IActionResult Index(ContratoFilter filters) {
             Console.WriteLine("Filtros: " + filters);
             try {
                 var viewModel = new ContratoViewModel {
-                    Contratos = _repositorioContrato.GetContratosFiltrados(filters), // Aquí asumes que esto devuelve una IEnumerable<Contrato>
+                    Contratos = _repositorioContrato.GetContratosFiltrados(filters),
                     Filters = filters
                 };
 
