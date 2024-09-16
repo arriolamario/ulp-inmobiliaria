@@ -2,8 +2,7 @@ namespace InmobiliariaCA.Repositorio;
 using InmobiliariaCA.Models;
 using System.Collections.Generic;
 
-public interface IRepositorioContrato
-{
+public interface IRepositorioContrato {
     List<Contrato> GetContratos();
     Contrato? GetContrato(int Id);
     int InsertarContrato(Contrato Contrato);
@@ -11,6 +10,6 @@ public interface IRepositorioContrato
     bool BajaContrato(int Id);
 
     int ActualizarContratoPagado(int Id, int Pagado);
-    List<Contrato> GetContratosFiltrados(Contrato.ContratoFilter filter);
+    List<Contrato> GetContratosFiltrados(ContratoFilter filter);
 }
 

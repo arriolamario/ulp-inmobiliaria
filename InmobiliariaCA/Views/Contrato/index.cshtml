@@ -1,24 +1,24 @@
-@model IEnumerable<InmobiliariaCA.Models.Contrato>
+@model InmobiliariaCA.Models.ContratoViewModel
 
 @{ ViewData["Title"] = "Lista de Contratos"; }
 
 <div class="container mt-5">
-    @*<form method="get" asp-action="Index" class="form-inline mb-3">
+    <form method="get" asp-action="Index" class="form-inline mb-3">
             <div class="form-group">
                 <label for="InquilinoId">Inquilino:</label>
-                <select asp-items="ViewBag.Inquilinos" asp-for="Filter.InquilinoId" class="form-control">
+                <select asp-items="ViewBag.Inquilinos" asp-for="Filters.InquilinoId" class="form-control">
                     <option value="">Todos</option>
                 </select>
             </div>
             <div class="form-group mx-2">
                 <label for="InmuebleId">Inmueble:</label>
-                <select asp-items="ViewBag.Inmuebles" asp-for="Filter.InmuebleId" class="form-control">
+                <select asp-items="ViewBag.Inmuebles" asp-for="Filters.InmuebleId" class="form-control">
                     <option value="">Todos</option>
                 </select>
             </div>
             <div class="form-group mx-2">
                 <label for="Estado">Estado:</label>
-                <select asp-for="Filter.Estado" class="form-control">
+                <select asp-for="Filters.Estado" class="form-control">
                     <option value="">Todos</option>
                     <option value="Vigente">Vigente</option>
                     <option value="Finalizado">Finalizado</option>
@@ -27,21 +27,21 @@
             </div>
             <div class="form-group mx-2">
                 <label for="FechaDesde">Desde:</label>
-                <input type="date" asp-for="Filter.FechaDesde" class="form-control" />
+                <input type="date" asp-for="Filters.FechaDesde" class="form-control" />
             </div>
             <div class="form-group mx-2">
                 <label for="FechaHasta">Hasta:</label>
-                <input type="date" asp-for="Filter.FechaHasta" class="form-control" />
+                <input type="date" asp-for="Filters.FechaHasta" class="form-control" />
             </div>
-            <button type="submit" class="btn btn-primary">Filtrar</button>
-    </form>*@
+        <button type="submit" class="btn btn-primary">Filtrar</button>
+    </form>
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="text-primary"><i class="fas fa-file-contract"></i> Lista de Contratos</h2>
         <a href="@Url.Action("AltaEditar", "Contrato")" class="btn btn-success shadow-sm">Agregar Nuevo Contrato</a>
     </div>
     <div class="row">
-        @if (Model.Any()) {
-            foreach (var contrato in Model) {
+        @if (Model.Contratos.Any()) {
+            foreach (var contrato in Model.Contratos) {
                 <div class="col-12 mb-4">
                     <div class="card shadow-sm">
                         <div class="card-body">

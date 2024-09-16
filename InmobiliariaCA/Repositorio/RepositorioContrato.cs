@@ -203,7 +203,7 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato
 
         string query = @$"UPDATE contrato SET
                                 {nameof(Contrato.Pagado)} = {pagado},
-                                {nameof(Contrato.Estado)} = {contrato.Estado.ToString()}
+                                {nameof(Contrato.Estado)} = {contrato.Estado}
                                 {nameof(Contrato.Cuotas_Pagas)} = {nameof(Contrato.Cuotas_Pagas)} + 1                        
                             WHERE {nameof(Contrato.Id)} = @{nameof(Contrato.Id)} AND Cuotas_Pagas < Cantidad_Cuotas;";
 
@@ -231,7 +231,7 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato
         return Math.Max(meses, 1);
     }
 
-    public List<Contrato> GetContratosFiltrados(Contrato.ContratoFilter filter) {
+    public List<Contrato> GetContratosFiltrados(ContratoFilter filter) {
 
         Console.WriteLine("Repositorio Filtros: " + filter.ToString());
         //filter.Estado = EstadoContrato.Finalizado;

@@ -81,11 +81,4 @@ public class Contrato {
 
     public bool PagosCompletos() => Cantidad_Cuotas == Cuotas_Pagas;
 
-    public class ContratoFilter {
-        public int? InquilinoId { get; set; }
-        public int? InmuebleId { get; set; }
-        public EstadoContrato? Estado { get; set; }
-        public DateTime? FechaDesde { get; set; }
-        public DateTime? FechaHasta { get; set; }
-    } 
 }
