@@ -22,14 +22,29 @@ namespace InmobiliariaCA.Controllers {
             _repositorioInmueble = repositorioInmueble;
         }
 
-        // GET: Contrato        
-        public IActionResult Index() {
-            try {
-                var contratos = _repositorioContrato.GetContratos();
-                return View(contratos);
-            } catch (Exception ex) {              
-                _logger.LogError("An error occurred while getting contracts: {Error}", ex.Message);
+        // public IActionResult Index() {
+        //     try {
+        //         var contratos = _repositorioContrato.GetContratos();
+        //         return View(contratos);
+        //     } catch (Exception ex) {              
+        //         _logger.LogError("An error occurred while getting contracts: {Error}", ex.Message);
                
+        //         TempData["ErrorMessage"] = "Error al cargar los contratos. Por favor intente de nuevo más tarde.";
+        //         return View(new List<Contrato>());
+        //     }
+        // }
+
+        // GET: Contratos
+        public IActionResult Index(Contrato.ContratoFilter filters) {
+            Console.WriteLine("Filtros: " + filters);
+            try {
+                ViewBag.Inquilinos = new SelectList(_repositorioInquilino.GetInquilinos(), "Id", "NombreCompleto");
+                ViewBag.Inmuebles = new SelectList(_repositorioInmueble.GetInmuebles(), "Id", "NombreInmueble");
+                var contratos = _repositorioContrato.GetContratosFiltrados(filters);
+
+                return View(contratos);
+            } catch (Exception ex) {
+                _logger.LogError("An error occurred while getting contracts: {Error}", ex.Message);
                 TempData["ErrorMessage"] = "Error al cargar los contratos. Por favor intente de nuevo más tarde.";
                 return View(new List<Contrato>());
             }

@@ -179,5 +179,5 @@ public class RepositorioPago : RepositorioBase, IRepositorioPago {
 
         return result;
     }
-
+    
 }

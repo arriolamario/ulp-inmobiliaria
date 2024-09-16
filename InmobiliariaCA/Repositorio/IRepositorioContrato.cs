@@ -1,8 +1,6 @@
 namespace InmobiliariaCA.Repositorio;
 using InmobiliariaCA.Models;
-using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
-using System;
 
 public interface IRepositorioContrato
 {
@@ -13,5 +11,6 @@ public interface IRepositorioContrato
     bool BajaContrato(int Id);
 
     int ActualizarContratoPagado(int Id, int Pagado);
+    List<Contrato> GetContratosFiltrados(Contrato.ContratoFilter filter);
 }
 
