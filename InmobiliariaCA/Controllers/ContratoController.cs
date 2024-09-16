@@ -31,9 +31,8 @@ namespace InmobiliariaCA.Controllers {
                     Filters = filters
                 };
 
-                ViewBag.Inquilinos = new SelectList(_repositorioInquilino.GetInquilinos(), "Id", "NombreCompleto");
-                ViewBag.Inmuebles = new SelectList(_repositorioInmueble.GetInmuebles(), "Id", "NombreInmueble");
-                
+                ViewBag.Inquilinos =  new SelectList(GetInquilinos(), "Id", "NombreCompletoDNI");
+                ViewBag.Inmuebles = GetInmueblesSelectList(true);                
 
                 return View(viewModel);
             } catch (Exception ex) {

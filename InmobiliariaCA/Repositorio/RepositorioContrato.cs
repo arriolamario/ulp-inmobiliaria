@@ -233,7 +233,7 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato
 
     public List<Contrato> GetContratosFiltrados(ContratoFilter filter) {
 
-        Console.WriteLine("Repositorio Filtros: " + filter.ToString());
+        Console.WriteLine("Repositorio Filtros: " + filter.Estado.ToString());
         //filter.Estado = EstadoContrato.Finalizado;
         var query = new StringBuilder(@"select * from contrato where 1=1");
 

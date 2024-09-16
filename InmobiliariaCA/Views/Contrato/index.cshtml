@@ -4,7 +4,7 @@
 
 <div class="container mt-5">
     <form method="get" asp-action="Index" class="form-inline mb-3">
-            <div class="form-group">
+            <div class="form-group mx-2">
                 <label for="InquilinoId">Inquilino:</label>
                 <select asp-items="ViewBag.Inquilinos" asp-for="Filters.InquilinoId" class="form-control">
                     <option value="">Todos</option>
@@ -15,7 +15,7 @@
                 <select asp-items="ViewBag.Inmuebles" asp-for="Filters.InmuebleId" class="form-control">
                     <option value="">Todos</option>
                 </select>
-            </div>
+            </div> 
             <div class="form-group mx-2">
                 <label for="Estado">Estado:</label>
                 <select asp-for="Filters.Estado" class="form-control">
