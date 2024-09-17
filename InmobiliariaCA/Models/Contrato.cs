@@ -80,4 +80,5 @@ public class Contrato {
     }
 
     public bool PagosCompletos() => Cantidad_Cuotas == Cuotas_Pagas;
+
 }

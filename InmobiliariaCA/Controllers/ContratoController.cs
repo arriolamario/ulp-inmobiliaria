@@ -22,16 +22,27 @@ namespace InmobiliariaCA.Controllers {
             _repositorioInmueble = repositorioInmueble;
         }
 
-        // GET: Contrato        
-        public IActionResult Index() {
+        // GET: Contratos
+        public int? InquilinoId { get; set; }
+        public int? InmuebleId { get; set; }
+        public EstadoContrato? Estado { get; set; }
+        public DateTime? FechaDesde { get; set; }
+        public DateTime? FechaHasta { get; set; }
+        public IActionResult Index(ContratoFilter filters) {
             try {
-                var contratos = _repositorioContrato.GetContratos();
-                return View(contratos);
-            } catch (Exception ex) {              
+                var viewModel = new ContratoViewModel {
+                    Contratos = _repositorioContrato.GetContratosFiltrados(filters),
+                    Filters = filters
+                };
+
+                ViewBag.Inquilinos =  new SelectList(GetInquilinos(), "Id", "NombreCompletoDNI");
+                ViewBag.Inmuebles = GetInmueblesSelectList(false);                
+
+                return View(viewModel);
+            } catch (Exception ex) {
                 _logger.LogError("An error occurred while getting contracts: {Error}", ex.Message);
-               
                 TempData["ErrorMessage"] = "Error al cargar los contratos. Por favor intente de nuevo más tarde.";
-                return View(new List<Contrato>());
+                return View(new ContratoViewModel { Contratos = new List<Contrato>() });
             }
         }
 
