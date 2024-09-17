@@ -194,26 +194,24 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato {
     public int ActualizarContratoPagado(int Id, int pagado) {
         Console.WriteLine("Id actualiuzar contrato pagado: " + Id);
 
-        Contrato? contrato = this.GetContrato(Id);
+        Contrato? contrato = this.GetContrato(Id) ?? throw new Exception("No se encontró el contrato.");
 
-        if (contrato == null) {
-            throw new Exception("No se encontró el contrato.");
-        }
-
-        if(contrato!=null && contrato.Cantidad_Cuotas-contrato.Cuotas_Pagas == 0) {
+        if (contrato.Cantidad_Cuotas-contrato.Cuotas_Pagas == 0) {
             contrato.Estado = EstadoContrato.Finalizado;
         }        
 
         string query = @$"UPDATE contrato SET
-                                {nameof(Contrato.Pagado)} = {pagado},
-                                {nameof(Contrato.Estado)} = {contrato.Estado.ToString()},
+                                {nameof(Contrato.Pagado)} = @{nameof(Contrato.Pagado)},
+                                {nameof(Contrato.Estado)} = @{nameof(Contrato.Estado)}
                                 {nameof(Contrato.Cuotas_Pagas)} = {nameof(Contrato.Cuotas_Pagas)} + 1                        
-                            WHERE {nameof(Contrato.Id)} = {Id} AND {nameof(Contrato.Cuotas_Pagas)} < Cantidad_Cuotas;";
+                            WHERE {nameof(Contrato.Id)} = @{nameof(Contrato.Id)}
+                            AND {nameof(Contrato.Cuotas_Pagas)} < {nameof(Contrato.Cantidad_Cuotas)};";
 
+        
         int result = this.ExecuteNonQuery(query, (parameters) => {
-             parameters.AddWithValue("@Pagado", pagado);
-            parameters.AddWithValue("@Estado", contrato.Estado.ToString());
-            parameters.AddWithValue("@Id", Id);
+            parameters.AddWithValue($"@{nameof(Contrato.Pagado)}", pagado);
+            parameters.AddWithValue($"@{nameof(Contrato.Estado)}", contrato.Estado.ToString());
+            parameters.AddWithValue($"@{nameof(Contrato.Id)}", Id);
         });
 
         return result;

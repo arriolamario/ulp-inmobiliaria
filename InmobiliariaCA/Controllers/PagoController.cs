@@ -35,17 +35,24 @@ public class PagoController : Controller {
 
     [HttpPost]
     public IActionResult CrearActualizar(Pago pago) {
-        if (!ModelState.IsValid) {
-            TempData["ErrorMessage"] = "Datos del formulario no son válidos.";
-            return RedirectToAction("Index");
+
+        try {
+            if (!ModelState.IsValid) {
+                TempData["ErrorMessage"] = "Datos del formulario no son válidos.";
+                return RedirectToAction("Index");
+            }
+            if (pago.Id == 0) {
+                _repositorioPago.InsertarPago(pago);
+                TempData["SuccessMessage"] = "Pago agregado correctamente.";
+            } else {
+                _repositorioPago.ActualizarPago(pago);
+                TempData["SuccessMessage"] = "Pago actualizado correctamente.";
+            }
         }
-        if (pago.Id == 0) {
-            _repositorioPago.InsertarPago(pago);
-            TempData["SuccessMessage"] = "Pago agregado correctamente.";
-        } else {
-            _repositorioPago.ActualizarPago(pago);
-            TempData["SuccessMessage"] = "Pago actualizado correctamente.";
+        catch (Exception ex) {
+            TempData["ErrorMessage"] = ex.Message;
         }
+
         return RedirectToAction("Index");
     }
 
