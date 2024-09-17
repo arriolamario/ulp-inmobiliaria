@@ -3,38 +3,46 @@
 @{ ViewData["Title"] = "Lista de Contratos"; }
 
 <div class="container mt-5">
-    <form method="get" asp-action="Index" class="form-inline mb-3">
-            <div class="form-group mx-2">
-                <label for="InquilinoId">Inquilino:</label>
-                <select asp-items="ViewBag.Inquilinos" asp-for="Filters.InquilinoId" class="form-control">
-                    <option value="">Todos</option>
-                </select>
-            </div>
-            <div class="form-group mx-2">
-                <label for="InmuebleId">Inmueble:</label>
-                <select asp-items="ViewBag.Inmuebles" asp-for="Filters.InmuebleId" class="form-control">
-                    <option value="">Todos</option>
-                </select>
-            </div> 
-            <div class="form-group mx-2">
-                <label for="Estado">Estado:</label>
-                <select asp-for="Filters.Estado" class="form-control">
-                    <option value="">Todos</option>
-                    <option value="Vigente">Vigente</option>
-                    <option value="Finalizado">Finalizado</option>
-                    <option value="Cancelado">Cancelado</option>
-                </select>
-            </div>
-            <div class="form-group mx-2">
-                <label for="FechaDesde">Desde:</label>
-                <input type="date" asp-for="Filters.FechaDesde" class="form-control" />
-            </div>
-            <div class="form-group mx-2">
-                <label for="FechaHasta">Hasta:</label>
-                <input type="date" asp-for="Filters.FechaHasta" class="form-control" />
-            </div>
-        <button type="submit" class="btn btn-primary">Filtrar</button>
+    <!-- Filtros -->
+    <form method="get" asp-action="Index" class="row g-3 mb-4 p-3 bg-light rounded shadow-sm">
+        <div class="col-md-2">
+            <label for="InquilinoId" class="form-label">Inquilino:</label>
+            <select asp-items="ViewBag.Inquilinos" asp-for="Filters.InquilinoId" class="form-select">
+                <option value="">Todos</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label for="InmuebleId" class="form-label">Inmueble:</label>
+            <select asp-items="ViewBag.Inmuebles" asp-for="Filters.InmuebleId" class="form-select">
+                <option value="">Todos</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label for="Estado" class="form-label">Estado:</label>
+            <select asp-for="Filters.Estado" class="form-select">
+                <option value="">Todos</option>
+                <option value="Vigente">Vigente</option>
+                <option value="Finalizado">Finalizado</option>
+                <option value="Cancelado">Cancelado</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label for="FechaDesde" class="form-label">Desde:</label>
+            <input type="date" asp-for="Filters.FechaDesde" class="form-control" />
+        </div>
+        <div class="col-md-2">
+            <label for="FechaHasta" class="form-label">Hasta:</label>
+            <input type="date" asp-for="Filters.FechaHasta" class="form-control" />
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+            <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+        </div>
     </form>
+
+    <!-- Separador visual -->
+    <hr class="my-4" />
+
+    <!-- Listado de contratos -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="text-primary"><i class="fas fa-file-contract"></i> Lista de Contratos</h2>
         <a href="@Url.Action("AltaEditar", "Contrato")" class="btn btn-success shadow-sm">Agregar Nuevo Contrato</a>
