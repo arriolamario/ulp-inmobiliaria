@@ -6,6 +6,10 @@
     <!-- Filtros -->
      <form method="get" asp-action="Index" class="row g-3 mb-4 p-3 bg-light rounded shadow-sm">
         <div class="col-md-2">
+            <label for="ContratoId" class="form-label">Nro Contrato:</label>
+            <input type="text" class="form-control" asp-for="Filters.ContratoId">
+        </div>
+        <div class="col-md-2">
             <label for="InquilinoId" class="form-label">Inquilino:</label>
             <select asp-items="ViewBag.Inquilinos" asp-for="Filters.InquilinoId" class="form-select">
                 <option value="">Todos</option>
@@ -35,12 +39,10 @@
             <input type="date" asp-for="Filters.FechaHasta" class="form-control" />
         </div>
         <div class="col-md-2 d-flex align-items-end">
-            <button type="submit" class="btn btn-primary w-100">Filtrar</button>
-            <button type="button" id="clearFilters" class="btn btn-warning">Limpiar</button>
-        </div>
+            <button type="submit" class="btn btn-primary w-100 mr-2">Buscar</button>
+            <button type="button" id="clearFilters" class="btn btn-primary w-100">Limpiar</button>
+        </div>        
     </form>
-
-    <!-- Separador visual -->
     <hr class="my-4" />
 
     <!-- Listado de contratos -->
@@ -78,9 +80,13 @@
 
 @section Scripts {
     <script>
-        document.getElementById("clearFilters").addEventListener("click", function() {
-                var form = document.getElementById("filtersForm");
-                form.reset();
+        document.getElementById("clearFilters").addEventListener("click", function() {               
+                document.getElementById("Filters_InquilinoId").value = "";
+                document.getElementById("Filters_InmuebleId").value = "";
+                document.getElementById("Filters_Estado").value = "";
+                document.getElementById("Filters_FechaDesde").value = "";
+                document.getElementById("Filters_FechaHasta").value = "";
+                document.getElementById("Filters_ContratoId").value = "";
         });
 
         document.getElementById("filtersForm").style.display = "none";

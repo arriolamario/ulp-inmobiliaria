@@ -23,8 +23,12 @@ namespace InmobiliariaCA.Controllers {
         }
 
         // GET: Contratos
+        public int? InquilinoId { get; set; }
+        public int? InmuebleId { get; set; }
+        public EstadoContrato? Estado { get; set; }
+        public DateTime? FechaDesde { get; set; }
+        public DateTime? FechaHasta { get; set; }
         public IActionResult Index(ContratoFilter filters) {
-            Console.WriteLine("Filtros: " + filters);
             try {
                 var viewModel = new ContratoViewModel {
                     Contratos = _repositorioContrato.GetContratosFiltrados(filters),
@@ -32,7 +36,7 @@ namespace InmobiliariaCA.Controllers {
                 };
 
                 ViewBag.Inquilinos =  new SelectList(GetInquilinos(), "Id", "NombreCompletoDNI");
-                ViewBag.Inmuebles = GetInmueblesSelectList(true);                
+                ViewBag.Inmuebles = GetInmueblesSelectList(false);                
 
                 return View(viewModel);
             } catch (Exception ex) {

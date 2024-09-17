@@ -92,7 +92,6 @@ public class RepositorioPago : RepositorioBase, IRepositorioPago {
     }
 
     public int InsertarPago(Pago pago) {
-        
         string query = @$"INSERT INTO pago (
                           {nameof(Pago.Contrato_Id)},
                           {nameof(Pago.Numero_Pago)},
@@ -118,12 +117,11 @@ public class RepositorioPago : RepositorioBase, IRepositorioPago {
             parameters.AddWithValue($"{nameof(Pago.Fecha_Pago)}", pago.Fecha_Pago);
             parameters.AddWithValue($"{nameof(Pago.Detalle)}", pago.Detalle);
             parameters.AddWithValue($"{nameof(Pago.Importe)}", pago.Importe);
-            parameters.AddWithValue($"{nameof(Pago.Estado)}", EstadoPago.Pagado);
+            parameters.AddWithValue($"{nameof(Pago.Estado)}", EstadoPago.Pagado.ToString());
             parameters.AddWithValue($"{nameof(Pago.Creado_Por_Id)}", 1);
         });
 
-        //_repositorioContrato.ActualizarContratoPagado(pago.Contrato_Id);
-         if (_repositorioContrato.ActualizarContratoPagado(pago.Contrato_Id, 1) == 0) {
+        if (_repositorioContrato.ActualizarContratoPagado(pago.Contrato_Id, 1) == 0) {
                 throw new Exception("No se pudo actualizar el estado de pagado del contrato.");
         }
 

@@ -5,8 +5,7 @@ using System.Collections.Generic;
 using System;
 using System.Text;
 
-public class RepositorioContrato : RepositorioBase, IRepositorioContrato
-{
+public class RepositorioContrato : RepositorioBase, IRepositorioContrato {
 
     private IRepositorioInmueble _repositorioInmueble;
     private IRepositorioInquilino _repositorioInquilino;
@@ -197,18 +196,24 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato
 
         Contrato? contrato = this.GetContrato(Id);
 
+        if (contrato == null) {
+            throw new Exception("No se encontró el contrato.");
+        }
+
         if(contrato!=null && contrato.Cantidad_Cuotas-contrato.Cuotas_Pagas == 0) {
             contrato.Estado = EstadoContrato.Finalizado;
         }        
 
         string query = @$"UPDATE contrato SET
                                 {nameof(Contrato.Pagado)} = {pagado},
-                                {nameof(Contrato.Estado)} = {contrato.Estado}
+                                {nameof(Contrato.Estado)} = {contrato.Estado.ToString()},
                                 {nameof(Contrato.Cuotas_Pagas)} = {nameof(Contrato.Cuotas_Pagas)} + 1                        
-                            WHERE {nameof(Contrato.Id)} = @{nameof(Contrato.Id)} AND Cuotas_Pagas < Cantidad_Cuotas;";
+                            WHERE {nameof(Contrato.Id)} = {Id} AND {nameof(Contrato.Cuotas_Pagas)} < Cantidad_Cuotas;";
 
         int result = this.ExecuteNonQuery(query, (parameters) => {
-            parameters.AddWithValue($"@{nameof(Contrato.Id)}", Id);
+             parameters.AddWithValue("@Pagado", pagado);
+            parameters.AddWithValue("@Estado", contrato.Estado.ToString());
+            parameters.AddWithValue("@Id", Id);
         });
 
         return result;
@@ -225,17 +230,13 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato
         return result;
     }
 
-    private int CantidadCuotas(Contrato contrato) {
-
-        int meses = ((contrato.Fecha_Hasta.Year - contrato.Fecha_Desde.Year) * 12) + contrato.Fecha_Hasta.Month - contrato.Fecha_Desde.Month;
-        return Math.Max(meses, 1);
-    }
-
+    
     public List<Contrato> GetContratosFiltrados(ContratoFilter filter) {
 
-        Console.WriteLine("Repositorio Filtros: " + filter.Estado.ToString());
-        //filter.Estado = EstadoContrato.Finalizado;
         var query = new StringBuilder(@"select * from contrato where 1=1");
+
+        if (filter.ContratoId.HasValue)
+            query.Append($" AND Id = {filter.ContratoId}");
 
         if (filter.InquilinoId.HasValue)
             query.Append($" AND Id_Inquilino = {filter.InquilinoId}");
@@ -281,5 +282,9 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato
         return resultContratos;
     }
 
-}
+    private int CantidadCuotas(Contrato contrato) {
 
+        int meses = ((contrato.Fecha_Hasta.Year - contrato.Fecha_Desde.Year) * 12) + contrato.Fecha_Hasta.Month - contrato.Fecha_Desde.Month;
+        return Math.Max(meses, 1);
+    }
+}
