@@ -11,5 +11,6 @@ public interface IRepositorioUsuario
     public int InsertarUsuario(Usuario usuario);
     public int ActualizarUsuario(Usuario usuario);
     public bool BajaUsuario(int Id);
+    public Usuario? GetPorEmail(string email);
 }
 
