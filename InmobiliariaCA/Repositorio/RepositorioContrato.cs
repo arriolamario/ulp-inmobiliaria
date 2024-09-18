@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
 using System;
 using System.Text;
+using InmobiliariaCA.Models.ContratoModels;
 
 public class RepositorioContrato : RepositorioBase, IRepositorioContrato {
 
@@ -202,7 +203,7 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato {
 
         string query = @$"UPDATE contrato SET
                                 {nameof(Contrato.Pagado)} = @{nameof(Contrato.Pagado)},
-                                {nameof(Contrato.Estado)} = @{nameof(Contrato.Estado)}
+                                {nameof(Contrato.Estado)} = @{nameof(Contrato.Estado)},
                                 {nameof(Contrato.Cuotas_Pagas)} = {nameof(Contrato.Cuotas_Pagas)} + 1                        
                             WHERE {nameof(Contrato.Id)} = @{nameof(Contrato.Id)}
                             AND {nameof(Contrato.Cuotas_Pagas)} < {nameof(Contrato.Cantidad_Cuotas)};";

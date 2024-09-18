@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Globalization;
 
-namespace InmobiliariaCA.Models;
+namespace InmobiliariaCA.Models.ContratoModels;
 public class Contrato {
     [Key]
     public int Id { get; set; }

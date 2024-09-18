@@ -1,5 +1,5 @@
+namespace InmobiliariaCA.Models.ContratoModels;
 
-namespace InmobiliariaCA.Models;
     public class ContratoFilter {
         public int? ContratoId { get; set; }
         public int? InquilinoId { get; set; }

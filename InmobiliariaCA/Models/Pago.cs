@@ -1,6 +1,7 @@
 namespace InmobiliariaCA.Models;
 using System;
 using System.ComponentModel.DataAnnotations;
+using InmobiliariaCA.Models.ContratoModels;
 
 public class Pago {
 
