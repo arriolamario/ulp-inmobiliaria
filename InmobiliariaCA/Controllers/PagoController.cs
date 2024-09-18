@@ -35,16 +35,38 @@ public class PagoController : Controller {
 
     [HttpPost]
     public IActionResult CrearActualizar(Pago pago) {
-        if (!ModelState.IsValid) {
-            TempData["ErrorMessage"] = "Datos del formulario no son válidos.";
-            return RedirectToAction("Index");
+
+        try {
+            if (!ModelState.IsValid) {
+                TempData["ErrorMessage"] = "Datos del formulario no son válidos.";
+                return RedirectToAction("Index");
+            }
+            if (pago.Id == 0) {
+                _repositorioPago.InsertarPago(pago);
+                TempData["SuccessMessage"] = "Pago agregado correctamente.";
+            } else {
+                _repositorioPago.ActualizarPago(pago);
+                TempData["SuccessMessage"] = "Pago actualizado correctamente.";
+            }
         }
-        if (pago.Id == 0) {
-            _repositorioPago.InsertarPago(pago);
-            TempData["SuccessMessage"] = "Pago agregado correctamente.";
+        catch (Exception ex) {
+            TempData["ErrorMessage"] = ex.Message;
+        }
+
+        return RedirectToAction("Index");
+    }
+
+    [HttpPost]
+    public IActionResult Anular(int Id, int IdAnulador, int IdContrato) {
+        
+        if (Id == 0) {
+            TempData["ErrorMessage"] = "No se pudo dar de baja al propietario.";
         } else {
-            _repositorioPago.ActualizarPago(pago);
-            TempData["SuccessMessage"] = "Pago actualizado correctamente.";
+            var res = _repositorioPago.AnularPago(Id, IdAnulador, IdContrato);
+            if (res)
+                TempData["SuccessMessage"] = "Propietario dado de baja correctamente.";
+            else
+                TempData["ErrorMessage"] = "No se pudo dar de baja al propietario.";
         }
         return RedirectToAction("Index");
     }

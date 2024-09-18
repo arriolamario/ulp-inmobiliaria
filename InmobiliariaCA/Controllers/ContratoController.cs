@@ -10,31 +10,39 @@ namespace InmobiliariaCA.Controllers {
         private IRepositorioInquilino _repositorioInquilino;
         private IRepositorioInmueble _repositorioInmueble;
         private readonly ILogger<HomeController> _logger;
-        // private IConfiguration _Configuration;
 
         public ContratoController(ILogger<HomeController> logger, 
                         IRepositorioContrato repositorioContrato,
                         IRepositorioInquilino repositorioInquilino,
                         IRepositorioInmueble repositorioInmueble) 
-        {
-            
+        {            
             _logger = logger;
-            //_Configuration = configuration;
             _repositorioContrato = repositorioContrato;
             _repositorioInquilino = repositorioInquilino;
             _repositorioInmueble = repositorioInmueble;
         }
 
-        // GET: Contrato        
-        public IActionResult Index() {
+        // GET: Contratos
+        public int? InquilinoId { get; set; }
+        public int? InmuebleId { get; set; }
+        public EstadoContrato? Estado { get; set; }
+        public DateTime? FechaDesde { get; set; }
+        public DateTime? FechaHasta { get; set; }
+        public IActionResult Index(ContratoFilter filters) {
             try {
-                var contratos = _repositorioContrato.GetContratos();
-                return View(contratos);
-            } catch (Exception ex) {              
+                var viewModel = new ContratoViewModel {
+                    Contratos = _repositorioContrato.GetContratosFiltrados(filters),
+                    Filters = filters
+                };
+
+                ViewBag.Inquilinos =  new SelectList(GetInquilinos(), "Id", "NombreCompletoDNI");
+                ViewBag.Inmuebles = GetInmueblesSelectList(false);                
+
+                return View(viewModel);
+            } catch (Exception ex) {
                 _logger.LogError("An error occurred while getting contracts: {Error}", ex.Message);
-               
                 TempData["ErrorMessage"] = "Error al cargar los contratos. Por favor intente de nuevo más tarde.";
-                return View(new List<Contrato>());
+                return View(new ContratoViewModel { Contratos = new List<Contrato>() });
             }
         }
 
@@ -56,28 +64,24 @@ namespace InmobiliariaCA.Controllers {
                
                 TempData["ErrorMessage"] = "Error al cargar la vista de contrato. Por favor intente de nuevo más tarde.";
                 return View();
-            }
-            
+            }            
         }
 
         public IActionResult AltaEditar(int Id) {
-            ViewBag.Inquilinos = new SelectList(_repositorioInquilino.GetInquilinos(), "Id", "NombreCompletoDNI");
-            
-            var inmuebles = _repositorioInmueble.GetInmueblesSinUso();
-            ViewBag.Inmuebles = new SelectList(inmuebles, "Id", "NombreInmueble", "Precio");
-            ViewBag.InmueblesData = inmuebles.ToDictionary(i => i.Id.ToString(), i => i.Precio.ToString("0.##", CultureInfo.InvariantCulture));
+            ViewBag.Inquilinos = new SelectList(GetInquilinos(), "Id", "NombreCompletoDNI");
+            ViewBag.Inmuebles = GetInmueblesSelectList(Id == 0);
 
-            if (Id == 0) {                
-                return View();
+            if (Id == 0) {
+                return View(new Contrato());
             }
-            
-            return View(_repositorioContrato.GetContrato(Id));
+
+            var contrato = _repositorioContrato.GetContrato(Id);
+            return View(contrato);
         }
 
         [HttpPost]
         public IActionResult CrearActualizar(Contrato Contrato) {
-
-            Console.WriteLine("Contrato id: " + Contrato.Id);
+            
             if (Contrato.Id == 0) {
                 _repositorioContrato.InsertarContrato(Contrato);
                 TempData["SuccessMessage"] = "Contrato agregado correctamente.";
@@ -98,6 +102,41 @@ namespace InmobiliariaCA.Controllers {
                 ModelState.AddModelError("", "Error al eliminar el contrato");
                 return View();
             }
+        }
+
+        public IActionResult TerminarContrato(int Id) {
+            var contrato = _repositorioContrato.GetContrato(Id);
+            if (contrato == null) {
+                return NotFound("El contrato solicitado no existe.");
+            }
+           
+            return View("TerminarContrato", contrato);
+        }
+
+        [HttpPost]
+        public IActionResult FinalizarContrato(Contrato contrato) {
+            var contratoDb = _repositorioContrato.GetContrato(contrato.Id);
+            if (contratoDb == null) {
+                return NotFound("El contrato solicitado no existe.");
+            }
+
+            contratoDb.Fecha_Finalizacion_Anticipada = contrato.Fecha_Finalizacion_Anticipada;
+            contratoDb.MultaCalculada();
+            contratoDb.Estado = EstadoContrato.Finalizado;
+
+            _repositorioContrato.ActualizarContrato(contratoDb);
+
+            return RedirectToAction("Index");
+        }
+
+        private IEnumerable<Inquilino> GetInquilinos() {
+            return _repositorioInquilino.GetInquilinos();
+        }
+
+        private SelectList GetInmueblesSelectList(bool sinUso) {
+            var inmuebles = sinUso ? _repositorioInmueble.GetInmueblesSinUso() : _repositorioInmueble.GetInmuebles();
+            ViewBag.InmueblesData = inmuebles.ToDictionary(i => i.Id.ToString(), i => i.Precio.ToString("0.##", CultureInfo.InvariantCulture));
+            return new SelectList(inmuebles, "Id", "NombreInmueble");
         }
     }
 }

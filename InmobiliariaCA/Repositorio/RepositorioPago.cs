@@ -22,7 +22,9 @@ public class RepositorioPago : RepositorioBase, IRepositorioPago {
                                     {nameof(Pago.Detalle)},
                                     {nameof(Pago.Importe)},
                                     {nameof(Pago.Estado)},
-                                    {nameof(Pago.Creado_Por_Id)}
+                                    {nameof(Pago.Creado_Por_Id)},
+                                    {nameof(Pago.Anulado_Por_Id)},
+                                    {nameof(Pago.Fecha_Anulacion)}
                                 FROM pago;";
 
                     resultPagos = this.ExecuteReaderList<Pago>(query, (parameters) => {}, (reader) =>
@@ -34,8 +36,10 @@ public class RepositorioPago : RepositorioBase, IRepositorioPago {
                             Fecha_Pago = DateTime.Parse(reader[nameof(Pago.Fecha_Pago)].ToString() ?? "0"),
                             Detalle = reader[nameof(Pago.Detalle)].ToString() ?? "",
                             Importe = decimal.Parse(reader[nameof(Pago.Importe)].ToString() ?? "0"),
-                            Estado = reader[nameof(Pago.Estado)].ToString() ?? "",
-                            Creado_Por_Id = int.Parse(reader[nameof(Pago.Creado_Por_Id)].ToString() ?? "0")
+                            Estado = Enum.TryParse(reader[nameof(Pago.Estado)].ToString(), out EstadoPago estado) ? estado : EstadoPago.Pendiente,
+                            Creado_Por_Id = int.Parse(reader[nameof(Pago.Creado_Por_Id)].ToString() ?? "0"),
+                            Anulado_Por_Id = reader[nameof(Pago.Anulado_Por_Id)] != DBNull.Value ? int.Parse(reader[nameof(Pago.Anulado_Por_Id)].ToString() ?? "0") : (int?)null,
+                            Fecha_Anulacion = reader[nameof(Pago.Fecha_Anulacion)] != DBNull.Value ? DateTime.Parse(reader[nameof(Pago.Fecha_Anulacion)].ToString() ?? "0") : (DateTime?)null
                         };
 
                         // Cargar los objetos Contrato usando su ID
@@ -57,7 +61,9 @@ public class RepositorioPago : RepositorioBase, IRepositorioPago {
                           {nameof(Pago.Detalle)},
                           {nameof(Pago.Importe)},
                           {nameof(Pago.Estado)},
-                          {nameof(Pago.Creado_Por_Id)}
+                          {nameof(Pago.Creado_Por_Id)},
+                          {nameof(Pago.Anulado_Por_Id)},
+                          {nameof(Pago.Fecha_Anulacion)}
                         FROM pago
                          WHERE {nameof(Pago.Id)} = {Id};";
         result = this.ExecuteReader<Pago>(query, (reader) => {
@@ -68,8 +74,11 @@ public class RepositorioPago : RepositorioBase, IRepositorioPago {
                             Fecha_Pago = DateTime.Parse(reader[nameof(Pago.Fecha_Pago)].ToString() ?? "0"),
                             Detalle = reader[nameof(Pago.Detalle)].ToString() ?? "",
                             Importe = decimal.Parse(reader[nameof(Pago.Importe)].ToString() ?? "0"),
-                            Estado = reader[nameof(Pago.Estado)].ToString() ?? "",
-                            Creado_Por_Id = int.Parse(reader[nameof(Pago.Creado_Por_Id)].ToString() ?? "0")
+                            Estado = Enum.TryParse(reader[nameof(Pago.Estado)].ToString(), out EstadoPago estado) ? estado : EstadoPago.Pendiente,
+                            Creado_Por_Id = int.Parse(reader[nameof(Pago.Creado_Por_Id)].ToString() ?? "0"),
+                            Anulado_Por_Id = reader[nameof(Pago.Anulado_Por_Id)] != DBNull.Value ? int.Parse(reader[nameof(Pago.Anulado_Por_Id)].ToString() ?? "0") : (int?)null,
+                            Fecha_Anulacion = reader[nameof(Pago.Fecha_Anulacion)] != DBNull.Value ? DateTime.Parse(reader[nameof(Pago.Fecha_Anulacion)].ToString() ?? "0") : (DateTime?)null
+                        
                         };
 
                         // Cargar los objetos Contrato usando su ID
@@ -82,42 +91,56 @@ public class RepositorioPago : RepositorioBase, IRepositorioPago {
     }
 
     public int InsertarPago(Pago pago) {
-        
-        string query = @$"INSERT INTO pago (
-                          {nameof(Pago.Contrato_Id)},
-                          {nameof(Pago.Numero_Pago)},
-                          {nameof(Pago.Fecha_Pago)},
-                          {nameof(Pago.Detalle)},
-                          {nameof(Pago.Importe)},
-                          {nameof(Pago.Estado)},
-                          {nameof(Pago.Creado_Por_Id)}
-                ) VALUES (
-                          @{nameof(Pago.Contrato_Id)},
-                          @{nameof(Pago.Numero_Pago)},
-                          @{nameof(Pago.Fecha_Pago)},
-                          @{nameof(Pago.Detalle)},
-                          @{nameof(Pago.Importe)},
-                          @{nameof(Pago.Estado)},
-                          @{nameof(Pago.Creado_Por_Id)}
-                );
-        SELECT LAST_INSERT_ID();";
+        using var connection = GetConnection();
+        using var transaction = BeginTransaction(connection);
+        try {
+            // Insertar el pago
+            string query = @$"INSERT INTO pago (
+                                      {nameof(Pago.Contrato_Id)},
+                                      {nameof(Pago.Numero_Pago)},
+                                      {nameof(Pago.Fecha_Pago)},
+                                      {nameof(Pago.Detalle)},
+                                      {nameof(Pago.Importe)},
+                                      {nameof(Pago.Estado)},
+                                      {nameof(Pago.Creado_Por_Id)}
+                              ) VALUES (
+                                      @{nameof(Pago.Contrato_Id)},
+                                      @{nameof(Pago.Numero_Pago)},
+                                      @{nameof(Pago.Fecha_Pago)},
+                                      @{nameof(Pago.Detalle)},
+                                      @{nameof(Pago.Importe)},
+                                      @{nameof(Pago.Estado)},
+                                      @{nameof(Pago.Creado_Por_Id)}
+                              );
+                    SELECT LAST_INSERT_ID();";
 
-        int result = this.ExecuteScalar(query, (parameters) => {
-            parameters.AddWithValue($"{nameof(Pago.Contrato_Id)}", pago.Contrato_Id);
-            parameters.AddWithValue($"{nameof(Pago.Numero_Pago)}", pago.Numero_Pago);
-            parameters.AddWithValue($"{nameof(Pago.Fecha_Pago)}", pago.Fecha_Pago);
-            parameters.AddWithValue($"{nameof(Pago.Detalle)}", pago.Detalle);
-            parameters.AddWithValue($"{nameof(Pago.Importe)}", pago.Importe);
-            parameters.AddWithValue($"{nameof(Pago.Estado)}", 1);
-            parameters.AddWithValue($"{nameof(Pago.Creado_Por_Id)}", 1);
-        });
+            int result = this.ExecuteScalar(query, (parameters) =>
+            {
+                parameters.AddWithValue($"{nameof(Pago.Contrato_Id)}", pago.Contrato_Id);
+                parameters.AddWithValue($"{nameof(Pago.Numero_Pago)}", pago.Numero_Pago);
+                parameters.AddWithValue($"{nameof(Pago.Fecha_Pago)}", pago.Fecha_Pago);
+                parameters.AddWithValue($"{nameof(Pago.Detalle)}", pago.Detalle);
+                parameters.AddWithValue($"{nameof(Pago.Importe)}", pago.Importe);
+                parameters.AddWithValue($"{nameof(Pago.Estado)}", EstadoPago.Pagado.ToString());
+                parameters.AddWithValue($"{nameof(Pago.Creado_Por_Id)}", 1);
+            }, transaction);
 
-        //_repositorioContrato.ActualizarContratoPagado(pago.Contrato_Id);
-         if (_repositorioContrato.ActualizarContratoPagado(pago.Contrato_Id) == 0) {
+            // Actualizar el contrato
+            if (_repositorioContrato.ActualizarContratoPagado(pago.Contrato_Id, 1) == 0)
+            {
                 throw new Exception("No se pudo actualizar el estado de pagado del contrato.");
-        }
+            }
 
-        return result;
+            // Confirmamos la transacción
+            transaction.Commit();
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+            transaction.Rollback();
+            throw new Exception("Error al insertar el pago o actualizar el contrato: " + ex.Message, ex);
+        }
     }
 
     public bool ActualizarPago(Pago pago) {
@@ -148,9 +171,11 @@ public class RepositorioPago : RepositorioBase, IRepositorioPago {
         return result;
     }
 
-    public bool AnularPago(int id, int anuladoPorId) {
+    public bool AnularPago(int id, int anuladoPorId, int contratoId) {
+        Console.WriteLine("Anulando el pago con ID: " + id + " por el usuario con ID: " + anuladoPorId + " en el contrato con ID: " + contratoId);
+
         string query = @$"UPDATE pago SET 
-            {nameof(Pago.Estado)} = 'Anulado', 
+            {nameof(Pago.Estado)} = {EstadoPago.Anulado}, 
             {nameof(Pago.Anulado_Por_Id)} = @{nameof(Pago.Anulado_Por_Id)}, 
             {nameof(Pago.Fecha_Anulacion)} = CURRENT_TIMESTAMP
         WHERE {nameof(Pago.Id)} = @{nameof(Pago.Id)};";
@@ -160,7 +185,12 @@ public class RepositorioPago : RepositorioBase, IRepositorioPago {
             parameters.AddWithValue($"{nameof(Pago.Anulado_Por_Id)}", anuladoPorId);
         });
 
+        if (_repositorioContrato.ActualizarContratoPagado(contratoId, 0) == 0) {
+                throw new Exception("No se pudo anular el pagado del contrato.");
+        }
+
+
         return result;
     }
-
+    
 }
