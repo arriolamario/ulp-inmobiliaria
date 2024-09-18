@@ -277,6 +277,7 @@ public class RepositorioInmueble : RepositorioBase, IRepositorioInmueble
                         FROM inmueble AS i
                         LEFT JOIN contrato AS c ON i.id = c.id_inmueble
                         WHERE i.id = @IdInmueble
+                        AND c.estado != 'Finalizado'
                         AND (
                             (c.id IS NULL) 
                             OR 
@@ -285,12 +286,11 @@ public class RepositorioInmueble : RepositorioBase, IRepositorioInmueble
 
             int count = this.ExecuteScalar(query, (parameters) => {
                 parameters.AddWithValue("@IdInmueble", IdInmueble);
-                parameters.AddWithValue("@FechaDesde", fechaDesde);
-                parameters.AddWithValue("@FechaHasta", fechaHasta);
-                Console.WriteLine("Query: " + query);
+                parameters.AddWithValue("@FechaDesde", fechaDesde.Date);
+                parameters.AddWithValue("@FechaHasta", fechaHasta.Date);
             });
 
-            return count > 0;
+            return count > 0; //DISPONIBLE
         } catch (Exception ex) {
             throw new Exception("Error al validar el inmueble en las fechas: " + ex.Message, ex);
         }
