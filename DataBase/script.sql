@@ -73,7 +73,6 @@ CREATE TABLE IF NOT EXISTS usuario (
     password_hash VARCHAR(255) NOT NULL,
     nombre VARCHAR(100),
     apellido VARCHAR(100),
-    telefono VARCHAR(20),
     avatar_url TEXT,
     rol ENUM('empleado', 'administrador') NOT NULL,
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

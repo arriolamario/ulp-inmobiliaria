@@ -1,0 +1,66 @@
+@model InmobiliariaCA.Models.UsuarioAltaEditarViewModel
+
+@{
+    ViewData["Title"] = "Formulario de Registro";
+}
+
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h2>@(Model == null || Model.Id == 0 ? "Formulario de Registro" : "Formulario de Actualización")</h2>
+        </div>
+        <div class="card-body"> 
+            <form asp-action="AltaEditar">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="email" asp-for="Email" class="form-control" placeholder="Email")">
+                            <label asp-for="Email">Email</label>
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-floating">
+                            @Html.DropDownListFor(m => m.Rol, (SelectList)ViewBag.Roles, "", new { @class = "form-select", id = "Rol" })
+                            <label for="Rol">Rol</label>
+                            <span asp-validation-for="Rol" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input asp-for="Nombre" class="form-control" placeholder="Nombre">
+                            <label asp-for="Nombre">Nombre</label>
+                            <span asp-validation-for="Nombre" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input asp-for="Apellido" class="form-control" placeholder="Apellido">
+                            <label asp-for="Apellido">Apellido</label>
+                            <span asp-validation-for="Apellido" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <input type="hidden" asp-for="Id" />
+               <div class="d-flex justify-content-between">
+                    <a href="@Url.Action(Model == null ? "Index" : "Detalle", "Usuario", Model == null || Model.Id == 0 ? null : new { id = Model.Id })" class="btn btn-secondary">
+                        @(Model == null ? "Volver a la Lista" : "Volver")
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        @(Model == null || Model.Id == 0 ? "Registrar" : "Actualizar")
+                    </button>
+                </div> 
+            </form>
+        </div>
+    </div> 
+</div>
+    
+
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
+}

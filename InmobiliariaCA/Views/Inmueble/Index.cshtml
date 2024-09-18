@@ -20,9 +20,6 @@
                                 <p class="card-text"><strong>Propietario:</strong> @inmueble.Propietario.Apellido @inmueble.Propietario.Nombre</p>
                             }
                             <p class="card-text"><strong>Precio: </strong> @inmueble.Precio.ToString("C", culturaArgentina)</p>
-                            @*<p class="card-text"><strong>Teléfono:</strong> @inquilino.Telefono</p>
-                            <p class="card-text"><strong>Email:</strong> @inquilino.Email</p>
-                            <p class="card-text"><strong>Dirección:</strong> @inquilino.Direccion</p> *@
                             <div class="d-flex justify-content-end">
                                 <a href="@Url.Action("Detalle", "Inmueble", new { id = inmueble.Id })" class="btn btn-info btn-sm mx-1 shadow-sm">Ver</a>
                             </div>
