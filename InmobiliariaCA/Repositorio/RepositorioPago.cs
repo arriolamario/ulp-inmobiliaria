@@ -9,7 +9,6 @@ public class RepositorioPago : RepositorioBase, IRepositorioPago {
     private IRepositorioContrato _repositorioContrato;
     public RepositorioPago(IConfiguration configuration, IRepositorioContrato repositorioContrato) : base(configuration) {
         _repositorioContrato = repositorioContrato;
-       //gi _repositorioUsuario = new RepositorioUsuario(configuration);
     }
 
     public List<Pago> GetPagos() {
