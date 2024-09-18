@@ -4,11 +4,11 @@ namespace InmobiliariaCA.Repositorio
 {
     public abstract class RepositorioBase
     {
-        private string connectionString;
+        private readonly string connectionString;
 
         public RepositorioBase(IConfiguration configuration)
         {
-            connectionString = configuration.GetConnectionString("DefaultConnection") ?? "";
+            connectionString = configuration.GetConnectionString("DefaultConnection") ?? throw new ArgumentNullException(nameof(configuration));
         }
 
         protected MySqlConnection GetConnection()
@@ -27,11 +27,13 @@ namespace InmobiliariaCA.Repositorio
         {
             List<T> result = new List<T>();
 
-            using (MySqlCommand command = new MySqlCommand(query, transaction?.Connection ?? GetConnection()))
+            using (var connection = transaction?.Connection ?? GetConnection())
+            using (var command = new MySqlCommand(query, connection))
             {
-                command.Transaction = transaction;
+                if (transaction != null) command.Transaction = transaction;
                 parameters?.Invoke(command.Parameters);
-                using (MySqlDataReader reader = command.ExecuteReader())
+
+                using (var reader = command.ExecuteReader())
                 {
                     while (reader.Read())
                     {
@@ -45,12 +47,14 @@ namespace InmobiliariaCA.Repositorio
 
         public T? ExecuteReader<T>(string query, Func<MySqlDataReader, T> mapper, MySqlTransaction? transaction = null)
         {
-            T? result = default(T);
+            T? result = default;
 
-            using (MySqlCommand command = new MySqlCommand(query, transaction?.Connection ?? GetConnection()))
+            using (var connection = transaction?.Connection ?? GetConnection())
+            using (var command = new MySqlCommand(query, connection))
             {
-                command.Transaction = transaction;
-                using (MySqlDataReader reader = command.ExecuteReader())
+                if (transaction != null) command.Transaction = transaction;
+
+                using (var reader = command.ExecuteReader())
                 {
                     if (reader.Read())
                     {
@@ -64,13 +68,15 @@ namespace InmobiliariaCA.Repositorio
 
         public T? ExecuteReader<T>(string query, Action<MySqlParameterCollection> parameters, Func<MySqlDataReader, T> mapper, MySqlTransaction? transaction = null)
         {
-            T? result = default(T);
+            T? result = default;
 
-            using (MySqlCommand command = new MySqlCommand(query, transaction?.Connection ?? GetConnection()))
+            using (var connection = transaction?.Connection ?? GetConnection())
+            using (var command = new MySqlCommand(query, connection))
             {
-                command.Transaction = transaction;
+                if (transaction != null) command.Transaction = transaction;
                 parameters?.Invoke(command.Parameters);
-                using (MySqlDataReader reader = command.ExecuteReader())
+
+                using (var reader = command.ExecuteReader())
                 {
                     if (reader.Read())
                     {
@@ -84,11 +90,12 @@ namespace InmobiliariaCA.Repositorio
 
         public int ExecuteScalar(string query, Action<MySqlParameterCollection> parameters, MySqlTransaction? transaction = null)
         {
-            int result = default(int);
+            int result = 0;
 
-            using (MySqlCommand command = new MySqlCommand(query, transaction?.Connection ?? GetConnection()))
+            using (var connection = transaction?.Connection ?? GetConnection())
+            using (var command = new MySqlCommand(query, connection))
             {
-                command.Transaction = transaction;
+                if (transaction != null) command.Transaction = transaction;
                 parameters?.Invoke(command.Parameters);
                 result = Convert.ToInt32(command.ExecuteScalar());
             }
@@ -98,11 +105,12 @@ namespace InmobiliariaCA.Repositorio
 
         public int ExecuteNonQuery(string query, Action<MySqlParameterCollection> parameters, MySqlTransaction? transaction = null)
         {
-            int filasAfectadas = default(int);
+            int filasAfectadas = 0;
 
-            using (MySqlCommand command = new MySqlCommand(query, transaction?.Connection ?? GetConnection()))
+            using (var connection = transaction?.Connection ?? GetConnection())
+            using (var command = new MySqlCommand(query, connection))
             {
-                command.Transaction = transaction;
+                if (transaction != null) command.Transaction = transaction;
                 parameters?.Invoke(command.Parameters);
                 filasAfectadas = command.ExecuteNonQuery();
             }

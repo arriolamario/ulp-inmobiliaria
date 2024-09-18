@@ -1,4 +1,4 @@
-namespace InmobiliariaCA.Models;
+namespace InmobiliariaCA.Models.ContratoModels;
 
 public class ContratoViewModel {
     public IEnumerable<Contrato> Contratos { get; set; } = new List<Contrato>();

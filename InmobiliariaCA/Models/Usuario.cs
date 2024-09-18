@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using InmobiliariaCA.Models;
+using InmobiliariaCA.Models.ContratoModels;
 
 namespace InmobiliariaCA.Models;
 

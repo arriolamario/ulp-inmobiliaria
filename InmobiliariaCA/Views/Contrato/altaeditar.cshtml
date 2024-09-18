@@ -1,4 +1,4 @@
-@model InmobiliariaCA.Models.Contrato
+@model InmobiliariaCA.Models.ContratoModels.Contrato
 
 @{
     ViewData["Title"] = Model == null || Model.Id == 0 ? "Crear Contrato" : "Editar Contrato";
@@ -14,7 +14,7 @@
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <select asp-for="Id_Inmueble" class="form-select" id="id_inmueble" disabled="@(Model?.Id_Inmueble != 0)">
+                            <select asp-for="Id_Inmueble" class="form-select" id="id_inmueble" disabled="@(Model?.Id_Inmueble != 0)" required>
                                 <option value="">Seleccione un Inmueble</option>
                                 @foreach (var inmueble in ViewBag.Inmuebles) {
                                     <option value="@inmueble.Value" data-precio="@ViewBag.InmueblesData[inmueble.Value]">@inmueble.Text</option>
@@ -26,7 +26,7 @@
                     </div>
                     <div class="col-md-6">
                         <div class="form-floating">
-                            @Html.DropDownListFor(m => m.Id_Inquilino, (SelectList)ViewBag.Inquilinos, "Seleccione un Inquilino", new { @class = "form-select", id = 1 })
+                            @Html.DropDownListFor(m => m.Id_Inquilino, (SelectList)ViewBag.Inquilinos, "Seleccione un Inquilino", new { @class = "form-select", @required = "required", id = 1 })
                             <label for="Id_Inquilino">Inquilino</label>
                             <span asp-validation-for="Id_Inquilino" class="text-danger"></span>
                         </div>
@@ -57,8 +57,11 @@
                 <input type="hidden" asp-for="Id" />
 
                   <div class="d-flex justify-content-between">
-                    <a href="@Url.Action(Model == null ? "Index" : "Detalle", "Contrato", Model == null || Model.Id == 0 ? null : new { id = Model.Id })" class="btn btn-secondary">
-                        @(Model == null ? "Volver a la Lista" : "Volver")
+                    @* <a href="@Url.Action(Model == null ? "Index" : "Detalle", "Contrato", Model == null || Model.Id == 0 ? null : new { id = Model.Id })" class="btn btn-secondary">
+                        @(Model == null || Model.Id == 0 ? "Volver a la Lista" : "Volver")
+                    </a> *@
+                     <a href="@Url.Action("Index", "Contrato")" class="btn btn-secondary">
+                        Volver a la Lista
                     </a>
                     <button type="submit" class="btn btn-primary">
                         @(Model == null || Model.Id == 0 ? "Registrar" : "Actualizar")

@@ -126,8 +126,7 @@ public class RepositorioPago : RepositorioBase, IRepositorioPago {
             }, transaction);
 
             // Actualizar el contrato
-            if (_repositorioContrato.ActualizarContratoPagado(pago.Contrato_Id, 1) == 0)
-            {
+            if (_repositorioContrato.ActualizarContratoPagado(pago.Contrato_Id, 1) == 0) {
                 throw new Exception("No se pudo actualizar el estado de pagado del contrato.");
             }
 
@@ -135,9 +134,7 @@ public class RepositorioPago : RepositorioBase, IRepositorioPago {
             transaction.Commit();
 
             return result;
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             transaction.Rollback();
             throw new Exception("Error al insertar el pago o actualizar el contrato: " + ex.Message, ex);
         }
@@ -188,7 +185,6 @@ public class RepositorioPago : RepositorioBase, IRepositorioPago {
         if (_repositorioContrato.ActualizarContratoPagado(contratoId, 0) == 0) {
                 throw new Exception("No se pudo anular el pagado del contrato.");
         }
-
 
         return result;
     }

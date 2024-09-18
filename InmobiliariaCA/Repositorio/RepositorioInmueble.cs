@@ -5,13 +5,15 @@ public class RepositorioInmueble : RepositorioBase, IRepositorioInmueble
 {
     private IRepositorioPropietario _repositorioPropietario;
     private IRepositorioTipos _repositorioTipos;
-    public RepositorioInmueble(IConfiguration configuration, IRepositorioPropietario repositorioPropietario, IRepositorioTipos repositorioTipos) : base(configuration)
+    public RepositorioInmueble(
+        IConfiguration configuration, 
+        IRepositorioPropietario repositorioPropietario, 
+        IRepositorioTipos repositorioTipos) : base(configuration)
     {
         _repositorioPropietario = repositorioPropietario;
         _repositorioTipos = repositorioTipos;
     }
-    public int AltaInmueble(Inmueble inmueble)
-    {
+    public int AltaInmueble(Inmueble inmueble) {
         int result = 0;
         string query = @$"INSERT INTO inmueble(
                             {nameof(Inmueble.Direccion)}, 
@@ -45,8 +47,7 @@ public class RepositorioInmueble : RepositorioBase, IRepositorioInmueble
 
         return result;
     }
-    public List<Inmueble> GetInmuebles()
-    {
+    public List<Inmueble> GetInmuebles() {
         List<Inmueble> resultInmuebles = new List<Inmueble>();
 
         string query = @$"select {nameof(Inmueble.Id)}, 
@@ -94,8 +95,7 @@ public class RepositorioInmueble : RepositorioBase, IRepositorioInmueble
         return resultInmuebles;
     }
 
-    public List<Inmueble> GetInmuebles(int idPropietario)
-    {
+    public List<Inmueble> GetInmuebles(int idPropietario) {
         List<Inmueble> resultInmuebles = new List<Inmueble>();
 
         string query = @$"select {nameof(Inmueble.Id)}, 
@@ -176,8 +176,7 @@ public class RepositorioInmueble : RepositorioBase, IRepositorioInmueble
             return resultInmuebles;
     }
 
-    public Inmueble? GetInmueble(int Id)
-    {
+    public Inmueble? GetInmueble(int Id) {
         Inmueble? result = null;
         string query = @$"select {nameof(Inmueble.Id)}, 
                                 {nameof(Inmueble.Direccion)},
@@ -226,8 +225,7 @@ public class RepositorioInmueble : RepositorioBase, IRepositorioInmueble
         return result;
     }
 
-    public bool BajaInmueble(int id)
-    {
+    public bool BajaInmueble(int id) {
         bool result = false;
         string query = @$"delete from inmueble where {nameof(Inmueble.Id)} = @{nameof(Inmueble.Id)};";
         result = this.ExecuteNonQuery(query, (parameters) => {
@@ -263,15 +261,39 @@ public class RepositorioInmueble : RepositorioBase, IRepositorioInmueble
         return result;
     }
 
-    public List<TipoInmueble> GetTipoInmuebles()
-    {
+    public List<TipoInmueble> GetTipoInmuebles() {
         var resultList = _repositorioTipos.GetTipoInmuebles();
         return resultList;
     }
 
-    public List<TipoInmuebleUso> GetTipoInmueblesUsos()
-    {
+    public List<TipoInmuebleUso> GetTipoInmueblesUsos() {
         var resultList = _repositorioTipos.GetTipoInmueblesUsos();
         return resultList;
+    }
+
+    public bool EsInmuebleDisponible(int IdInmueble, DateTime fechaDesde, DateTime fechaHasta) {
+        try {
+            string query = @$"SELECT COUNT(1)
+                        FROM inmueble AS i
+                        LEFT JOIN contrato AS c ON i.id = c.id_inmueble
+                        WHERE i.id = @IdInmueble
+                        AND c.estado != 'Finalizado'
+                        AND (
+                            (c.id IS NULL) 
+                            OR 
+                            (c.fecha_desde > @FechaHasta OR c.fecha_hasta < @FechaDesde)
+                        );";
+
+            int count = this.ExecuteScalar(query, (parameters) => {
+                parameters.AddWithValue("@IdInmueble", IdInmueble);
+                parameters.AddWithValue("@FechaDesde", fechaDesde.Date);
+                parameters.AddWithValue("@FechaHasta", fechaHasta.Date);
+            });
+
+            return count > 0; //DISPONIBLE
+        } catch (Exception ex) {
+            throw new Exception("Error al validar el inmueble en las fechas: " + ex.Message, ex);
+        }
+
     }
 }

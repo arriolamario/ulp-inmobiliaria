@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Globalization;
 
-namespace InmobiliariaCA.Models;
+namespace InmobiliariaCA.Models.ContratoModels;
 public class Contrato {
     [Key]
     public int Id { get; set; }
@@ -36,6 +36,9 @@ public class Contrato {
     [Column("multa", TypeName = "decimal(10, 2)")]
     [Range(0, double.MaxValue, ErrorMessage = "La multa debe ser un valor positivo.")]
     public decimal? Multa { get; set; }
+
+    [Range(0, double.MaxValue, ErrorMessage = "La multa debe ser un valor positivo.")]
+    public decimal? Total { get; set; }
 
     [Required(ErrorMessage = "El usuario de creación es obligatorio.")]
     [ForeignKey("UsuarioCreacion")]
@@ -80,5 +83,7 @@ public class Contrato {
     }
 
     public bool PagosCompletos() => Cantidad_Cuotas == Cuotas_Pagas;
+
+    public bool EsFinalizado() => EstadoContrato.Finalizado == Estado;
 
 }

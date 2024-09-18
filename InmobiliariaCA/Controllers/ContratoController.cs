@@ -1,5 +1,6 @@
 using System.Globalization;
 using InmobiliariaCA.Models;
+using InmobiliariaCA.Models.ContratoModels;
 using InmobiliariaCA.Repositorio;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -41,7 +42,7 @@ namespace InmobiliariaCA.Controllers {
                 return View(viewModel);
             } catch (Exception ex) {
                 _logger.LogError("An error occurred while getting contracts: {Error}", ex.Message);
-                TempData["ErrorMessage"] = "Error al cargar los contratos. Por favor intente de nuevo más tarde.";
+                TempData["ErrorMessage"] = ex.Message;
                 return View(new ContratoViewModel { Contratos = new List<Contrato>() });
             }
         }
@@ -62,71 +63,110 @@ namespace InmobiliariaCA.Controllers {
             } catch (Exception ex) {              
                 _logger.LogError("An error occurred while getting contract: {Error}", ex.Message);
                
-                TempData["ErrorMessage"] = "Error al cargar la vista de contrato. Por favor intente de nuevo más tarde.";
+                TempData["ErrorMessage"] = ex.Message;
                 return View();
             }            
         }
 
         public IActionResult AltaEditar(int Id) {
-            ViewBag.Inquilinos = new SelectList(GetInquilinos(), "Id", "NombreCompletoDNI");
-            ViewBag.Inmuebles = GetInmueblesSelectList(Id == 0);
+            try {
+                ViewBag.Inquilinos = new SelectList(GetInquilinos(), "Id", "NombreCompletoDNI");
+                ViewBag.Inmuebles = GetInmueblesSelectList(false);
 
-            if (Id == 0) {
-                return View(new Contrato());
-            }
+                if (Id == 0) {
+                    return View(new Contrato());
+                }
 
-            var contrato = _repositorioContrato.GetContrato(Id);
-            return View(contrato);
+                var contrato = _repositorioContrato.GetContrato(Id);
+                return View(contrato);
+            } catch (Exception ex) {              
+                _logger.LogError("An error occurred while getting contract: {Error}", ex.Message);               
+                TempData["ErrorMessage"] = "Error al cargar o editar un contrato. Por favor intente de nuevo más tarde.";
+                return View();
+            }  
         }
 
         [HttpPost]
         public IActionResult CrearActualizar(Contrato Contrato) {
+            try {
+                if(!_repositorioInmueble.EsInmuebleDisponible(Contrato.Id_Inmueble, Contrato.Fecha_Desde, Contrato.Fecha_Hasta)) {
+                    throw new Exception("No se puede crear el contrato en ese rango de fechas.");
+                }
             
-            if (Contrato.Id == 0) {
-                _repositorioContrato.InsertarContrato(Contrato);
-                TempData["SuccessMessage"] = "Contrato agregado correctamente.";
-            } else {
-                _repositorioContrato.ActualizarContrato(Contrato);
-                TempData["SuccessMessage"] = "Contrato actualizado correctamente.";
-            }
-            
-            return RedirectToAction("Index");
+                if (Contrato.Id == 0) {                    
+                    _repositorioContrato.InsertarContrato(Contrato);
+                    TempData["SuccessMessage"] = "Contrato agregado correctamente.";
+                } else {
+                    _repositorioContrato.ActualizarContrato(Contrato);
+                    TempData["SuccessMessage"] = "Contrato actualizado correctamente.";
+                }
+                
+                return RedirectToAction("Index");
+            } catch (Exception ex) {              
+                _logger.LogError("An error occurred while getting contract: {Error}", ex.Message);
+               
+                TempData["ErrorMessage"] = ex.Message;
+                return RedirectToAction("Index");
+            }  
         }
         
         [HttpPost]
         public IActionResult Baja(int id) {
-            bool result = _repositorioContrato.BajaContrato(id);
-            if (result) {
-                return RedirectToAction(nameof(Index));
-            } else {
-                ModelState.AddModelError("", "Error al eliminar el contrato");
+            try {
+                bool result = _repositorioContrato.BajaContrato(id);
+                if (result) {
+                    return RedirectToAction(nameof(Index));
+                } else {
+                    ModelState.AddModelError("", "Error al eliminar el contrato");
+                    return View();
+                }
+            } catch (Exception ex) {              
+                _logger.LogError("An error occurred while getting contract: {Error}", ex.Message);
+               
+                TempData["ErrorMessage"] = ex.Message;
                 return View();
-            }
+            }  
         }
 
         public IActionResult TerminarContrato(int Id) {
-            var contrato = _repositorioContrato.GetContrato(Id);
-            if (contrato == null) {
-                return NotFound("El contrato solicitado no existe.");
-            }
-           
-            return View("TerminarContrato", contrato);
+            try {
+                var contrato = _repositorioContrato.GetContrato(Id);
+                if (contrato == null) {
+                    return NotFound("El contrato solicitado no existe.");
+                }
+            
+                return View("TerminarContrato", contrato);
+            } catch (Exception ex) {              
+                _logger.LogError("An error occurred while getting contract: {Error}", ex.Message);
+               
+                TempData["ErrorMessage"] = ex.Message;
+                return View();
+            }  
         }
 
         [HttpPost]
         public IActionResult FinalizarContrato(Contrato contrato) {
-            var contratoDb = _repositorioContrato.GetContrato(contrato.Id);
-            if (contratoDb == null) {
-                return NotFound("El contrato solicitado no existe.");
-            }
+            try {
+                var contratoDb = _repositorioContrato.GetContrato(contrato.Id);
+                if (contratoDb == null) {
+                    return NotFound("El contrato solicitado no existe.");
+                }
 
-            contratoDb.Fecha_Finalizacion_Anticipada = contrato.Fecha_Finalizacion_Anticipada;
-            contratoDb.MultaCalculada();
-            contratoDb.Estado = EstadoContrato.Finalizado;
+                contratoDb.Fecha_Finalizacion_Anticipada = contrato.Fecha_Finalizacion_Anticipada;
+                contratoDb.MultaCalculada();
+                contratoDb.Estado = EstadoContrato.Finalizado;
+                contratoDb.Id_Usuario_Finalizacion = 2;
 
-            _repositorioContrato.ActualizarContrato(contratoDb);
+                _repositorioContrato.ActualizarContrato(contratoDb);
 
-            return RedirectToAction("Index");
+                TempData["SuccessMessage"] = "Contrato Finalizado correctamente.";
+                return RedirectToAction("Index");
+            } catch (Exception ex) {              
+                _logger.LogError("An error occurred while getting contract: {Error}", ex.Message);
+               
+                TempData["ErrorMessage"] = ex.Message;
+                return RedirectToAction("Index");
+            }  
         }
 
         private IEnumerable<Inquilino> GetInquilinos() {
