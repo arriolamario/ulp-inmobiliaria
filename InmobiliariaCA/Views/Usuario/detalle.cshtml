@@ -6,17 +6,33 @@
         </div>
         <div class="card-body">
             <dl class="row">
-                <dt class="col-sm-3">Nombre Completo</dt>
-                <dd class="col-sm-9">@Model.NombreCompleto</dd>
+                <div class="col-8">
+                    <dt class="col-sm-3">Nombre Completo</dt>
+                    <dd class="col-sm-9">@Model.NombreCompleto</dd>
 
-                <dt class="col-sm-3">Email</dt>
-                <dd class="col-sm-9">@Model.Email</dd>
+                    <dt class="col-sm-3">Email</dt>
+                    <dd class="col-sm-9">@Model.Email</dd>
 
-                <dt class="col-sm-3">Rol</dt>
-                <dd class="col-sm-9">@Model.Rol</dd>
+                    <dt class="col-sm-3">Rol</dt>
+                    <dd class="col-sm-9">@Model.Rol</dd>
 
-                <dt class="col-sm-3">Fecha de Creación</dt>
-                <dd class="col-sm-9">@Model.Fecha_Creacion.ToString("dd/MM/yyyy")</dd>
+                    <dt class="col-sm-3">Fecha de Creación</dt>
+                    <dd class="col-sm-9">@Model.Fecha_Creacion.ToString("dd/MM/yyyy")</dd>
+                </div>
+                <div class="col-4">
+                    <div>
+                        @if (Model.Avatar_Url != "")
+                        {
+                            <img src="@Model.Avatar_Url" alt="Usuario Avatar" class="rounded-circle mb-3"
+                                style="width: 150px; height: 150px; object-fit: cover;">
+                        }
+                        else
+                        {
+                            <img src="/img/sin-perfil.png" alt="Usuario Avatar" class="rounded-circle mb-3"
+                                style="width: 150px; height: 150px; object-fit: cover;">
+                        }
+                    </div>
+                </div>
             </dl>
         </div>
         <div class="card-footer text-end">
@@ -25,6 +41,8 @@
                 Eliminar
             </button>
             <a href="@Url.Action("Index", "Usuario")" class="btn btn-secondary">Volver a la Lista</a>
+            <input type="file" name="input-file" id="input-file" style="display:none" accept=".png,.jpg,.jpeg">
+            <label for="input-file" class="btn btn-secondary" type="button">Cargar Avatar</label>
         </div>
     </div>
 </div>
@@ -47,7 +65,102 @@
                     <input type="hidden" name="id" value="@Model.Id" />
                     <button type="submit" class="btn btn-danger">Eliminar</button>
                 </form>
+                
             </div>
         </div>
     </div>
 </div>
+
+
+<!-- Modal Cargar Avatar -->
+<div class="modal fade" id="modalCargarAvatar" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-action="UploadAvatar" id="formUploadAvatar" method="post" class="d-inline" enctype="multipart/form-data">
+                <div class="modal-header">
+                    <p>Recorta tu foto</p>
+                </div>
+                <div class="modal-body">
+                    <div class="content-imagen-cropper">
+                        <img src="" alt="" style="width: 150%;" class="img-cropper" id="avatarImg">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="cerrarModal()" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" onclick="aceptarModal(@Model.Id)" class="btn btn-danger" id="btnCargar">Aceptar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+    <script>
+        let avatarInput = document.getElementById('input-file');
+        let cropper = null;
+        avatarInput.onchange = function (e) {
+            let image = document.getElementById('avatarImg');
+            let input = document.getElementById('input-file');
+            let archivos = input.files;
+
+            if (!archivos || !archivos.length) {
+                image.src = "";
+                input.value = "";
+            }
+            else {
+                let imagenUrl = URL.createObjectURL(archivos[0]);
+                image.src = imagenUrl;
+                cropper = new Cropper(image, {
+                    aspectRatio: 1,
+                    preview: '.avatarDiv',
+                    zoomable: false,
+                    viewMode: 1,
+                    responsive: false,
+                    dragMode: 'none',
+                    ready() {
+                        document.querySelector
+                    }
+                });
+
+                let modalCargarAvatar = new bootstrap.Modal(document.getElementById('modalCargarAvatar'));
+                modalCargarAvatar.show();
+            }
+        }
+
+        function cerrarModal(){
+            let image = document.getElementById('avatarImg');
+            let input = document.getElementById('input-file');
+            image.src = "";
+            input.value = "";
+            cropper.destroy();
+        }
+
+        function aceptarModal(id){
+            let canvas = cropper.getCroppedCanvas();
+
+            canvas.toBlob(function(blob){
+                let formData = new FormData();
+                formData.append('avatar', blob, 'avatar.png');
+                formData.append('Id', id);
+                fetch('/Usuario/UploadAvatar', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    window.location.replace("/Usuario/Detalle/" + id);
+                });
+            });
+
+            let image = document.getElementById('avatarImg');
+            let input = document.getElementById('input-file');
+            image.src = "";
+            input.value = "";
+            cropper.destroy();
+        }
+    </script>
+
+    
+}

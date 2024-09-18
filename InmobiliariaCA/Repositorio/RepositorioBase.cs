@@ -87,6 +87,7 @@ public abstract class RepositorioBase
             connection.Open();
             using (MySqlCommand command = new MySqlCommand(query, connection))
             {
+
                 parameters(command.Parameters);
                 result = Convert.ToInt32(command.ExecuteScalar());
             }
@@ -112,7 +113,7 @@ public abstract class RepositorioBase
                 }
                 catch (Exception)
                 {
-                    result = 0;                    
+                    result = 0;
                 }
                 filasAfectadas = Convert.ToInt32(result);
             }

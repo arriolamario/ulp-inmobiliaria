@@ -115,7 +115,9 @@ public class RepositorioUsuario : RepositorioBase, IRepositorioUsuario
                         SET {nameof(Usuario.Email)} = @{nameof(Usuario.Email)},
                             {nameof(Usuario.Nombre)} = @{nameof(Usuario.Nombre)},
                             {nameof(Usuario.Apellido)} = @{nameof(Usuario.Apellido)},
-                            {nameof(Usuario.Rol)} = @{nameof(Usuario.Rol)}
+                            {nameof(Usuario.Rol)} = @{nameof(Usuario.Rol)},
+                            {nameof(Usuario.Password_Hash)} = @{nameof(Usuario.Password_Hash)},
+                            {nameof(Usuario.Avatar_Url)} = @{nameof(Usuario.Avatar_Url)}
                         WHERE {nameof(Usuario.Id)} = @{nameof(Usuario.Id)};";
 
         return this.ExecuteNonQuery(query, (parameters) => {
@@ -124,6 +126,8 @@ public class RepositorioUsuario : RepositorioBase, IRepositorioUsuario
             parameters.AddWithValue(@$"@{nameof(Usuario.Nombre)}", usuario.Nombre);
             parameters.AddWithValue(@$"@{nameof(Usuario.Apellido)}", usuario.Apellido);
             parameters.AddWithValue(@$"@{nameof(Usuario.Rol)}", usuario.Rol);
+            parameters.AddWithValue(@$"@{nameof(Usuario.Password_Hash)}", usuario.Password_Hash);
+            parameters.AddWithValue(@$"@{nameof(Usuario.Avatar_Url)}", usuario.Avatar_Url);
         });
     }
 
