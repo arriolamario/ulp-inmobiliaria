@@ -45,7 +45,7 @@
                 </div>
                 <input type="hidden" asp-for="Id" />
                <div class="d-flex justify-content-between">
-                    <a href="@Url.Action(Model == null ? "Index" : "Detalle", "Usuario", Model == null || Model.Id == 0 ? null : new { id = Model.Id })" class="btn btn-secondary">
+                    <a href="@Url.Action(Model == null || Model.Id == 0 ? "Index" : "Detalle", "Usuario", Model == null || Model.Id == 0 ? null : new { id = Model.Id })" class="btn btn-secondary">
                         @(Model == null ? "Volver a la Lista" : "Volver")
                     </a>
                     <button type="submit" class="btn btn-primary">

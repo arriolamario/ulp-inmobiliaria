@@ -193,6 +193,50 @@ public class UsuarioController : Controller
         return View();
     }
 
+    public IActionResult ResetPassword(int Id)
+    {
+        if (Id == 0)
+        {
+            return NotFound();
+        }
+
+        Usuario? u = _repositorioUsuario.GetUsuario(Id);
+        if (u == null){
+            return NotFound();
+        }
+
+        return View(new UsuarioResetPasswordViewModel(u));
+    }
+    [HttpPost]
+    public IActionResult ResetPassword(UsuarioResetPasswordViewModel model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        // Lógica para verificar el token y cambiar la contraseña
+        Usuario? usuario = _repositorioUsuario.GetPorEmail(model.Email);
+
+        if (usuario == null)
+        {
+            ModelState.AddModelError("", "El email no existe");
+            return View(model);
+        }
+
+        usuario.Password_Hash = PasswordHash(model.NewPassword);
+        int result = _repositorioUsuario.ActualizarUsuario(usuario);
+        if (result > 0)
+        {
+            TempData["SuccessMessage"] = "Se ha cambiado la contraseña correctamente";
+            return RedirectToAction("Detalle", "Usuario", new { Id = usuario.Id });
+        }
+
+        ModelState.AddModelError("", "No se pudo cambiar la contraseña");
+
+        return View(model);
+    }
+
 
     private string PasswordHash(string password)
     {

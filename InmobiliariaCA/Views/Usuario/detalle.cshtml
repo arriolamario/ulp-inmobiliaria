@@ -36,6 +36,7 @@
             </dl>
         </div>
         <div class="card-footer text-end">
+            <a href="@Url.Action("ResetPassword", "Usuario", new { id = Model.Id })" class="btn btn-warning">Cambiar Password</a>
             <a href="@Url.Action("AltaEditar", "Usuario", new { id = Model.Id })" class="btn btn-warning">Editar</a>
             <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalBajaLogica">
                 Eliminar
