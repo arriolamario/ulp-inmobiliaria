@@ -1,7 +1,7 @@
 @model InmobiliariaCA.Models.ContratoModels.Contrato
 
 @{
-    ViewData["Title"] = "Terminar Contrato";
+    ViewData["Title"] = $"Terminar Contrato Nro: {Model.Id}";
 }
 
 <div class="container mt-5">
@@ -41,7 +41,7 @@
 
                 <div class="card-footer d-flex justify-content-end">
                     <div>
-                        <button type="submit" class="btn btn-success"> Terminar </button>
+                        <button type="submit" class="btn btn-success" style="margin-right: 5px;"> Terminar </button>
                     </div>
                     <div>
                         <button onclick="window.location.href='@Url.Action("AltaEditar", "Contrato",new { id = Model.Id })'" class="btn btn-secondary"> Volver al Contrato </button>

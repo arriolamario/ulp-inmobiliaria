@@ -3,7 +3,7 @@
 <div class="container mt-5">
     <div class="card shadow-sm">
         <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-            <h2>Detalles del Contrato</h2>
+            <h2>Detalles del Contrato Nro: @Model.Id</h2>
             <div>
                 <h3 class="mb-0">Pagos: @Model.Cuotas_Pagas/@Model.Cantidad_Cuotas</h3>
                 @if(@Model.Estado == EstadoContrato.Vigente) {
@@ -54,8 +54,8 @@
         <div class="card-footer d-flex justify-content-between">
             <div>
                 <a href="@Url.Action(Model.PagosCompletos() ? "RenovarContrato" : "TerminarContrato", "Contrato", new { id = Model.Id })" 
-                class="btn @(Model.PagosCompletos() ? "btn-success" : "btn-danger")">
-                    @(Model.PagosCompletos() ? "Renovar Contrato" : "Terminar Contrato")
+                class="btn @(Model.PagosCompletos() || Model.EsFinalizado() ? "btn-success" : "btn-danger")">
+                    @(Model.PagosCompletos() || Model.EsFinalizado() ? "Renovar Contrato" : "Terminar Contrato")
                 </a>
             </div>
             <div>
@@ -134,6 +134,14 @@
                             <label for="Importe" class="form-label">Monto del Alquiler</label>
                             <input type="text" class="form-control" id="Importe" name="Importe" value="@Model.Monto_Alquiler" readonly>
                         </div>
+                        @* <div class="mb-3">
+                            <label for="Multa" class="form-label">Monto Multa</label>
+                            <input type="text" class="form-control" id="Multa" name="Multa" value="@Model.Multa" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="Total" class="form-label">Total</label>
+                            <input type="text" class="form-control" id="Total" name="Total" value="@Model.Total" readonly>
+                        </div> *@
                     </div>
                     <div id="botoneraModalPago" class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>

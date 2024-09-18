@@ -37,6 +37,9 @@ public class Contrato {
     [Range(0, double.MaxValue, ErrorMessage = "La multa debe ser un valor positivo.")]
     public decimal? Multa { get; set; }
 
+    [Range(0, double.MaxValue, ErrorMessage = "La multa debe ser un valor positivo.")]
+    public decimal? Total { get; set; }
+
     [Required(ErrorMessage = "El usuario de creación es obligatorio.")]
     [ForeignKey("UsuarioCreacion")]
     public int Id_Usuario_Creacion { get; set; }
@@ -80,5 +83,7 @@ public class Contrato {
     }
 
     public bool PagosCompletos() => Cantidad_Cuotas == Cuotas_Pagas;
+
+    public bool EsFinalizado() => EstadoContrato.Finalizado == Estado;
 
 }

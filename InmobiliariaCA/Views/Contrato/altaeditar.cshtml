@@ -57,8 +57,11 @@
                 <input type="hidden" asp-for="Id" />
 
                   <div class="d-flex justify-content-between">
-                    <a href="@Url.Action(Model == null ? "Index" : "Detalle", "Contrato", Model == null || Model.Id == 0 ? null : new { id = Model.Id })" class="btn btn-secondary">
-                        @(Model == null ? "Volver a la Lista" : "Volver")
+                    @* <a href="@Url.Action(Model == null ? "Index" : "Detalle", "Contrato", Model == null || Model.Id == 0 ? null : new { id = Model.Id })" class="btn btn-secondary">
+                        @(Model == null || Model.Id == 0 ? "Volver a la Lista" : "Volver")
+                    </a> *@
+                     <a href="@Url.Action("Index", "Contrato")" class="btn btn-secondary">
+                        Volver a la Lista
                     </a>
                     <button type="submit" class="btn btn-primary">
                         @(Model == null || Model.Id == 0 ? "Registrar" : "Actualizar")

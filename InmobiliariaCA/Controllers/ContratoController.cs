@@ -155,15 +155,17 @@ namespace InmobiliariaCA.Controllers {
                 contratoDb.Fecha_Finalizacion_Anticipada = contrato.Fecha_Finalizacion_Anticipada;
                 contratoDb.MultaCalculada();
                 contratoDb.Estado = EstadoContrato.Finalizado;
+                contratoDb.Id_Usuario_Finalizacion = 2;
 
                 _repositorioContrato.ActualizarContrato(contratoDb);
 
+                TempData["SuccessMessage"] = "Contrato Finalizado correctamente.";
                 return RedirectToAction("Index");
             } catch (Exception ex) {              
                 _logger.LogError("An error occurred while getting contract: {Error}", ex.Message);
                
                 TempData["ErrorMessage"] = ex.Message;
-                return View();
+                return RedirectToAction("Index");
             }  
         }
 

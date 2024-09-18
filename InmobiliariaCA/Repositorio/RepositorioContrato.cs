@@ -152,7 +152,7 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato {
             parameters.AddWithValue($"@{nameof(Contrato.Fecha_Finalizacion_Anticipada)}", (object?)contrato.Fecha_Finalizacion_Anticipada ?? DBNull.Value);
             parameters.AddWithValue($"@{nameof(Contrato.Multa)}", (object?)contrato.Multa ?? DBNull.Value);
             parameters.AddWithValue($"@{nameof(Contrato.Id_Usuario_Creacion)}", 1);//contrato.Id_Usuario_Creacion);
-            parameters.AddWithValue($"@{nameof(Contrato.Id_Usuario_Finalizacion)}", 2);// (object?)contrato.Id_Usuario_Finalizacion ?? DBNull.Value);
+            parameters.AddWithValue($"@{nameof(Contrato.Id_Usuario_Finalizacion)}", (object?)contrato.Id_Usuario_Finalizacion ?? DBNull.Value);// (object?)contrato.Id_Usuario_Finalizacion ?? DBNull.Value);
             parameters.AddWithValue($"@{nameof(Contrato.Fecha_Creacion)}", contrato.Fecha_Creacion);
             parameters.AddWithValue($"@{nameof(Contrato.Fecha_Actualizacion)}", contrato.Fecha_Actualizacion);
             parameters.AddWithValue($"@{nameof(Contrato.Cantidad_Cuotas)}", CantidadCuotas(contrato));
@@ -171,7 +171,7 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato {
                                 {nameof(Contrato.Fecha_Finalizacion_Anticipada)} = @{nameof(Contrato.Fecha_Finalizacion_Anticipada)},
                                 {nameof(Contrato.Multa)} = @{nameof(Contrato.Multa)},
                                 {nameof(Contrato.Id_Usuario_Finalizacion)} = @{nameof(Contrato.Id_Usuario_Finalizacion)},
-                                {nameof(Contrato.Fecha_Actualizacion)} = @{nameof(Contrato.Fecha_Actualizacion)}
+                                {nameof(Contrato.Fecha_Actualizacion)} = @{nameof(Contrato.Fecha_Actualizacion)},
                                 {nameof(Contrato.Estado)} = @{nameof(Contrato.Estado)}
                             WHERE {nameof(Contrato.Id)} = @{nameof(Contrato.Id)};";
 
@@ -186,7 +186,7 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato {
             parameters.AddWithValue($"@{nameof(Contrato.Multa)}", (object?)contrato.Multa ?? DBNull.Value);
             parameters.AddWithValue($"@{nameof(Contrato.Id_Usuario_Finalizacion)}", (object?)contrato.Id_Usuario_Finalizacion ?? DBNull.Value);
             parameters.AddWithValue($"@{nameof(Contrato.Fecha_Actualizacion)}", contrato.Fecha_Actualizacion);
-            parameters.AddWithValue($"@{nameof(Contrato.Estado)}", (object?)contrato.Estado ?? DBNull.Value);
+            parameters.AddWithValue($"@{nameof(Contrato.Estado)}", contrato.Estado.ToString());
         });
 
         return result;
@@ -250,7 +250,7 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato {
             query.Append($" AND Fecha_Desde >= '{filter.FechaDesde.Value.ToString("yyyy-MM-dd")}'");
 
         if (filter.FechaHasta.HasValue)
-            query.Append($" AND Fecha_Hasta <= '{filter.FechaHasta.Value.ToString("yyyy-MM-dd")}'");
+            query.Append($" AND Fecha_Hasta <= '{filter.FechaHasta.Value.ToString("yyyy-MM-dd")}'"); //DESDE -> CONSULTAR PROFE
 
         List<Contrato> resultContratos = this.ExecuteReaderList<Contrato>(query.ToString(), (parameters) => { }, (reader) => {
             var contrato = new Contrato() {
