@@ -6,9 +6,13 @@ using InmobiliariaCA.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using System.Runtime.InteropServices;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 
 namespace InmobiliariaCA.Controllers;
-
+[Authorize]
 public class UsuarioController : Controller
 {
     private readonly ILogger<HomeController> _logger;
@@ -157,12 +161,14 @@ public class UsuarioController : Controller
         return RedirectToAction("Index");
     }
 
+    [AllowAnonymous]
     public IActionResult Login()
     {
         return View();
     }
     [HttpPost]
-    public IActionResult Login(UsuarioLoginViewModel usuario)
+    [AllowAnonymous]
+    public async Task<IActionResult> Login(UsuarioLoginViewModel usuario)
     {
         if (ModelState.IsValid)
         {
@@ -174,23 +180,32 @@ public class UsuarioController : Controller
                 ModelState.AddModelError("", "El email o el password no son correctos");
                 return View();
             }
-            // var claims = new List<Claim>
-            // {
-            // 	new Claim(ClaimTypes.Name, e.Email),
-            // 	new Claim("FullName", e.Nombre + " " + e.Apellido),
-            // 	new Claim(ClaimTypes.Role, e.RolNombre),
-            // };
+            var claims = new List<Claim>
+            {
+            	new Claim(ClaimTypes.Name, e.Email),
+                new Claim("Id", e.Id.ToString()),
+            	new Claim("FullName", e.Nombre + " " + e.Apellido),
+            	new Claim(ClaimTypes.Role, e.Rol),
+            };
 
-            // var claimsIdentity = new ClaimsIdentity(
-            // 		claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var claimsIdentity = new ClaimsIdentity(
+            		claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
-            // await HttpContext.SignInAsync(
-            // 		CookieAuthenticationDefaults.AuthenticationScheme,
-            // 		new ClaimsPrincipal(claimsIdentity));
-            // TempData.Remove("returnUrl");
+            await HttpContext.SignInAsync(
+            		CookieAuthenticationDefaults.AuthenticationScheme,
+            		new ClaimsPrincipal(claimsIdentity));
+            
             return RedirectToAction("Index", "Home");
         }
         return View();
+    }
+
+    public async Task<IActionResult> Logout()
+    {
+        await HttpContext.SignOutAsync(
+            CookieAuthenticationDefaults.AuthenticationScheme
+        );
+        return RedirectToAction("Login", "Usuario");
     }
 
     public IActionResult ResetPassword(int Id)

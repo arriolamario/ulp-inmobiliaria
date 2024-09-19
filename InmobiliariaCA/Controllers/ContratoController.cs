@@ -2,10 +2,12 @@ using System.Globalization;
 using InmobiliariaCA.Models;
 using InmobiliariaCA.Models.ContratoModels;
 using InmobiliariaCA.Repositorio;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace InmobiliariaCA.Controllers {
+    [Authorize]
     public class ContratoController : Controller {
         private IRepositorioContrato _repositorioContrato;
         private IRepositorioInquilino _repositorioInquilino;
