@@ -1,9 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using InmobiliariaCA.Models;
 using InmobiliariaCA.Repositorio;
+using Microsoft.AspNetCore.Authorization;
 
 namespace InmobiliariaCA.Controllers;
-
+[Authorize]
 public class PropietarioController : Controller
 {
     private readonly ILogger<HomeController> _logger;
