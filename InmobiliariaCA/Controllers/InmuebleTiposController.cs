@@ -26,7 +26,7 @@ public class InmuebleTiposController : Controller
     }
 
     [HttpPost]
-    public IActionResult BajaLogica(int eliminarId, string eliminarTipo)
+    public IActionResult Baja(int eliminarId, string eliminarTipo)
     {
 
         if (eliminarTipo == "tipoInmueble")

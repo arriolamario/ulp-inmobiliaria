@@ -69,6 +69,7 @@ public class InmuebleController : Controller
     }
 
     [HttpPost]
+    [Authorize(Policy = "administrador")]
     public IActionResult BajaLogica(int Id)
     {
         if (Id == 0)

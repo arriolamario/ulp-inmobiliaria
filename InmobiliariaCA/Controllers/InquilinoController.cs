@@ -67,6 +67,7 @@ public class InquilinoController: Controller {
     }
 
     [HttpPost]
+    [Authorize(Policy = "administrador")]
     public IActionResult BajaLogica(int id) {
         var success = _repositorioInquilino.BajaInquilino(id);
         

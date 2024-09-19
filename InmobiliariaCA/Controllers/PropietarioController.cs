@@ -67,6 +67,7 @@ public class PropietarioController : Controller
     }
 
     [HttpPost]
+    [Authorize(Policy = "administrador")]
     public IActionResult Baja(int Id)
     {
         if (Id == 0)
