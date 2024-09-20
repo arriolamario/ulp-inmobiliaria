@@ -1,4 +1,4 @@
-@model InmobiliariaCA.Models.ContratoModels.Contrato
+@model InmobiliariaCA.Models.ContratoModels.ContratoAltaEditarViewModel
 
 @{
     ViewData["Title"] = Model == null || Model.Id == 0 ? "Crear Contrato" : "Editar Contrato";
@@ -12,7 +12,7 @@
         <div class="card-body">
             <form asp-action="CrearActualizar">
                 <div class="row mb-3">
-                    <div class="col-md-6">
+                    @* <div class="col-md-6">
                         <div class="form-floating">
                             <select asp-for="Id_Inmueble" class="form-select" id="id_inmueble" disabled="@(Model?.Id_Inmueble != 0)" required>
                                 <option value="">Seleccione un Inmueble</option>
@@ -23,7 +23,7 @@
                             <label for="id_inmueble"><i class="fas fa-building"></i> Inmueble</label>
                             <span asp-validation-for="Id_Inmueble" class="text-danger"></span>
                         </div>
-                    </div>
+                    </div> *@
                     <div class="col-md-6">
                         <div class="form-floating">
                             @Html.DropDownListFor(m => m.Id_Inquilino, (SelectList)ViewBag.Inquilinos, "Seleccione un Inquilino", new { @class = "form-select", @required = "required", id = 1 })
