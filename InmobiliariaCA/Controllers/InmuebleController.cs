@@ -3,6 +3,7 @@ using InmobiliariaCA.Models;
 using InmobiliariaCA.Repositorio;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Authorization;
+using InmobiliariaCA.Models.ContratoModels;
 
 namespace InmobiliariaCA.Controllers;
 
@@ -11,12 +12,15 @@ public class InmuebleController : Controller
 {
     private readonly ILogger<HomeController> _logger;
     private IRepositorioInmueble _repositorioInmueble;
+    private IRepositorioContrato _repositorioContrato;
 
     public InmuebleController(ILogger<HomeController> logger, 
-                        IRepositorioInmueble repositorioInmueble)
+                        IRepositorioInmueble repositorioInmueble,
+                        IRepositorioContrato repositorioContrato)
     {
         _logger = logger;
         _repositorioInmueble = repositorioInmueble;
+        _repositorioContrato = repositorioContrato;
     }
 
     public IActionResult Index([FromQuery] bool? Activo)
@@ -38,7 +42,14 @@ public class InmuebleController : Controller
 
     public IActionResult Detalle(int Id)
     {
-        return View(_repositorioInmueble.GetInmueble(Id));
+        Inmueble? inmueble =_repositorioInmueble.GetInmueble(Id);
+        if(inmueble == null){
+            return NotFound();
+        }
+        List<Contrato> contratos = _repositorioContrato.GetContratos(inmueble.Id);
+
+        InmuebleViewModel inmuebleViewModel = new InmuebleViewModel(inmueble, contratos);
+        return View(inmuebleViewModel);
     }
 
     public IActionResult AltaEditar(int Id, int idPropietario)
