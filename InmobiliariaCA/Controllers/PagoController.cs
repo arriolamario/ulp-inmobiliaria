@@ -36,7 +36,6 @@ public class PagoController : Controller {
 
     [HttpPost]
     public IActionResult CrearActualizar(Pago pago) {
-
         try {
             if (!ModelState.IsValid) {
                 TempData["ErrorMessage"] = "Datos del formulario no son válidos.";

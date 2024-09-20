@@ -3,44 +3,52 @@
 @{ ViewData["Title"] = "Lista de Contratos"; }
 
 <div class="container mt-5">
-    <!-- Filtros -->
-    <form method="get" asp-action="Index" class="row g-3 mb-4 p-3 bg-light rounded shadow-sm">
-        <div class="col-md-2">
-            <label for="ContratoId" class="form-label"><i class="fas fa-file-contract"></i> Nro Contrato:</label>
-            <input type="text" class="form-control" asp-for="Filters.ContratoId">
+    <form method="get" asp-action="Index" class="row g-3 mb-3 p-3 bg-light rounded shadow-sm">
+        <div class="row">
+            <div class="col-md-3">
+                <label for="ContratoId" class="form-label">Nro Contrato:</label>
+                <input type="text" class="form-control" asp-for="Filters.ContratoId">
+            </div>
+            <div class="col-md-3">
+                <label for="InquilinoId" class="form-label">Inquilino:</label>
+                <select asp-items="ViewBag.Inquilinos" asp-for="Filters.InquilinoId" class="form-select">
+                    <option value="">Todos</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="InmuebleId" class="form-label">Inmueble:</label>
+                <select asp-items="ViewBag.Inmuebles" asp-for="Filters.InmuebleId" class="form-select">
+                    <option value="">Todos</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="Estado" class="form-label">Estado:</label>
+                <select asp-for="Filters.Estado" asp-items="Html.GetEnumSelectList<EstadoContrato>()" class="form-select">
+                    <option value="">Todos</option>
+                </select>
+            </div>
         </div>
-        <div class="col-md-2">
-            <label for="InquilinoId" class="form-label"><i class="fas fa-user"></i> Inquilino:</label>
-            <select asp-items="ViewBag.Inquilinos" asp-for="Filters.InquilinoId" class="form-select">
-                <option value="">Todos</option>
-            </select>
+        <div class="row">
+            <div class="col-md-3">
+                <label for="FechaDesde_Inicio" class="form-label">Desde - Inicio:</label>
+                <input type="date" asp-for="Filters.FechaDesde_Inicio" class="form-control" />
+            </div>
+            <div class="col-md-3">
+                <label for="FechaDesde_Fin" class="form-label">Desde - Fin:</label>
+                <input type="date" asp-for="Filters.FechaDesde_Fin" class="form-control" />
+            </div>
+            <div class="col-md-3">
+                <label for="FechaHasta_Inicio" class="form-label">Hasta - Inicio:</label>
+                <input type="date" asp-for="Filters.FechaHasta_Inicio" class="form-control" />
+            </div>
+            <div class="col-md-3">
+                <label for="FechaHasta_Fin" class="form-label">Hasta - Fin:</label>
+                <input type="date" asp-for="Filters.FechaHasta_Fin" class="form-control" />
+            </div>
         </div>
-        <div class="col-md-2">
-            <label for="InmuebleId" class="form-label"><i class="fas fa-building"></i> Inmueble:</label>
-            <select asp-items="ViewBag.Inmuebles" asp-for="Filters.InmuebleId" class="form-select">
-                <option value="">Todos</option>
-            </select>
-        </div>
-        <div class="col-md-2">
-            <label for="Estado" class="form-label"><i class="fas fa-info-circle"></i> Estado:</label>
-            <select asp-for="Filters.Estado" class="form-select">
-                <option value="">Todos</option>
-                <option value="Vigente">Vigente</option>
-                <option value="Finalizado">Finalizado</option>
-                <option value="Cancelado">Cancelado</option>
-            </select>
-        </div>
-        <div class="col-md-2">
-            <label for="FechaDesde" class="form-label"><i class="fas fa-calendar-alt"></i> Desde:</label>
-            <input type="date" asp-for="Filters.FechaDesde" class="form-control" />
-        </div>
-        <div class="col-md-2">
-            <label for="FechaHasta" class="form-label"><i class="fas fa-calendar-alt"></i> Hasta:</label>
-            <input type="date" asp-for="Filters.FechaHasta" class="form-control" />
-        </div>
-        <div class="col-md-12 d-flex justify-content-end">
-            <button type="submit" class="btn btn-primary w-100" style="max-width: 150px; margin-right: 5px;"><i class="fas fa-search"></i> Buscar</button>
-            <button type="button" id="clearFilters" class="btn btn-secondary w-100" style="max-width: 150px;"><i class="fas fa-eraser"></i> Limpiar</button>
+        <div class="col-md-12 d-flex justify-content-end mt-3">
+            <button type="submit" class="btn btn-primary" style="max-width: 150px; margin-right: 5px;">Buscar</button>
+            <button type="reset" id="clearFilters" class="btn btn-secondary" style="max-width: 150px;">Limpiar</button>
         </div>
     </form>
 
@@ -58,15 +66,14 @@
                 <div class="col-12 mb-4">
                     <div class="card shadow-sm">
                         <div class="card-body">
-                            <h5 class="card-title text-white p-2" style="background-color: @(contrato.PagosCompletos() || contrato.EsFinalizado() ? "#f26060" : "#2d94f5");">
-                                <i class="fas fa-file-contract"></i> Nro Contrato: @contrato.Id
-                            </h5>
-                            <p class="card-text"><strong><i class="fas fa-building"></i> Inmueble:</strong> @contrato.Inmueble?.NombreInmueble</p>
-                            <p class="card-text"><strong><i class="fas fa-user"></i> Inquilino:</strong> @contrato.Inquilino?.NombreCompletoDNI</p>
-                            <p class="card-text"><strong><i class="fas fa-calendar-alt"></i> Fecha Desde:</strong> @contrato.Fecha_Desde.ToShortDateString()</p>
-                            <p class="card-text"><strong><i class="fas fa-calendar-alt"></i> Fecha Hasta:</strong> @contrato.Fecha_Hasta.ToShortDateString()</p>
-                            <p class="card-text"><strong><i class="fas fa-money-bill"></i> Monto de Alquiler:</strong> @contrato.Monto_Alquiler</p>
-                            <p class="card-text"><strong><i class="fas fa-info-circle"></i> Estado:</strong> @contrato.Estado.ToString()</p>
+                            <h5 class="card-title text-white p-2" style="background-color: @(contrato.PagosCompletos() || contrato.EsFinalizado() ? "#f26060" : "#2d94f5");">Nro Contrato: @contrato.Id</h5>                            
+                            <p class="card-text"><strong>Inmueble:</strong> @contrato.Inmueble?.NombreInmueble</p>
+                            <p class="card-text"><strong>Inquilino:</strong> @contrato.Inquilino?.NombreCompletoDNI</p>
+                            <p class="card-text"><strong>Fecha Desde:</strong> @contrato.Fecha_Desde.ToShortDateString()</p>
+                            <p class="card-text"><strong>Fecha Hasta:</strong> @contrato.Fecha_Hasta.ToShortDateString()</p>
+                            @* <p class="card-text"><strong>Monto de Alquiler:</strong> @contrato.Monto_Alquiler</p> *@
+                            <p class="card-text"><strong>Monto de Alquiler:</strong>$ @Html.Raw(contrato.Monto_Alquiler.ToString().Replace(",", "."))</p>
+                            <p class="card-text"><strong>Estado:</strong> @contrato.Estado.ToString()</p>
                             <div class="d-flex justify-content-end">
                                 <a href="@Url.Action("Detalle", "Contrato", new { id = contrato.Id })" class="btn btn-info btn-sm mx-1 shadow-sm"><i class="fas fa-eye"></i> Ver</a>
                             </div>

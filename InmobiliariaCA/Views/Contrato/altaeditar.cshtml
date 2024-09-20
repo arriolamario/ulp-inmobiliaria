@@ -119,28 +119,31 @@
 
             var today = new Date().toISOString().split('T')[0];
             $('#Fecha_Desde').attr('min', today);
-            $('#Fecha_Hasta').change(function() {
+
+            $('form').submit(function (event) {
                 var fechaDesde = $('#Fecha_Desde').val();
-                var fechaHasta = $(this).val();
-                
-                if (fechaDesde && fechaHasta && fechaHasta < fechaDesde) {
-                    alert('La fecha de finalización debe ser posterior a la fecha de inicio.');
-                    $(this).val('');
-                }
-            });
-            $('#Fecha_Desde').change(function() {
-                var fechaDesde = $(this).val();
                 var fechaHasta = $('#Fecha_Hasta').val();
-                
-                if (fechaDesde < today) {
+                var fechaActual = new Date().toISOString().split('T')[0];
+
+                // Validación para la fecha desde no ser menor que la fecha actual
+                if (fechaDesde < fechaActual) {
                     alert('La fecha de inicio no puede ser menor que la fecha actual.');
-                    $(this).val(today);
+                    $('#Fecha_Desde').val(today);
+                    event.preventDefault(); // Detiene el envío del formulario
                 }
-                
+
+                // Validación para la fecha hasta ser posterior a la fecha desde
                 if (fechaDesde && fechaHasta && fechaHasta < fechaDesde) {
                     alert('La fecha de finalización debe ser posterior a la fecha de inicio.');
                     $('#Fecha_Hasta').val('');
+                    event.preventDefault(); // Detiene el envío del formulario
                 }
+            });
+
+            $('#id_inmueble').change(function () {
+                var precio = $(this).find('option:selected').attr('data-precio');
+                precio = precio.replace(',', '.');
+                $('#Monto_Alquiler').val(precio);
             });
         });
     </script>

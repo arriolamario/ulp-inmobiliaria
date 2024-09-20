@@ -27,12 +27,9 @@ namespace InmobiliariaCA.Controllers
             _repositorioInmueble = repositorioInmueble;
         }
 
-        public IActionResult Index(ContratoFilter filters)
-        {
-            try
-            {
-                var viewModel = new ContratoViewModel
-                {
+        public IActionResult Index(ContratoFilter filters) {
+            try {
+                var viewModel = new ContratoViewModel {
                     Contratos = _repositorioContrato.GetContratosFiltrados(filters),
                     Filters = filters
                 };

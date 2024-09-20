@@ -2,13 +2,16 @@ using InmobiliariaCA.Models;
 using MySql.Data.MySqlClient;
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
+using System.Data;
 
 namespace InmobiliariaCA.Repositorio;
 
 public class RepositorioPago : RepositorioBase, IRepositorioPago {
     private IRepositorioContrato _repositorioContrato;
-    public RepositorioPago(IConfiguration configuration, IRepositorioContrato repositorioContrato) : base(configuration) {
+    private readonly ILogger<RepositorioPago> _logger;
+    public RepositorioPago(IConfiguration configuration, IRepositorioContrato repositorioContrato, ILogger<RepositorioPago> logger) : base(configuration) {
         _repositorioContrato = repositorioContrato;
+        _logger = logger;
     }
 
     public List<Pago> GetPagos() {
@@ -90,55 +93,59 @@ public class RepositorioPago : RepositorioBase, IRepositorioPago {
         return result;
     }
 
-    public int InsertarPago(Pago pago) {
+   public int InsertarPago(Pago pago) {
         using var connection = GetConnection();
         using var transaction = BeginTransaction(connection);
+        Console.WriteLine("Insertando el pago con ID: " + pago.Id + " en el contrato con ID: " + pago.Contrato_Id);
+        Console.WriteLine("Importe: " + pago.Importe + " Detalle: " + pago.Detalle + " Fecha: " + pago.Fecha_Pago + "Estado: " + pago.Estado);
         try {
-            // Insertar el pago
+            // Insertar el pago.
             string query = @$"INSERT INTO pago (
-                                      {nameof(Pago.Contrato_Id)},
-                                      {nameof(Pago.Numero_Pago)},
-                                      {nameof(Pago.Fecha_Pago)},
-                                      {nameof(Pago.Detalle)},
-                                      {nameof(Pago.Importe)},
-                                      {nameof(Pago.Estado)},
-                                      {nameof(Pago.Creado_Por_Id)}
-                              ) VALUES (
-                                      @{nameof(Pago.Contrato_Id)},
-                                      @{nameof(Pago.Numero_Pago)},
-                                      @{nameof(Pago.Fecha_Pago)},
-                                      @{nameof(Pago.Detalle)},
-                                      @{nameof(Pago.Importe)},
-                                      @{nameof(Pago.Estado)},
-                                      @{nameof(Pago.Creado_Por_Id)}
-                              );
+                                {nameof(Pago.Contrato_Id)},
+                                {nameof(Pago.Numero_Pago)},
+                                {nameof(Pago.Fecha_Pago)},
+                                {nameof(Pago.Detalle)},
+                                {nameof(Pago.Importe)},
+                                {nameof(Pago.Estado)},
+                                {nameof(Pago.Creado_Por_Id)}
+                            ) VALUES (
+                                @{nameof(Pago.Contrato_Id)},
+                                @{nameof(Pago.Numero_Pago)},
+                                @{nameof(Pago.Fecha_Pago)},
+                                @{nameof(Pago.Detalle)},
+                                @{nameof(Pago.Importe)},
+                                @{nameof(Pago.Estado)},
+                                @{nameof(Pago.Creado_Por_Id)}
+                            );
                     SELECT LAST_INSERT_ID();";
 
-            int result = this.ExecuteScalar(query, (parameters) =>
-            {
+            int pagoId = this.ExecuteScalar(query, (parameters) => {
                 parameters.AddWithValue($"{nameof(Pago.Contrato_Id)}", pago.Contrato_Id);
                 parameters.AddWithValue($"{nameof(Pago.Numero_Pago)}", pago.Numero_Pago);
                 parameters.AddWithValue($"{nameof(Pago.Fecha_Pago)}", pago.Fecha_Pago);
                 parameters.AddWithValue($"{nameof(Pago.Detalle)}", pago.Detalle);
                 parameters.AddWithValue($"{nameof(Pago.Importe)}", pago.Importe);
                 parameters.AddWithValue($"{nameof(Pago.Estado)}", EstadoPago.Pagado.ToString());
-                parameters.AddWithValue($"{nameof(Pago.Creado_Por_Id)}", 1);
+                parameters.AddWithValue($"{nameof(Pago.Creado_Por_Id)}", 6);
             }, transaction);
 
-            // Actualizar el contrato
-            if (_repositorioContrato.ActualizarContratoPagado(pago.Contrato_Id, 1) == 0) {
-                throw new Exception("No se pudo actualizar el estado de pagado del contrato.");
-            }
+            // Actualizar el estado del contrato.
+            // if (_repositorioContrato.ActualizarContratoPagado(pago.Contrato_Id, transaction) == 0) {
+            //     throw new Exception("No se pudo actualizar el estado de pagado del contrato.");
+            // }
 
-            // Confirmamos la transacción
             transaction.Commit();
-
-            return result;
-        } catch (Exception ex) {
+            return pagoId;
+    } catch (Exception ex) {
+         _logger.LogError("Error: {Error}", ex.Message);
+        if (connection.State != ConnectionState.Open) {
+            _logger.LogError("La conexión se ha cerrado inesperadamente.");
+        } else {
             transaction.Rollback();
-            throw new Exception("Error al insertar el pago o actualizar el contrato: " + ex.Message, ex);
         }
+        throw;      
     }
+}
 
     public bool ActualizarPago(Pago pago) {
         string query = @$"UPDATE pago SET 
@@ -182,7 +189,7 @@ public class RepositorioPago : RepositorioBase, IRepositorioPago {
             parameters.AddWithValue($"{nameof(Pago.Anulado_Por_Id)}", anuladoPorId);
         });
 
-        if (_repositorioContrato.ActualizarContratoPagado(contratoId, 0) == 0) {
+        if (_repositorioContrato.ActualizarContratoPagado(contratoId) == 0) {
                 throw new Exception("No se pudo anular el pagado del contrato.");
         }
 
