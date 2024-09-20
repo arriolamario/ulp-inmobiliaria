@@ -50,6 +50,15 @@
                             <span asp-validation-for="Ambientes" class="text-danger"></span>
                         </div>
                     </div>
+                    <div class="col-md-6">
+                        <div class="form-check">
+                            <input class="form-check-input" asp-for="Activo" type="checkbox" id="Activo" />
+                            <label class="form-check-label" for="Activo">
+                                <i class="fas fa-check"></i> Activo
+                            </label>
+                        </div>
+                        <span asp-validation-for="Activo" class="text-danger"></span>
+                    </div>
                 </div>
 
                 <div class="row mb-3">
@@ -99,8 +108,7 @@
                     }
                     else
                     {
-                        <a href="@Url.Action("Detalle", "Inmueble", new { Id = Model.Id})"
-                            class="btn btn-secondary">
+                        <a href="@Url.Action("Detalle", "Inmueble", new { Id = Model.Id})" class="btn btn-secondary">
                             <i class="fas fa-arrow-left me-2"></i>Volver
                         </a>
                     }

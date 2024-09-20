@@ -1,5 +1,6 @@
 @model InmobiliariaCA.Models.Inmueble
 @{
+    ViewData["Title"] = "Inmueble detalle";
     System.Globalization.CultureInfo culturaArgentina = new System.Globalization.CultureInfo("es-AR");
     string precioFormateado = Model.Precio.ToString("C", culturaArgentina);
 }
@@ -40,6 +41,14 @@
 
                 <dt class="col-sm-3"><i class="fas fa-dollar-sign me-2"></i>Precio</dt>
                 <dd class="col-sm-9">@precioFormateado</dd>
+                <dt class="col-sm-3"><i class="fas fa-check"></i>Activo/Desactivado</dt>
+                @if (Model.Activo)
+                {
+                    <dd class="col-sm-9">Activo</dd>
+                }
+                else{
+                    <dd class="col-sm-9">Desactivado</dd>
+                }
             </dl>
 
             <div id="map" style="height: 500px; width: 100%;"></div>

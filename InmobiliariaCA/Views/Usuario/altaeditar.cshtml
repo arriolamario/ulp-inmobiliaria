@@ -1,7 +1,7 @@
 @model InmobiliariaCA.Models.UsuarioAltaEditarViewModel
 
 @{
-    ViewData["Title"] = "Formulario de Registro";
+    ViewData["Title"] = Model == null || Model.Id == 0 ? "Formulario de Registro" : "Formulario de Actualización";
 }
 
 <div class="container mt-5">

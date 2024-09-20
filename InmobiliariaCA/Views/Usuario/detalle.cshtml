@@ -1,6 +1,7 @@
 @model InmobiliariaCA.Models.Usuario
 
 @{
+    ViewData["Title"] = "Usuario detalle";
     Guid guid = Guid.NewGuid();
     var avatarUrl = Model.Avatar_Url;
     if (string.IsNullOrEmpty(avatarUrl))
