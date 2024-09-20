@@ -26,6 +26,8 @@ public class Inmueble
     public decimal Precio { get; set; }
     [Required(ErrorMessage = "El id del propietario es obligatorio.")]
     public int Id_Propietario { get; set; }
+
+    public bool Activo { get; set; }
     public Propietario? Propietario { get; set; }
     public DateTime Fecha_Creacion { get; set; }
     public DateTime Fecha_Actualizacion { get; set; }

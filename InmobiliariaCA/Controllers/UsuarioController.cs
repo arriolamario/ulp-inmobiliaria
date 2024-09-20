@@ -147,12 +147,28 @@ public class UsuarioController : Controller
                 };
 
                 ViewBag.Roles = new SelectList(roles, "Key", "Value");
-                //return View();
+                
                 return View("AltaEditar", usuario);
             }
         }
         else
         {
+            Usuario? userBase = _repositorioUsuario.GetUsuario(usuario.Id);
+            if(!(userBase != null && userBase.Email == usuario.Email) && _repositorioUsuario.GetPorEmail(usuario.Email) != null){
+                ModelState.AddModelError("Email", "Email ya existente");
+                List<KeyValuePair<string, string>> roles = new List<KeyValuePair<string, string>>(){
+                    new KeyValuePair<string, string>("administrador", "Administrador"),
+                    new KeyValuePair<string, string>("empleado", "Empleado"),
+                };
+
+                ViewBag.Roles = new SelectList(roles, "Key", "Value");
+                
+                return View("AltaEditar", usuario);
+            }
+
+            if(usuario.Id == 1){
+                usuario.Rol = "administrador";
+            }
             int result = _repositorioUsuario.ActualizarUsuario(new Usuario(usuario));
             if (result > 0)
                 TempData["SuccessMessage"] = "Usuario actualizado correctamente";
@@ -169,6 +185,9 @@ public class UsuarioController : Controller
     {
         if (Id == 0)
         {
+        }
+        else if (Id == 1){
+            TempData["ErrorMessage"] = "No se puede eliminar el usuario";
         }
         else
         {
