@@ -1,9 +1,23 @@
 ﻿@{
+    Guid guid = Guid.NewGuid();
     var avatarUrl = @User.FindFirst("AvatarUrl")?.Value;
     var userId = @User.FindFirst("Id")?.Value;
+
     if (avatarUrl == null || avatarUrl == "")
     {
-        avatarUrl = "/img/sin-perfil.png";
+        avatarUrl = "/img/sin-perfil.png?" + guid.ToString();
+    }
+    else
+    {
+        string pathCompleto = System.IO.Path.Combine(Environment.CurrentDirectory, "wwwroot", avatarUrl.Remove(0, 1));
+        if (System.IO.File.Exists(pathCompleto))
+        {
+            avatarUrl += "?" + guid.ToString();
+        }
+        else
+        {
+            avatarUrl = "/img/sin-perfil.png?" + guid.ToString();
+        }
     }
 }
 

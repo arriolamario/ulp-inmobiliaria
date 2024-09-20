@@ -39,7 +39,8 @@ public class UsuarioController : Controller
     [Authorize]
     public IActionResult Detalle(int Id)
     {
-        if(!LogicaEmpleado(Id)){
+        if (!LogicaEmpleado(Id))
+        {
             return RedirectToAction("AccesoDenegado", "Usuario");
         }
 
@@ -55,7 +56,8 @@ public class UsuarioController : Controller
     [Authorize]
     public ActionResult UploadAvatar(int Id, IFormFile avatar)
     {
-        if(!LogicaEmpleado(Id)){
+        if (!LogicaEmpleado(Id))
+        {
             return RedirectToAction("AccesoDenegado", "Usuario");
         }
         bool resultSuccess = false;
@@ -71,7 +73,7 @@ public class UsuarioController : Controller
             }
             string fileName = "avatar_" + u.Id + Path.GetExtension(avatar.FileName);
             string pathCompleto = Path.Combine(path, fileName);
-            u.Avatar_Url = Path.Combine("/Uploads", fileName);
+            u.Avatar_Url = Path.Combine("\\Uploads", fileName);
 
             using (FileStream stream = new FileStream(pathCompleto, FileMode.Create))
             {
@@ -87,7 +89,8 @@ public class UsuarioController : Controller
     [Authorize]
     public IActionResult AltaEditar(int Id)
     {
-        if(!LogicaEmpleado(Id)){
+        if (!LogicaEmpleado(Id))
+        {
             return RedirectToAction("AccesoDenegado", "Usuario");
         }
         List<KeyValuePair<string, string>> roles = new List<KeyValuePair<string, string>>(){
@@ -114,7 +117,8 @@ public class UsuarioController : Controller
     [Authorize]
     public IActionResult AltaEditar(UsuarioAltaEditarViewModel usuario)
     {
-        if(!LogicaEmpleado(usuario.Id)){
+        if (!LogicaEmpleado(usuario.Id))
+        {
             return RedirectToAction("AccesoDenegado", "Usuario");
         }
         if (!ModelState.IsValid)
@@ -232,7 +236,8 @@ public class UsuarioController : Controller
     [Authorize]
     public IActionResult ResetPassword(int Id)
     {
-        if(!LogicaEmpleado(Id)){
+        if (!LogicaEmpleado(Id))
+        {
             return RedirectToAction("AccesoDenegado", "Usuario");
         }
         if (Id == 0)
@@ -260,7 +265,8 @@ public class UsuarioController : Controller
 
         // Lógica para verificar el token y cambiar la contraseña
         Usuario? usuario = _repositorioUsuario.GetPorEmail(model.Email);
-        if(!LogicaEmpleado(usuario.Id)){
+        if (usuario != null && !LogicaEmpleado(usuario.Id))
+        {
             return RedirectToAction("AccesoDenegado", "Usuario");
         }
         if (usuario == null)
@@ -282,6 +288,21 @@ public class UsuarioController : Controller
         return View(model);
     }
 
+    [HttpPost]
+    public IActionResult RemoveAvatar(int Id)
+    {
+        var usuario = _repositorioUsuario.GetUsuario(Id);
+        if (usuario != null)
+        {
+            
+            string pathCompleto = Path.Combine(environment.WebRootPath, usuario.Avatar_Url.Remove(0,1));
+            System.IO.File.Delete(pathCompleto);
+            usuario.Avatar_Url = "";
+            _repositorioUsuario.ActualizarUsuario(usuario);
+        }
+
+        return RedirectToAction("Detalle", "Usuario", new { Id = Id });
+    }
 
     private string PasswordHash(string password)
     {
@@ -294,7 +315,8 @@ public class UsuarioController : Controller
         return hashed;
     }
 
-    private bool LogicaEmpleado(int Id){
+    private bool LogicaEmpleado(int Id)
+    {
         if (!HttpContext.User.IsInRole("administrador"))
         {
             var idUsuarioCookie = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "Id")?.Value;
