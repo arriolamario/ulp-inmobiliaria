@@ -15,6 +15,7 @@ namespace InmobiliariaCA.Repositorio
         {
             var connection = new MySqlConnection(connectionString);
             connection.Open();
+            
             return connection;
         }
 

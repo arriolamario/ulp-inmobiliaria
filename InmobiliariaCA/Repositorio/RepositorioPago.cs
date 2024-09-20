@@ -2,6 +2,7 @@ using InmobiliariaCA.Models;
 using MySql.Data.MySqlClient;
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
+using System.Data;
 
 namespace InmobiliariaCA.Repositorio;
 
@@ -95,6 +96,8 @@ public class RepositorioPago : RepositorioBase, IRepositorioPago {
    public int InsertarPago(Pago pago) {
         using var connection = GetConnection();
         using var transaction = BeginTransaction(connection);
+        Console.WriteLine("Insertando el pago con ID: " + pago.Id + " en el contrato con ID: " + pago.Contrato_Id);
+        Console.WriteLine("Importe: " + pago.Importe + " Detalle: " + pago.Detalle + " Fecha: " + pago.Fecha_Pago + "Estado: " + pago.Estado);
         try {
             // Insertar el pago.
             string query = @$"INSERT INTO pago (
@@ -134,13 +137,15 @@ public class RepositorioPago : RepositorioBase, IRepositorioPago {
             transaction.Commit();
             return pagoId;
     } catch (Exception ex) {
-        _logger.LogError("Hubo un error al updatear contrato: {Error}", ex.Message);
-        transaction.Rollback();
-        throw new Exception("Error al insertar el pago o actualizar el contrato: " + ex.Message, ex);
-       
+         _logger.LogError("Error: {Error}", ex.Message);
+        if (connection.State != ConnectionState.Open) {
+            _logger.LogError("La conexión se ha cerrado inesperadamente.");
+        } else {
+            transaction.Rollback();
+        }
+        throw;      
     }
 }
-
 
     public bool ActualizarPago(Pago pago) {
         string query = @$"UPDATE pago SET 
