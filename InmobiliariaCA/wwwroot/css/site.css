@@ -19,8 +19,18 @@ html {
 
 body {
   margin-bottom: 60px;
+  display: flex;
+  flex-direction: column;
 }
 
+main {
+  flex: 1;
+}
+
+body, html {
+  height: 100%;
+  margin: 0;
+}
 a.navbar-brand {
   white-space: normal;
   text-align: center;
@@ -29,6 +39,17 @@ a.navbar-brand {
 
 a {
   color: #0077cc;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.content {
+  flex: 1;
+  overflow-y: auto; /* Habilita el scroll */
 }
 
 .btn-primary {
@@ -60,9 +81,15 @@ button.accept-policy {
 }
 
 .footer {
-  position: absolute;
+  /* position: absolute; */
   bottom: 0;
   width: 100%;
   white-space: nowrap;
   line-height: 60px;
+}
+
+footer {
+  background: #ffffff; /* Color de fondo del footer */
+  padding: 10px;
+  text-align: center;
 }

@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 
 namespace InmobiliariaCA.Controllers;
-[Authorize]
+
 public class UsuarioController : Controller
 {
     private readonly ILogger<HomeController> _logger;
@@ -31,13 +31,19 @@ public class UsuarioController : Controller
         this.environment = environment;
     }
 
+    [Authorize(Policy = "administrador")]
     public IActionResult Index()
     {
         return View(_repositorioUsuario.GetUsuarios());
     }
-
+    [Authorize]
     public IActionResult Detalle(int Id)
     {
+        if (!LogicaEmpleado(Id))
+        {
+            return RedirectToAction("AccesoDenegado", "Usuario");
+        }
+
         var usuario = _repositorioUsuario.GetUsuario(Id);
         if (usuario == null)
         {
@@ -47,8 +53,13 @@ public class UsuarioController : Controller
     }
 
     [HttpPost]
+    [Authorize]
     public ActionResult UploadAvatar(int Id, IFormFile avatar)
     {
+        if (!LogicaEmpleado(Id))
+        {
+            return RedirectToAction("AccesoDenegado", "Usuario");
+        }
         bool resultSuccess = false;
         Usuario? u = _repositorioUsuario.GetUsuario(Id);
 
@@ -62,7 +73,7 @@ public class UsuarioController : Controller
             }
             string fileName = "avatar_" + u.Id + Path.GetExtension(avatar.FileName);
             string pathCompleto = Path.Combine(path, fileName);
-            u.Avatar_Url = Path.Combine("/Uploads", fileName);
+            u.Avatar_Url = Path.Combine("\\Uploads", fileName);
 
             using (FileStream stream = new FileStream(pathCompleto, FileMode.Create))
             {
@@ -75,8 +86,13 @@ public class UsuarioController : Controller
         return new JsonResult(new { success = resultSuccess });
     }
 
+    [Authorize]
     public IActionResult AltaEditar(int Id)
     {
+        if (!LogicaEmpleado(Id))
+        {
+            return RedirectToAction("AccesoDenegado", "Usuario");
+        }
         List<KeyValuePair<string, string>> roles = new List<KeyValuePair<string, string>>(){
             new KeyValuePair<string, string>("administrador", "Administrador"),
             new KeyValuePair<string, string>("empleado", "Empleado"),
@@ -98,8 +114,13 @@ public class UsuarioController : Controller
     }
 
     [HttpPost]
+    [Authorize]
     public IActionResult AltaEditar(UsuarioAltaEditarViewModel usuario)
     {
+        if (!LogicaEmpleado(usuario.Id))
+        {
+            return RedirectToAction("AccesoDenegado", "Usuario");
+        }
         if (!ModelState.IsValid)
         {
             return RedirectToAction("AltaEditar", usuario);// Vuelva a mostrar el formulario con los errores(usuario);
@@ -137,11 +158,13 @@ public class UsuarioController : Controller
                 TempData["SuccessMessage"] = "Usuario actualizado correctamente";
             else
                 TempData["ErrorMessage"] = "No se actualizo el usuario";
+            return RedirectToAction("Detalle", "Usuario", new { Id = usuario.Id });
         }
         return RedirectToAction("Index");
     }
 
     [HttpPost]
+    [Authorize(Policy = "administrador")]
     public IActionResult Baja(int Id)
     {
         if (Id == 0)
@@ -182,24 +205,26 @@ public class UsuarioController : Controller
             }
             var claims = new List<Claim>
             {
-            	new Claim(ClaimTypes.Name, e.Email),
+                new Claim(ClaimTypes.Name, e.Email),
                 new Claim("Id", e.Id.ToString()),
-            	new Claim("FullName", e.Nombre + " " + e.Apellido),
-            	new Claim(ClaimTypes.Role, e.Rol),
+                new Claim("FullName", e.Nombre + " " + e.Apellido),
+                new Claim("AvatarUrl", e.Avatar_Url),
+                new Claim(ClaimTypes.Role, e.Rol),
             };
 
             var claimsIdentity = new ClaimsIdentity(
-            		claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
             await HttpContext.SignInAsync(
-            		CookieAuthenticationDefaults.AuthenticationScheme,
-            		new ClaimsPrincipal(claimsIdentity));
-            
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity));
+
             return RedirectToAction("Index", "Home");
         }
         return View();
     }
 
+    [Authorize]
     public async Task<IActionResult> Logout()
     {
         await HttpContext.SignOutAsync(
@@ -208,23 +233,31 @@ public class UsuarioController : Controller
         return RedirectToAction("Login", "Usuario");
     }
 
+    [Authorize]
     public IActionResult ResetPassword(int Id)
     {
+        if (!LogicaEmpleado(Id))
+        {
+            return RedirectToAction("AccesoDenegado", "Usuario");
+        }
         if (Id == 0)
         {
             return NotFound();
         }
 
         Usuario? u = _repositorioUsuario.GetUsuario(Id);
-        if (u == null){
+        if (u == null)
+        {
             return NotFound();
         }
 
         return View(new UsuarioResetPasswordViewModel(u));
     }
     [HttpPost]
+    [Authorize]
     public IActionResult ResetPassword(UsuarioResetPasswordViewModel model)
     {
+
         if (!ModelState.IsValid)
         {
             return View(model);
@@ -232,7 +265,10 @@ public class UsuarioController : Controller
 
         // Lógica para verificar el token y cambiar la contraseña
         Usuario? usuario = _repositorioUsuario.GetPorEmail(model.Email);
-
+        if (usuario != null && !LogicaEmpleado(usuario.Id))
+        {
+            return RedirectToAction("AccesoDenegado", "Usuario");
+        }
         if (usuario == null)
         {
             ModelState.AddModelError("", "El email no existe");
@@ -252,6 +288,21 @@ public class UsuarioController : Controller
         return View(model);
     }
 
+    [HttpPost]
+    public IActionResult RemoveAvatar(int Id)
+    {
+        var usuario = _repositorioUsuario.GetUsuario(Id);
+        if (usuario != null)
+        {
+            
+            string pathCompleto = Path.Combine(environment.WebRootPath, usuario.Avatar_Url.Remove(0,1));
+            System.IO.File.Delete(pathCompleto);
+            usuario.Avatar_Url = "";
+            _repositorioUsuario.ActualizarUsuario(usuario);
+        }
+
+        return RedirectToAction("Detalle", "Usuario", new { Id = Id });
+    }
 
     private string PasswordHash(string password)
     {
@@ -262,5 +313,25 @@ public class UsuarioController : Controller
                                 iterationCount: 1000,
                                 numBytesRequested: 256 / 8));
         return hashed;
+    }
+
+    private bool LogicaEmpleado(int Id)
+    {
+        if (!HttpContext.User.IsInRole("administrador"))
+        {
+            var idUsuarioCookie = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "Id")?.Value;
+            if (idUsuarioCookie != null && int.Parse(idUsuarioCookie) != Id)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    [AllowAnonymous]
+    public IActionResult AccesoDenegado()
+    {
+        return View();
     }
 }

@@ -58,6 +58,7 @@ public class PagoController : Controller {
     }
 
     [HttpPost]
+    [Authorize(Policy = "administrador")]
     public IActionResult Anular(int Id, int IdAnulador, int IdContrato) {
         
         if (Id == 0) {

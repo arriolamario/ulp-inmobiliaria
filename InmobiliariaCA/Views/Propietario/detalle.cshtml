@@ -5,89 +5,110 @@
 
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        
+        <!-- Puedes agregar un título o botón aquí si es necesario -->
     </div>
-    <div class="card shadow-sm">
+    <div class="card">
         <div class="card-header bg-primary text-white">
-            <h2>Detalles del Propietario</h2>
+            <h2><i class="fas fa-info-circle"></i> Detalles del Propietario</h2>
         </div>
         <div class="card-body">
             <dl class="row">
-                <dt class="col-sm-3">Nombre Completo</dt>
+                <dt class="col-sm-3"><i class="fas fa-user"></i> Nombre Completo</dt>
                 <dd class="col-sm-9">@Model.Nombre @Model.Apellido</dd>
 
-                <dt class="col-sm-3">DNI</dt>
+                <dt class="col-sm-3"><i class="fas fa-id-card"></i> DNI</dt>
                 <dd class="col-sm-9">@Model.Dni</dd>
 
-                <dt class="col-sm-3">Teléfono</dt>
+                <dt class="col-sm-3"><i class="fas fa-phone"></i> Teléfono</dt>
                 <dd class="col-sm-9">@Model.Telefono</dd>
 
-                <dt class="col-sm-3">Email</dt>
+                <dt class="col-sm-3"><i class="fas fa-envelope"></i> Email</dt>
                 <dd class="col-sm-9">@Model.Email</dd>
 
-                <dt class="col-sm-3">Dirección</dt>
+                <dt class="col-sm-3"><i class="fas fa-map-marker-alt"></i> Dirección</dt>
                 <dd class="col-sm-9">@Model.Direccion</dd>
 
-                <dt class="col-sm-3">Fecha de Creación</dt>
+                <dt class="col-sm-3"><i class="fas fa-calendar-alt"></i> Fecha de Creación</dt>
                 <dd class="col-sm-9">@Model.Fecha_Creacion.ToString("dd/MM/yyyy")</dd>
             </dl>
         </div>
-        <div class="card-footer text-end">
-            <a href="@Url.Action("AltaEditar", "Inmueble", new { idPropietario = Model.Id })" class="btn btn-success">Agregar Nuevo Inmueble</a>
-            <a href="@Url.Action("AltaEditar", "Propietario", new { id = Model.Id })" class="btn btn-warning">Editar</a>
-            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalBajaLogica">
-                Eliminar
-            </button>
-            <a href="@Url.Action("Index", "Propietario")" class="btn btn-secondary">Volver a la Lista</a>
+        <div class="card-footer text-right">
+            <a href="@Url.Action("AltaEditar", "Inmueble", new { idPropietario = Model.Id })" class="btn btn-success"><i
+                    class="fas fa-plus"></i> Agregar Nuevo Inmueble</a>
+            <a href="@Url.Action("AltaEditar", "Propietario", new { id = Model.Id })" class="btn btn-warning"><i
+                    class="fas fa-edit"></i> Editar</a>
+            @if (User.IsInRole("administrador"))
+            {
+                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalBajaLogica">
+                    <i class="fas fa-trash-alt"></i> Eliminar
+                </button>
+            }
+            <a href="@Url.Action("Index", "Propietario")" class="btn btn-secondary"><i class="fas fa-arrow-left"></i>
+                Volver a la Lista</a>
         </div>
     </div>
 </div>
+
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
-          <h2 class="text-primary"><i class="fas fa-users"></i> Lista de Inmuebles</h2>
-        @* <a href="@Url.Action("AltaEditar", "Inmueble")" class="btn btn-success shadow-sm">Agregar Nuevo Inmueble</a> *@
+        <h2 class="text-primary"><i class="fas fa-building"></i> Lista de Inmuebles</h2>
     </div>
     <div class="row">
-        @if (Model.Inmuebles.Any()) {
-            @foreach (var inmueble in Model.Inmuebles) {
+        @if (Model.Inmuebles.Any())
+        {
+            @foreach (var inmueble in Model.Inmuebles)
+            {
                 <div class="col-12 mb-4">
-                    <div class="card shadow-sm">
+                    <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title text-white p-2" style="background-color: #2d94f5;">@inmueble.Direccion</h5>
-                            @if(inmueble.Propietario != null){
-                                <p class="card-text"><strong>Propietario:</strong> @inmueble.Propietario.Apellido @inmueble.Propietario.Nombre</p>
+                            <h5 class="card-title bg-primary text-white p-2"><i class="fas fa-home"></i> @inmueble.Direccion
+                            </h5>
+                            @if (inmueble.Propietario != null)
+                            {
+                                <p class="card-text"><strong><i class="fas fa-user-tag"></i> Propietario:</strong>
+                                    @inmueble.Propietario.Apellido @inmueble.Propietario.Nombre</p>
                             }
-                            <p class="card-text"><strong>Precio: </strong> @inmueble.Precio.ToString("C", culturaArgentina)</p>
+                            <p class="card-text"><strong><i class="fas fa-dollar-sign"></i> Precio: </strong>
+                                @inmueble.Precio.ToString("C", culturaArgentina)</p>
                             <div class="d-flex justify-content-end">
-                                <a href="@Url.Action("Detalle", "Inmueble", new { id = inmueble.Id })" class="btn btn-info btn-sm mx-1 shadow-sm">Ver</a>
+                                <a href="@Url.Action("Detalle", "Inmueble", new { id = inmueble.Id })"
+                                    class="btn btn-info btn-sm mx-1"><i class="fas fa-eye"></i> Ver</a>
                             </div>
                         </div>
                     </div>
                 </div>
             }
-         } else {
+        }
+        else
+        {
             <div class="alert alert-info" role="alert">
-                No existen Inmuebles registrados.
+                <i class="fas fa-info-circle"></i> No existen Inmuebles registrados.
             </div>
         }
     </div>
 </div>
+
 <!-- Modal -->
-<div class="modal fade" id="modalBajaLogica" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+<div class="modal fade" id="modalBajaLogica" tabindex="-1" role="dialog" aria-labelledby="modalBajaLogicaLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Propietario</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 class="modal-title" id="modalBajaLogicaLabel"><i class="fas fa-exclamation-triangle"></i>
+                    Confirmación</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <div class="modal-body">
-                ¿Esta seguro que desea eliminar a @Model.Apellido @Model.Nombre?
+                <i class="fas fa-question-circle"></i> ¿Está seguro que desea eliminar a @Model.Apellido @Model.Nombre?
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fas fa-times"></i>
+                    Cerrar</button>
                 <form asp-action="Baja" method="post" class="d-inline">
                     <input type="hidden" name="id" value="@Model.Id" />
-                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                    <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Eliminar</button>
                 </form>
             </div>
         </div>

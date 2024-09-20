@@ -113,6 +113,7 @@ namespace InmobiliariaCA.Controllers {
         }
         
         [HttpPost]
+        [Authorize (Policy = "administrador")]
         public IActionResult Baja(int id) {
             try {
                 bool result = _repositorioContrato.BajaContrato(id);
