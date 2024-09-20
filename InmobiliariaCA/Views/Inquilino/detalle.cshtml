@@ -1,4 +1,8 @@
 @model InmobiliariaCA.Models.Inquilino
+
+@{
+    ViewData["Title"] = "Inquilino detalle";
+}
 <div class="container mt-5">
     <div class="card shadow-sm">
         <div class="card-header bg-primary text-white">
@@ -6,52 +10,60 @@
         </div>
         <div class="card-body">
             <dl class="row">
-                <dt class="col-sm-3">Nombre Completo</dt>
+                <dt class="col-sm-3"><i class="fas fa-user"></i> Nombre Completo</dt>
                 <dd class="col-sm-9">@Model.Nombre @Model.Apellido</dd>
 
-                <dt class="col-sm-3">DNI</dt>
+                <dt class="col-sm-3"><i class="fas fa-id-card"></i> DNI</dt>
                 <dd class="col-sm-9">@Model.Dni</dd>
 
-                <dt class="col-sm-3">Teléfono</dt>
+                <dt class="col-sm-3"><i class="fas fa-phone-alt"></i> Teléfono</dt>
                 <dd class="col-sm-9">@Model.TelefonoArea - @Model.TelefonoNumero</dd>
 
-                <dt class="col-sm-3">Email</dt>
+                <dt class="col-sm-3"><i class="fas fa-envelope"></i> Email</dt>
                 <dd class="col-sm-9">@Model.Email</dd>
 
-                <dt class="col-sm-3">Dirección</dt>
+                <dt class="col-sm-3"><i class="fas fa-map-marker-alt"></i> Dirección</dt>
                 <dd class="col-sm-9">@Model.Direccion</dd>
 
-                <dt class="col-sm-3">Fecha de Creación</dt>
+                <dt class="col-sm-3"><i class="fas fa-calendar-alt"></i> Fecha de Creación</dt>
                 <dd class="col-sm-9">@Model.Fecha_Creacion.ToString("dd/MM/yyyy")</dd>
             </dl>
         </div>
         <div class="card-footer text-end">
-            <a href="@Url.Action("AltaEditar", "Inquilino", new { id = Model.Id })" class="btn btn-warning">Editar</a>
-            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalBajaLogica">
-                Eliminar
-            </button>
-            <a href="@Url.Action("Index", "Inquilino")" class="btn btn-secondary">Volver a la Lista</a>
+            <a href="@Url.Action("AltaEditar", "Inquilino", new { id = Model.Id })" class="btn btn-warning">
+                <i class="fas fa-edit"></i> Editar
+            </a>
+            @if (User.IsInRole("administrador"))
+            {
+                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalBajaLogica">
+                    <i class="fas fa-trash"></i> Eliminar
+                </button>
+            }
+            <a href="@Url.Action("Index", "Inquilino")" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Volver a la Lista
+            </a>
         </div>
     </div>
 </div>
 
-
 <!-- Modal -->
-<div class="modal fade" id="modalBajaLogica" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="modalBajaLogica" tabindex="-1" aria-labelledby="modalBajaLogicaLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Inquilino</h1>
+                <h5 class="modal-title" id="modalBajaLogicaLabel">Confirmar Eliminación</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                ¿Esta seguro que desea eliminar a @Model.Apellido @Model.Nombre?
+                ¿Está seguro de que desea eliminar a @Model.Apellido @Model.Nombre?
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                 <form asp-action="BajaLogica" method="post" class="d-inline">
                     <input type="hidden" name="id" value="@Model.Id" />
-                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> Eliminar
+                    </button>
                 </form>
             </div>
         </div>

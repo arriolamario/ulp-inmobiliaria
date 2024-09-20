@@ -11,7 +11,6 @@ CREATE TABLE IF NOT EXISTS propietario (
     telefono VARCHAR(20),
     email VARCHAR(100),
     direccion VARCHAR(255),
-    estado INT DEFAULT 1,
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
@@ -26,15 +25,13 @@ CREATE TABLE IF NOT EXISTS inquilino (
     email VARCHAR(100),
     direccion VARCHAR(255),
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    activo int(1) DEFAULT 1
+    fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 -- Crear la tabla 'tipo_inmueble'
 CREATE TABLE IF NOT EXISTS tipo_inmueble (
     id INT AUTO_INCREMENT PRIMARY KEY,
     descripcion VARCHAR(100) NOT NULL,
-    estado INT DEFAULT 1,
 	fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
@@ -43,7 +40,6 @@ CREATE TABLE IF NOT EXISTS tipo_inmueble (
 CREATE TABLE IF NOT EXISTS tipo_inmueble_uso (
     id INT AUTO_INCREMENT PRIMARY KEY,
     descripcion VARCHAR(100) NOT NULL,
-    estado INT DEFAULT 1,
 	fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
@@ -58,7 +54,7 @@ CREATE TABLE IF NOT EXISTS inmueble (
     coordenada_lat VARCHAR(255) NOT NULL,
     coordenada_lon VARCHAR(255) NOT NULL,
     precio DECIMAL(10, 2) NOT NULL,
-    estado INT NOT NULL DEFAULT 1,
+    activo TINYINT(1) NOT NULL DEFAULT 1,
     id_propietario INT,
 	fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -76,9 +72,16 @@ CREATE TABLE IF NOT EXISTS usuario (
     avatar_url TEXT,
     rol ENUM('empleado', 'administrador') NOT NULL,
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+<<<<<<< HEAD
     fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     telefono varchar(100) DEFAULT NULL
 );
+=======
+    fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+
+>>>>>>> 15301ec9a526a2a4d6ff5dc7fdd12f949ba1b746
 
 CREATE TABLE IF NOT EXISTS contrato (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -149,23 +152,8 @@ values ('Comercial'),
 ('Laboral'),
 ('Personal');
 
-INSERT INTO inmueble ( direccion, id_tipo_inmueble_uso, id_tipo_inmueble, ambientes, coordenada_lat, coordenada_lon, precio, estado, id_propietario) VALUES
-('Calle Falsa 123, Springfield', 1, 1, 3, 34.0522, -118.2437, 1500.00, 1, 1),
-('742 Evergreen Terrace, Springfield', 2, 2, 5, 34.0522, -118.2437, 2500.00, 1, 2),
-('123 Elm Street, West Springfield', 1, 1, 4, 34.0522, -118.2437, 2000.00, 1, 3),
-('555 North Oak Trafficway, Springfield', 2, 3, 6, 34.0522, -118.2437, 3000.00, 1, 4),  
-('1600 Amphitheatre Parkway, Mountain View', 2, 3, 8, 37.4220, -122.0841, 3200.00, 1,1),
-    ('One Apple Park Way, Cupertino', 2, 1, 7, 37.3349, -122.0090, 2800.00, 1, 2),
-    ('1 Infinite Loop, Cupertino', 1, 2, 4, 37.3318, -122.0311, 2400.00, 1, 3),
-    ('350 Fifth Avenue, Manhattan, New York', 2, 3, 9, 40.7488, -73.9854, 4500.00, 1, 2),
-    ('4059 Mt Lee Drive, Hollywood, California', 1, 1, 3, 34.1341, -118.3215, 2200.00, 1, 4),
-    ('4 Pennsylvania Plaza, New York, NY', 2, 3, 6, 40.7505, -73.9934, 3300.00, 1, 3);
-
-INSERT INTO usuario (email, password_hash, nombre, apellido, telefono, avatar_url, rol)
+-- password_hash '123456' myl4T6FgkMUdldPQ96rZUnNYn0ho5fyVIc39WWFLd8Y=
+INSERT INTO usuario (email, password_hash, nombre, apellido, avatar_url, rol)
 VALUES
-('john.doe@example.com', '$2y$10$abcdefg1234567890hijklmnopqrstuv', 'John', 'Doe', '+123456789', 'https://example.com/avatar1.png', 'empleado'),
-('jane.smith@example.com', '$2y$10$1234567890abcdefg1234567890abcd', 'Jane', 'Smith', '+987654321', 'https://example.com/avatar2.png', 'administrador'),
-('maria.lopez@example.com', '$2y$10$hijklmnopqrstuv1234567890abcdefg', 'Maria', 'Lopez', '+1122334455', 'https://example.com/avatar3.png', 'empleado'),
-('carlos.martin@example.com', '$2y$10$1234567890abcdefg1234567890abcd', 'Carlos', 'Martin', '+9988776655', 'https://example.com/avatar4.png', 'empleado'),
-('laura.garcia@example.com', '$2y$10$abcdefg1234567890hijklmnopqrstuv', 'Laura', 'Garcia', '+6655443322', 'https://example.com/avatar5.png', 'administrador');
-
+('admin@yopmail.com', 'myl4T6FgkMUdldPQ96rZUnNYn0ho5fyVIc39WWFLd8Y=', 'NommbreAdm', 'ApellidoAdm', '', 'administrador'),
+('empleado@yopmail.com', 'myl4T6FgkMUdldPQ96rZUnNYn0ho5fyVIc39WWFLd8Y=', 'NombreEmp', 'ApellidoEmp', '', 'empleado');

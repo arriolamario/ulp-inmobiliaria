@@ -1,0 +1,18 @@
+@{
+    Layout = "_LayoutLogin";  // Usa el diseño adecuado si es necesario
+    ViewData["Title"] = "Acceso Denegado";
+}
+
+
+<div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="text-center">
+        <div class="mb-4">
+            <i class="fas fa-exclamation-triangle fa-5x text-danger"></i>
+        </div>
+        <h1 class="display-4">Acceso Denegado</h1>
+        <p class="lead">Lo sentimos, no tienes permiso para acceder a esta página.</p>
+        <a href="@Url.Action("Index", "Home")" class="btn btn-primary">
+            <i class="fas fa-home"></i> Volver a Inicio
+        </a>
+    </div>
+</div>

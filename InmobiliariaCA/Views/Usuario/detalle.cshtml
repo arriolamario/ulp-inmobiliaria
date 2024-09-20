@@ -1,95 +1,149 @@
 @model InmobiliariaCA.Models.Usuario
+
+@{
+    ViewData["Title"] = "Usuario detalle";
+    Guid guid = Guid.NewGuid();
+    var avatarUrl = Model.Avatar_Url;
+    if (string.IsNullOrEmpty(avatarUrl))
+    {
+        avatarUrl = "/img/sin-perfil.png?" + guid.ToString();
+    }
+    else
+    {
+        avatarUrl += "?" + guid.ToString();
+    }
+}
 <div class="container mt-5">
     <div class="card shadow-sm">
         <div class="card-header bg-primary text-white">
-            <h2>Detalles del Usuario</h2>
+            <h2><i class="fas fa-user-circle"></i> Detalles del Usuario</h2>
         </div>
         <div class="card-body">
             <dl class="row">
-                <div class="col-8">
-                    <dt class="col-sm-3">Nombre Completo</dt>
-                    <dd class="col-sm-9">@Model.NombreCompleto</dd>
+                <div class="col-md-8">
+                    <dt class="col-sm-3 text-left"><i class="fas fa-user"></i> Nombre Completo</dt>
+                    <dd class="col-sm-9 text-right">@Model.NombreCompleto</dd>
 
-                    <dt class="col-sm-3">Email</dt>
-                    <dd class="col-sm-9">@Model.Email</dd>
+                    <dt class="col-sm-3 text-left"><i class="fas fa-envelope"></i> Email</dt>
+                    <dd class="col-sm-9 text-right">@Model.Email</dd>
 
-                    <dt class="col-sm-3">Rol</dt>
-                    <dd class="col-sm-9">@Model.Rol</dd>
+                    <dt class="col-sm-3 text-left"><i class="fas fa-user-tag"></i> Rol</dt>
+                    <dd class="col-sm-9 text-right">@Model.Rol</dd>
 
-                    <dt class="col-sm-3">Fecha de Creación</dt>
-                    <dd class="col-sm-9">@Model.Fecha_Creacion.ToString("dd/MM/yyyy")</dd>
+                    <dt class="col-sm-3 text-left"><i class="fas fa-calendar-alt"></i> Fecha de Creación</dt>
+                    <dd class="col-sm-9 text-right">@Model.Fecha_Creacion.ToString("dd/MM/yyyy")</dd>
                 </div>
-                <div class="col-4">
-                    <div>
-                        @if (Model.Avatar_Url != "")
-                        {
-                            <img src="@Model.Avatar_Url" alt="Usuario Avatar" class="rounded-circle mb-3"
-                                style="width: 150px; height: 150px; object-fit: cover;">
-                        }
-                        else
-                        {
-                            <img src="/img/sin-perfil.png" alt="Usuario Avatar" class="rounded-circle mb-3"
-                                style="width: 150px; height: 150px; object-fit: cover;">
-                        }
+                <div class="col-md-4">
+                    <div class="text-center">
+                        <img src="@avatarUrl" alt="Usuario Avatar" class="rounded-circle mb-3"
+                            style="width: 150px; height: 150px; object-fit: cover;">
+                        <div>
+                            <button class="btn btn-danger btn-sm" data-toggle="modal"
+                                data-target="#modalEliminarAvatar">
+                                <i class="fas fa-trash-alt"></i> Quitar Avatar
+                            </button>
+                            <input type="file" name="input-file" id="input-file" style="display:none"
+                                accept=".png,.jpg,.jpeg">
+                            <label for="input-file" class="btn btn-secondary" type="button">
+                                <i class="fas fa-upload"></i> Cargar Avatar
+                            </label>
+                        </div>
                     </div>
                 </div>
             </dl>
         </div>
-        <div class="card-footer text-end">
-            <a href="@Url.Action("AltaEditar", "Usuario", new { id = Model.Id })" class="btn btn-warning">Editar</a>
-            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalBajaLogica">
-                Eliminar
-            </button>
-            <a href="@Url.Action("Index", "Usuario")" class="btn btn-secondary">Volver a la Lista</a>
-            <input type="file" name="input-file" id="input-file" style="display:none" accept=".png,.jpg,.jpeg">
-            <label for="input-file" class="btn btn-secondary" type="button">Cargar Avatar</label>
+        <div class="card-footer text-right">
+            <a href="@Url.Action("ResetPassword", "Usuario", new { id = Model.Id })" class="btn btn-warning">
+                <i class="fas fa-key"></i> Cambiar Password
+            </a>
+            <a href="@Url.Action("AltaEditar", "Usuario", new { id = Model.Id })" class="btn btn-warning">
+                <i class="fas fa-edit"></i> Editar
+            </a>
+            @if (User.IsInRole("administrador"))
+            {
+                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalBajaLogica">
+                    <i class="fas fa-trash"></i> Eliminar
+                </button>
+                <a href="@Url.Action("Index", "Usuario")" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Volver a la Lista
+                </a>
+            }
         </div>
     </div>
 </div>
 
-
-<!-- Modal -->
-<div class="modal fade" id="modalBajaLogica" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+<!-- Modal Baja Lógica -->
+<div class="modal fade" id="modalBajaLogica" tabindex="-1" role="dialog" aria-labelledby="modalBajaLogicaLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Usuario</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h5 class="modal-title" id="modalBajaLogicaLabel"><i class="fas fa-trash"></i> Eliminar Usuario</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <div class="modal-body">
-                ¿Esta seguro que desea eliminar al usuario @Model.Apellido @Model.Nombre?
+                ¿Está seguro de que desea eliminar al usuario @Model.Apellido @Model.Nombre?
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                 <form asp-action="Baja" method="post" class="d-inline">
                     <input type="hidden" name="id" value="@Model.Id" />
-                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                    <button type="submit" class="btn btn-danger"><i class="fas fa-trash"></i> Eliminar</button>
                 </form>
-                
             </div>
         </div>
     </div>
 </div>
 
-
 <!-- Modal Cargar Avatar -->
-<div class="modal fade" id="modalCargarAvatar" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
+<div class="modal fade" id="modalCargarAvatar" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <form asp-action="UploadAvatar" id="formUploadAvatar" method="post" class="d-inline" enctype="multipart/form-data">
+            <form asp-action="UploadAvatar" id="formUploadAvatar" method="post" enctype="multipart/form-data">
                 <div class="modal-header">
-                    <p>Recorta tu foto</p>
+                    <h5 class="modal-title"><i class="fas fa-crop-alt"></i> Recorta tu foto</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
                 </div>
                 <div class="modal-body">
                     <div class="content-imagen-cropper">
-                        <img src="" alt="" style="width: 150%;" class="img-cropper" id="avatarImg">
+                        <img src="" alt="" class="img-cropper" id="avatarImg">
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" onclick="cerrarModal()" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="button" onclick="aceptarModal(@Model.Id)" class="btn btn-danger" id="btnCargar">Aceptar</button>
+                    <button type="button" onclick="cerrarModal()" class="btn btn-secondary"
+                        data-dismiss="modal">Cerrar</button>
+                    <button type="button" onclick="aceptarModal(@Model.Id)" class="btn btn-danger" id="btnCargar"><i
+                            class="fas fa-check"></i> Aceptar</button>
                 </div>
             </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Eliminar Avatar -->
+<div class="modal fade" id="modalEliminarAvatar" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title"><i class="fas fa-trash-alt"></i> Eliminar Avatar</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                ¿Está seguro de que desea quitar el avatar?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <form asp-action="RemoveAvatar" method="post" class="d-inline">
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i> Quitar Avatar</button>
+                </form>
+            </div>
         </div>
     </div>
 </div>
@@ -100,7 +154,8 @@
     <script>
         let avatarInput = document.getElementById('input-file');
         let cropper = null;
-        avatarInput.onchange = function (e) {
+
+        avatarInput.onchange = function () {
             let image = document.getElementById('avatarImg');
             let input = document.getElementById('input-file');
             let archivos = input.files;
@@ -108,10 +163,10 @@
             if (!archivos || !archivos.length) {
                 image.src = "";
                 input.value = "";
-            }
-            else {
+            } else {
                 let imagenUrl = URL.createObjectURL(archivos[0]);
                 image.src = imagenUrl;
+                if (cropper) cropper.destroy();
                 cropper = new Cropper(image, {
                     aspectRatio: 1,
                     preview: '.avatarDiv',
@@ -119,9 +174,6 @@
                     viewMode: 1,
                     responsive: false,
                     dragMode: 'none',
-                    ready() {
-                        document.querySelector
-                    }
                 });
 
                 let modalCargarAvatar = new bootstrap.Modal(document.getElementById('modalCargarAvatar'));
@@ -129,18 +181,18 @@
             }
         }
 
-        function cerrarModal(){
+        function cerrarModal() {
             let image = document.getElementById('avatarImg');
             let input = document.getElementById('input-file');
             image.src = "";
             input.value = "";
-            cropper.destroy();
+            if (cropper) cropper.destroy();
         }
 
-        function aceptarModal(id){
+        function aceptarModal(id) {
             let canvas = cropper.getCroppedCanvas();
 
-            canvas.toBlob(function(blob){
+            canvas.toBlob(function (blob) {
                 let formData = new FormData();
                 formData.append('avatar', blob, 'avatar.png');
                 formData.append('Id', id);
@@ -148,19 +200,13 @@
                     method: 'POST',
                     body: formData
                 })
-                .then(response => response.json())
-                .then(data => {
-                    window.location.replace("/Usuario/Detalle/" + id);
-                });
+                    .then(response => response.json())
+                    .then(data => {
+                        window.location.reload();
+                    });
             });
 
-            let image = document.getElementById('avatarImg');
-            let input = document.getElementById('input-file');
-            image.src = "";
-            input.value = "";
-            cropper.destroy();
+            cerrarModal();
         }
     </script>
-
-    
 }

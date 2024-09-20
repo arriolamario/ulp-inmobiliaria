@@ -24,8 +24,7 @@ public class RepositorioPropietario : RepositorioBase, IRepositorioPropietario
                                 {nameof(Propietario.Email)}, 
                                 {nameof(Propietario.Direccion)}, 
                                 {nameof(Propietario.Fecha_Creacion)}, 
-                                {nameof(Propietario.Fecha_Actualizacion)},
-                                {nameof(Propietario.Estado)}
+                                {nameof(Propietario.Fecha_Actualizacion)}
                         from propietario;";
                         
         resultPropietarios = this.ExecuteReaderList<Propietario>(query, (parameters) => {}, (reader) => {

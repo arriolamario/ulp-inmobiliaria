@@ -2,9 +2,10 @@ using Microsoft.AspNetCore.Mvc;
 using InmobiliariaCA.Models;
 using InmobiliariaCA.Repositorio;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
 
 namespace InmobiliariaCA.Controllers;
-
+[Authorize]
 public class InmuebleTiposController : Controller
 {
     private readonly ILogger<HomeController> _logger;
@@ -25,7 +26,7 @@ public class InmuebleTiposController : Controller
     }
 
     [HttpPost]
-    public IActionResult BajaLogica(int eliminarId, string eliminarTipo)
+    public IActionResult Baja(int eliminarId, string eliminarTipo)
     {
 
         if (eliminarTipo == "tipoInmueble")

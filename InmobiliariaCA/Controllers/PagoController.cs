@@ -1,9 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using InmobiliariaCA.Models;
 using InmobiliariaCA.Repositorio;
+using Microsoft.AspNetCore.Authorization;
 
 namespace InmobiliariaCA.Controllers;
-
+[Authorize]
 public class PagoController : Controller {
     private readonly ILogger<HomeController> _logger;
     private IRepositorioPago _repositorioPago;
@@ -56,6 +57,7 @@ public class PagoController : Controller {
     }
 
     [HttpPost]
+    [Authorize(Policy = "administrador")]
     public IActionResult Anular(int Id, int IdAnulador, int IdContrato) {
         
         if (Id == 0) {

@@ -1,39 +1,33 @@
 @model InmobiliariaCA.Models.Usuario
 
 @{
-    ViewData["Title"] = "Cargar Avatar";
+    ViewData["Title"] = "Usuario Cargar Avatar";
 }
 
-<div class="container">
-    <div class="group">
-        <div class="row">
-            <div class="col-6">
-                <dt class="col-sm-3">Nombre Completo</dt>
-                <dd class="col-sm-9">@Model.NombreCompleto</dd>
-                <dt class="col-sm-3">Email</dt>
-                <dd class="col-sm-9">@Model.Email</dd>
-                <input type="file" name="input-file" id="input-file" style="display:none" accept=".png,.jpg,.jpeg">
-                <label for="input-file" class="btn btn-danger" type="button">Haz click aquí para subir una imagen</label>
-            </div>
-            <div class="col-6">
-                <img src="/img/user.png" style="width: 100%;" alt="" class="crop-image" id="crop-image">
-            </div>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6">
+            <dt class="col-sm-3">Nombre Completo</dt>
+            <dd class="col-sm-9">@Model.NombreCompleto</dd>
+            <dt class="col-sm-3">Email</dt>
+            <dd class="col-sm-9">@Model.Email</dd>
+            <input type="file" name="input-file" id="input-file" style="display:none" accept=".png,.jpg,.jpeg">
+            <label for="input-file" class="btn btn-danger" type="button">Haz click aquí para subir una imagen</label>
         </div>
-        <div class="row">
-            
+        <div class="col-md-6">
+            <img src="/img/user.png" style="width: 100%;" alt="" class="crop-image" id="crop-image">
         </div>
     </div>
 </div>
 
-
-
-<!-- Modal Alta Edicion -->
-<div class="modal fade" id="modelCargarAvatar" tabindex="-1" aria-hidden="true">
+<!-- Modal Alta Edición -->
+<div class="modal fade" id="modelCargarAvatar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <form asp-action="UploadAvatar" method="post" class="d-inline" enctype="multipart/form-data">
                 <div class="modal-header">
-                    <p>Recorta tu foto</p>
+                    <h5 class="modal-title" id="exampleModalLabel">Recorta tu foto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="content-imagen-cropper">
@@ -55,6 +49,7 @@
     <script>
         let avatarInput = document.getElementById('input-file');
         let cropper = null;
+
         avatarInput.onchange = function (e) {
             let image = document.getElementById('avatarImg');
             let input = document.getElementById('input-file');
@@ -73,10 +68,7 @@
                     zoomable: false,
                     viewMode: 1,
                     responsive: false,
-                    dragMode: 'none',
-                    ready() {
-                        document.querySelector
-                    }
+                    dragMode: 'none'
                 });
 
                 let modalCargarAvatar = new bootstrap.Modal(document.getElementById('modelCargarAvatar'));
@@ -84,7 +76,7 @@
             }
         }
 
-        function cerrarModal(){
+        function cerrarModal() {
             let image = document.getElementById('avatarImg');
             let input = document.getElementById('input-file');
             image.src = "";
@@ -92,11 +84,11 @@
             cropper.destroy();
         }
 
-        function aceptarModal(){
+        function aceptarModal() {
             let imagePrincipal = document.getElementById('crop-image');
             let canvas = cropper.getCroppedCanvas();
 
-            canvas.toBlob(function(blob){
+            canvas.toBlob(function(blob) {
                 let urlBlob = URL.createObjectURL(blob);
                 imagePrincipal.src = urlBlob;
             });
@@ -108,6 +100,4 @@
             cropper.destroy();
         }
     </script>
-
-    
 }

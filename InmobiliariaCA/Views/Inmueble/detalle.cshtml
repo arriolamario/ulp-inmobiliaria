@@ -1,90 +1,121 @@
 @model InmobiliariaCA.Models.Inmueble
 @{
-System.Globalization.CultureInfo culturaArgentina = new System.Globalization.CultureInfo("es-AR");
-string precioFormateado = Model.Precio.ToString("C", culturaArgentina);
+    ViewData["Title"] = "Inmueble detalle";
+    System.Globalization.CultureInfo culturaArgentina = new System.Globalization.CultureInfo("es-AR");
+    string precioFormateado = Model.Precio.ToString("C", culturaArgentina);
 }
+
 <div class="container mt-5">
     <div class="card shadow-sm">
         <div class="card-header bg-primary text-white">
-            <h2>Detalles del Inmueble</h2>
+            <h2><i class="fas fa-info-circle me-2"></i>Detalles del Inmueble</h2>
         </div>
         <div class="card-body">
             <dl class="row">
                 <input type="hidden" id="Coordenada_Lat" value="@Model.Coordenada_Lat" />
                 <input type="hidden" id="Coordenada_Lon" value="@Model.Coordenada_Lon" />
-                <dt class="col-sm-3">Propietario</dt>
-                @if(Model.Propietario != null){
-                    <dd class="col-sm-9">@Model.Propietario.Apellido @Model.Propietario.Nombre</dd>
-                }
 
-                <dt class="col-sm-3">Direccion</dt>
+                <dt class="col-sm-3"><i class="fas fa-user me-2"></i>Propietario</dt>
+                <dd class="col-sm-9">
+                    @if (Model.Propietario != null)
+                    {
+                        @Model.Propietario.Apellido @Model.Propietario.Nombre
+                    }
+                    else
+                    {
+                        <span>No disponible</span>
+                    }
+                </dd>
+
+                <dt class="col-sm-3"><i class="fas fa-map-marker-alt me-2"></i>Dirección</dt>
                 <dd class="col-sm-9">@Model.Direccion</dd>
 
-                <dt class="col-sm-3">Tipo</dt>
+                <dt class="col-sm-3"><i class="fas fa-building me-2"></i>Tipo</dt>
                 <dd class="col-sm-9">@Model.Tipo?.Descripcion</dd>
 
-                <dt class="col-sm-3">Tipo de Uso</dt>
+                <dt class="col-sm-3"><i class="fas fa-warehouse me-2"></i>Tipo de Uso</dt>
                 <dd class="col-sm-9">@Model.Tipo_Uso?.Descripcion</dd>
 
-                <dt class="col-sm-3">Ambientes</dt>
+                <dt class="col-sm-3"><i class="fas fa-door-open me-2"></i>Ambientes</dt>
                 <dd class="col-sm-9">@Model.Ambientes</dd>
 
-                <dt class="col-sm-3">Precio</dt>
+                <dt class="col-sm-3"><i class="fas fa-dollar-sign me-2"></i>Precio</dt>
                 <dd class="col-sm-9">@precioFormateado</dd>
-
-                <dd class="col-sm-9"></dd><div id="map" style="height: 500px; width: 100%;"></div></dd>
+                <dt class="col-sm-3"><i class="fas fa-check"></i>Activo/Desactivado</dt>
+                @if (Model.Activo)
+                {
+                    <dd class="col-sm-9">Activo</dd>
+                }
+                else{
+                    <dd class="col-sm-9">Desactivado</dd>
+                }
             </dl>
+
+            <div id="map" style="height: 500px; width: 100%;"></div>
         </div>
         <div class="card-footer text-end">
-            <a href="@Url.Action("AltaEditar", "Inmueble", new { id = Model.Id })" class="btn btn-warning">Editar</a>
-            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalBajaLogica">
-                Eliminar
-            </button>
-            <a href="@Url.Action("Index", "Inmueble")" class="btn btn-secondary">Volver a la Lista</a>
+            <a href="@Url.Action("AltaEditar", "Inmueble", new { id = Model.Id })" class="btn btn-warning">
+                <i class="fas fa-edit me-2"></i>Editar
+            </a>
+            @if (User.IsInRole("administrador"))
+            {
+                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalBajaLogica">
+                    <i class="fas fa-trash-alt me-2"></i>Eliminar
+                </button>
+            }
+            <a href="@Url.Action("Index", "Inmueble")" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Volver a la Lista
+            </a>
         </div>
     </div>
 </div>
 
-
-<!-- Modal -->
+<!-- Modal para confirmación de eliminación -->
 <div class="modal fade" id="modalBajaLogica" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Inquilino</h1>
+            <div class="modal-header bg-danger text-white">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Confirmación de Eliminación</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                ¿Esta seguro que desea eliminar el inmueble?
+                ¿Está seguro que desea eliminar este inmueble? Esta acción no se puede deshacer.
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                 <form asp-action="BajaLogica" method="post" class="d-inline">
                     <input type="hidden" name="id" value="@Model.Id" />
-                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                    <button type="submit" class="btn btn-danger">Confirmar Eliminación</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
 
-
 @section Scripts {
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
-        <script
-            src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
-        <script>
-        // Inicializar el mapa y establecer las coordenadas iniciales
-        var latitud = document.getElementById("Coordenada_Lat").value;
-        var longitud = document.getElementById("Coordenada_Lon").value;
-        var map = L.map('map').setView([latitud, longitud], 15); // Coordenadas y nivel de zoom
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css" />
 
-        // Cargar y mostrar un mapa de OpenStreetMap en el contenedor
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
+    <script>
+        $(document).ready(function () {
+            var latitud = parseFloat(document.getElementById("Coordenada_Lat").value) || 0;
+            var longitud = parseFloat(document.getElementById("Coordenada_Lon").value) || 0;
 
-        // Agregar un marcador al mapa y hacerlo arrastrable
-        var marker = L.marker([latitud, longitud], { draggable: false }).addTo(map);
-        </script>
+            // Inicializar el mapa si las coordenadas son válidas
+            if (latitud !== 0 && longitud !== 0) {
+                var map = L.map('map').setView([latitud, longitud], 15);
+
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(map);
+
+                L.marker([latitud, longitud], { draggable: false }).addTo(map);
+            } else {
+                $('#map').text("Coordenadas no disponibles para mostrar el mapa.");
+            }
+        });
+    </script>
 }

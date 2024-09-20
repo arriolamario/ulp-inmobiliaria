@@ -107,14 +107,32 @@ namespace InmobiliariaCA.Repositorio
         public int ExecuteNonQuery(string query, Action<MySqlParameterCollection> parameters, MySqlTransaction? transaction = null)
         {
             int filasAfectadas = 0;
-
-            using (var connection = transaction?.Connection ?? GetConnection())
-            using (var command = new MySqlCommand(query, connection))
+            try
             {
-                if (transaction != null) command.Transaction = transaction;
-                parameters?.Invoke(command.Parameters);
-                filasAfectadas = command.ExecuteNonQuery();
+                using (var connection = transaction?.Connection ?? GetConnection())
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    if (transaction != null) command.Transaction = transaction;
+                    parameters?.Invoke(command.Parameters);
+                    filasAfectadas = command.ExecuteNonQuery();
+                }
             }
+            catch (MySqlException ex)
+            {
+                if (ex.Number == 1451) // Código de error para restricción de clave foránea
+                {
+                    filasAfectadas = 0;
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
 
             return filasAfectadas;
         }

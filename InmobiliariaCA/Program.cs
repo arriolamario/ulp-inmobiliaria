@@ -1,4 +1,6 @@
 using InmobiliariaCA.Repositorio;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +17,18 @@ if(builder.Environment.EnvironmentName == "Production")
 }
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>{
+        options.LoginPath = "/Usuario/Login";
+        options.LogoutPath = "/Usuario/Logout"; 
+        options.AccessDeniedPath = "/Usuario/AccesoDenegado";
+    });
+
+builder.Services.AddAuthorization(options => {
+    options.AddPolicy("Administrador", policy => policy.RequireRole("administrador"));
+});
+
 
 //Registro de servicios
 // Transient: Se crea una nueva instancia cada vez que se solicita.
@@ -44,7 +58,13 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseCookiePolicy(new CookiePolicyOptions(){
+    MinimumSameSitePolicy = SameSiteMode.None
+});
+
+app.UseAuthentication();
 app.UseAuthorization();
+
 
 app.MapControllerRoute(
     name: "default",

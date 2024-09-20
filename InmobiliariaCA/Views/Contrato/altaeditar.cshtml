@@ -20,14 +20,14 @@
                                     <option value="@inmueble.Value" data-precio="@ViewBag.InmueblesData[inmueble.Value]">@inmueble.Text</option>
                                 }
                             </select>
-                            <label for="id_inmueble">Inmueble</label>
+                            <label for="id_inmueble"><i class="fas fa-building"></i> Inmueble</label>
                             <span asp-validation-for="Id_Inmueble" class="text-danger"></span>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-floating">
                             @Html.DropDownListFor(m => m.Id_Inquilino, (SelectList)ViewBag.Inquilinos, "Seleccione un Inquilino", new { @class = "form-select", @required = "required", id = 1 })
-                            <label for="Id_Inquilino">Inquilino</label>
+                            <label for="Id_Inquilino"><i class="fas fa-user"></i> Inquilino</label>
                             <span asp-validation-for="Id_Inquilino" class="text-danger"></span>
                         </div>
                     </div>
@@ -35,13 +35,13 @@
 
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <label asp-for="Fecha_Desde" class="form-label">Fecha Desde</label>
-                        <input asp-for="Fecha_Desde" type="date" class="form-control"/>
+                        <label asp-for="Fecha_Desde" class="form-label"><i class="fas fa-calendar-alt"></i> Fecha Desde</label>
+                        <input asp-for="Fecha_Desde" type="date" class="form-control" />
                         <span asp-validation-for="Fecha_Desde" class="text-danger"></span>
                     </div>
                     <div class="col-md-6">
-                        <label asp-for="Fecha_Hasta" class="form-label">Fecha Hasta</label>
-                        <input asp-for="Fecha_Hasta" type="date" class="form-control"/>
+                        <label asp-for="Fecha_Hasta" class="form-label"><i class="fas fa-calendar-alt"></i> Fecha Hasta</label>
+                        <input asp-for="Fecha_Hasta" type="date" class="form-control" />
                         <span asp-validation-for="Fecha_Hasta" class="text-danger"></span>
                     </div>
                 </div>
@@ -56,15 +56,12 @@
 
                 <input type="hidden" asp-for="Id" />
 
-                  <div class="d-flex justify-content-between">
-                    @* <a href="@Url.Action(Model == null ? "Index" : "Detalle", "Contrato", Model == null || Model.Id == 0 ? null : new { id = Model.Id })" class="btn btn-secondary">
-                        @(Model == null || Model.Id == 0 ? "Volver a la Lista" : "Volver")
-                    </a> *@
-                     <a href="@Url.Action("Index", "Contrato")" class="btn btn-secondary">
-                        Volver a la Lista
+                <div class="d-flex justify-content-between">
+                    <a href="@Url.Action("Index", "Contrato")" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Volver a la Lista
                     </a>
                     <button type="submit" class="btn btn-primary">
-                        @(Model == null || Model.Id == 0 ? "Registrar" : "Actualizar")
+                        <i class="fas fa-save"></i> @(Model == null || Model.Id == 0 ? "Registrar" : "Actualizar")
                     </button>
                 </div>
             </form>

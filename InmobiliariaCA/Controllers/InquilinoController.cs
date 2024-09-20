@@ -1,9 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using InmobiliariaCA.Models;
 using InmobiliariaCA.Repositorio;
+using Microsoft.AspNetCore.Authorization;
 
 namespace InmobiliariaCA.Controllers;
-
+[Authorize]
 public class InquilinoController: Controller {
 
     private readonly ILogger<HomeController> _logger;
@@ -66,6 +67,7 @@ public class InquilinoController: Controller {
     }
 
     [HttpPost]
+    [Authorize(Policy = "administrador")]
     public IActionResult BajaLogica(int id) {
         var success = _repositorioInquilino.BajaInquilino(id);
         
