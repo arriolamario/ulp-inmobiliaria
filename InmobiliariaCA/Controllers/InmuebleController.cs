@@ -19,9 +19,14 @@ public class InmuebleController : Controller
         _repositorioInmueble = repositorioInmueble;
     }
 
-    public IActionResult Index()
+    public IActionResult Index([FromQuery] bool? Activo)
     {
         try {
+            if (Activo.HasValue){
+                ViewBag.SelectActivo = Activo.Value ? "Activos" : "Inactivos";
+                return View(_repositorioInmueble.GetInmuebles(Activo.Value));
+            }
+            ViewBag.SelectActivo = "Todos";
             return View(_repositorioInmueble.GetInmuebles());
         } catch (Exception ex) {              
                 _logger.LogError("An error occurred while getting property: {Error}", ex.Message);

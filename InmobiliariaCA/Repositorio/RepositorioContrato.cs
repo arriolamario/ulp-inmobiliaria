@@ -119,55 +119,50 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato {
     }
 
     public int InsertarContrato(Contrato contrato) {
-        try {            
-            string query = @$"INSERT INTO contrato (
-                                    {nameof(Contrato.Id_Inmueble)},
-                                    {nameof(Contrato.Id_Inquilino)},
-                                    {nameof(Contrato.Fecha_Desde)},
-                                    {nameof(Contrato.Fecha_Hasta)},
-                                    {nameof(Contrato.Monto_Alquiler)},
-                                    {nameof(Contrato.Fecha_Finalizacion_Anticipada)},
-                                    {nameof(Contrato.Multa)},
-                                    {nameof(Contrato.Id_Usuario_Creacion)},
-                                    {nameof(Contrato.Id_Usuario_Finalizacion)},
-                                    {nameof(Contrato.Fecha_Creacion)},
-                                    {nameof(Contrato.Fecha_Actualizacion)},
-                                    {nameof(Contrato.Cantidad_Cuotas)})
-                                VALUES(
-                                    @{nameof(Contrato.Id_Inmueble)},
-                                    @{nameof(Contrato.Id_Inquilino)},
-                                    @{nameof(Contrato.Fecha_Desde)},
-                                    @{nameof(Contrato.Fecha_Hasta)},
-                                    @{nameof(Contrato.Monto_Alquiler)},
-                                    @{nameof(Contrato.Fecha_Finalizacion_Anticipada)},
-                                    @{nameof(Contrato.Multa)},
-                                    @{nameof(Contrato.Id_Usuario_Creacion)},
-                                    @{nameof(Contrato.Id_Usuario_Finalizacion)},
-                                    @{nameof(Contrato.Fecha_Creacion)},
-                                    @{nameof(Contrato.Fecha_Actualizacion)},
-                                    @{nameof(Contrato.Cantidad_Cuotas)});
-                                SELECT LAST_INSERT_ID();";
+        string query = @$"INSERT INTO contrato (
+                                {nameof(Contrato.Id_Inmueble)},
+                                {nameof(Contrato.Id_Inquilino)},
+                                {nameof(Contrato.Fecha_Desde)},
+                                {nameof(Contrato.Fecha_Hasta)},
+                                {nameof(Contrato.Monto_Alquiler)},
+                                {nameof(Contrato.Fecha_Finalizacion_Anticipada)},
+                                {nameof(Contrato.Multa)},
+                                {nameof(Contrato.Id_Usuario_Creacion)},
+                                {nameof(Contrato.Id_Usuario_Finalizacion)},
+                                {nameof(Contrato.Fecha_Creacion)},
+                                {nameof(Contrato.Fecha_Actualizacion)},
+                                {nameof(Contrato.Cantidad_Cuotas)})
+                            VALUES(
+                                @{nameof(Contrato.Id_Inmueble)},
+                                @{nameof(Contrato.Id_Inquilino)},
+                                @{nameof(Contrato.Fecha_Desde)},
+                                @{nameof(Contrato.Fecha_Hasta)},
+                                @{nameof(Contrato.Monto_Alquiler)},
+                                @{nameof(Contrato.Fecha_Finalizacion_Anticipada)},
+                                @{nameof(Contrato.Multa)},
+                                @{nameof(Contrato.Id_Usuario_Creacion)},
+                                @{nameof(Contrato.Id_Usuario_Finalizacion)},
+                                @{nameof(Contrato.Fecha_Creacion)},
+                                @{nameof(Contrato.Fecha_Actualizacion)},
+                                @{nameof(Contrato.Cantidad_Cuotas)});
+                            SELECT LAST_INSERT_ID();";
 
-            int result = this.ExecuteNonQuery(query, (parameters) => {
-                parameters.AddWithValue($"@{nameof(Contrato.Id_Inmueble)}", contrato.Id_Inmueble);
-                parameters.AddWithValue($"@{nameof(Contrato.Id_Inquilino)}", contrato.Id_Inquilino);
-                parameters.AddWithValue($"@{nameof(Contrato.Fecha_Desde)}", contrato.Fecha_Desde);
-                parameters.AddWithValue($"@{nameof(Contrato.Fecha_Hasta)}", contrato.Fecha_Hasta);
-                parameters.AddWithValue($"@{nameof(Contrato.Monto_Alquiler)}", contrato.Monto_Alquiler);
-                parameters.AddWithValue($"@{nameof(Contrato.Fecha_Finalizacion_Anticipada)}", (object?)contrato.Fecha_Finalizacion_Anticipada ?? DBNull.Value);
-                parameters.AddWithValue($"@{nameof(Contrato.Multa)}", (object?)contrato.Multa ?? DBNull.Value);
-                parameters.AddWithValue($"@{nameof(Contrato.Id_Usuario_Creacion)}", 6);//contrato.Id_Usuario_Creacion);
-                parameters.AddWithValue($"@{nameof(Contrato.Id_Usuario_Finalizacion)}", (object?)contrato.Id_Usuario_Finalizacion ?? DBNull.Value);// (object?)contrato.Id_Usuario_Finalizacion ?? DBNull.Value);
-                parameters.AddWithValue($"@{nameof(Contrato.Fecha_Creacion)}", contrato.Fecha_Creacion);
-                parameters.AddWithValue($"@{nameof(Contrato.Fecha_Actualizacion)}", contrato.Fecha_Actualizacion);
-                parameters.AddWithValue($"@{nameof(Contrato.Cantidad_Cuotas)}", CantidadCuotas(contrato));
-            });
+        int result = this.ExecuteScalar(query, (parameters) => {
+            parameters.AddWithValue($"@{nameof(Contrato.Id_Inmueble)}", contrato.Id_Inmueble);
+            parameters.AddWithValue($"@{nameof(Contrato.Id_Inquilino)}", contrato.Id_Inquilino);
+            parameters.AddWithValue($"@{nameof(Contrato.Fecha_Desde)}", contrato.Fecha_Desde);
+            parameters.AddWithValue($"@{nameof(Contrato.Fecha_Hasta)}", contrato.Fecha_Hasta);
+            parameters.AddWithValue($"@{nameof(Contrato.Monto_Alquiler)}", contrato.Monto_Alquiler);
+            parameters.AddWithValue($"@{nameof(Contrato.Fecha_Finalizacion_Anticipada)}", (object?)contrato.Fecha_Finalizacion_Anticipada ?? DBNull.Value);
+            parameters.AddWithValue($"@{nameof(Contrato.Multa)}", (object?)contrato.Multa ?? DBNull.Value);
+            parameters.AddWithValue($"@{nameof(Contrato.Id_Usuario_Creacion)}", 1);//contrato.Id_Usuario_Creacion);
+            parameters.AddWithValue($"@{nameof(Contrato.Id_Usuario_Finalizacion)}", (object?)contrato.Id_Usuario_Finalizacion ?? DBNull.Value);// (object?)contrato.Id_Usuario_Finalizacion ?? DBNull.Value);
+            parameters.AddWithValue($"@{nameof(Contrato.Fecha_Creacion)}", contrato.Fecha_Creacion);
+            parameters.AddWithValue($"@{nameof(Contrato.Fecha_Actualizacion)}", contrato.Fecha_Actualizacion);
+            parameters.AddWithValue($"@{nameof(Contrato.Cantidad_Cuotas)}", CantidadCuotas(contrato));
+        });
 
-            return result;
-        } catch (Exception ex) {
-             _logger.LogError("Hubo un error al crear contrato: {Error}", ex.Message);
-            throw new Exception("Error al crear el contrato. Contacte con el administrador.");
-        }
+        return result;
     }
 
     public int ActualizarContrato(Contrato contrato) {

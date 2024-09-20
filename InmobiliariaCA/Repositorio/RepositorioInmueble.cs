@@ -23,7 +23,8 @@ public class RepositorioInmueble : RepositorioBase, IRepositorioInmueble
                             {nameof(Inmueble.Coordenada_Lat)}, 
                             {nameof(Inmueble.Coordenada_Lon)}, 
                             {nameof(Inmueble.Precio)},
-                            {nameof(Inmueble.Id_Propietario)})
+                            {nameof(Inmueble.Id_Propietario)},
+                            {nameof(Inmueble.Activo)})
                             VALUES (@{nameof(Inmueble.Direccion)},
                             @{nameof(Inmueble.Id_Tipo_Inmueble_Uso)},
                             @{nameof(Inmueble.Id_Tipo_Inmueble)},
@@ -31,7 +32,8 @@ public class RepositorioInmueble : RepositorioBase, IRepositorioInmueble
                             @{nameof(Inmueble.Coordenada_Lat)}, 
                             @{nameof(Inmueble.Coordenada_Lon)}, 
                             @{nameof(Inmueble.Precio)},
-                            @{nameof(Inmueble.Id_Propietario)});
+                            @{nameof(Inmueble.Id_Propietario)},
+                            @{nameof(Inmueble.Activo)});
                             SELECT LAST_INSERT_ID();";
         
         result = this.ExecuteScalar(query, (parameters) => {
@@ -43,6 +45,7 @@ public class RepositorioInmueble : RepositorioBase, IRepositorioInmueble
             parameters.AddWithValue($"@{nameof(Inmueble.Coordenada_Lon)}", inmueble.Coordenada_Lon);
             parameters.AddWithValue($"@{nameof(Inmueble.Precio)}", inmueble.Precio);
             parameters.AddWithValue($"@{nameof(Inmueble.Id_Propietario)}", inmueble.Id_Propietario);
+            parameters.AddWithValue($"@{nameof(Inmueble.Activo)}", inmueble.Activo);
         });
 
         return result;
@@ -65,6 +68,59 @@ public class RepositorioInmueble : RepositorioBase, IRepositorioInmueble
                                 from inmueble;";
 
         resultInmuebles = this.ExecuteReaderList<Inmueble>(query, (parameters) => {}, (reader) =>  {
+            return new Inmueble()
+            {
+                Id = int.Parse(reader[nameof(Inmueble.Id)].ToString() ?? "0"),
+                Direccion = reader["direccion"].ToString() ?? "",
+                Id_Tipo_Inmueble_Uso = int.Parse(reader[nameof(Inmueble.Id_Tipo_Inmueble_Uso)].ToString() ?? "0"),
+                Id_Tipo_Inmueble = int.Parse(reader[nameof(Inmueble.Id_Tipo_Inmueble)].ToString() ?? "0"),
+                Ambientes = int.Parse(reader[nameof(Inmueble.Ambientes)].ToString() ?? "0"),
+                Coordenada_Lat = reader[nameof(Inmueble.Coordenada_Lat)].ToString() ?? "",
+                Coordenada_Lon = reader[nameof(Inmueble.Coordenada_Lon)].ToString() ?? "",
+                Precio = decimal.Parse(reader[nameof(Inmueble.Precio)].ToString() ?? "0"),
+                Id_Propietario = int.Parse(reader[nameof(Inmueble.Id_Propietario)].ToString() ?? "0"),
+                Fecha_Creacion = DateTime.Parse(reader[nameof(Inmueble.Fecha_Creacion)].ToString() ?? "0"),
+                Fecha_Actualizacion = DateTime.Parse(reader[nameof(Inmueble.Fecha_Actualizacion)].ToString() ?? "0"),
+                Activo = bool.Parse(reader[nameof(Inmueble.Activo)].ToString() ?? "0")
+            };
+        }); 
+
+        List<int> propietariosIds = resultInmuebles.Select(x => x.Id_Propietario).ToList();
+
+        var propietarios = _repositorioPropietario.GetPropietarios(propietariosIds);
+        var tiposInmuebles = _repositorioTipos.GetTipoInmuebles();
+        var tiposInmueblesUsos = _repositorioTipos.GetTipoInmueblesUsos();
+
+        resultInmuebles.ForEach(x => {
+            x.Propietario = propietarios.FirstOrDefault(y => y.Id == x.Id_Propietario)?? new Propietario();
+            x.Tipo = tiposInmuebles.FirstOrDefault(y => y.Id == x.Id_Tipo_Inmueble);
+            x.Tipo_Uso = tiposInmueblesUsos.FirstOrDefault(y => y.Id == x.Id_Tipo_Inmueble_Uso);
+        });
+
+        return resultInmuebles;
+    }
+
+    public List<Inmueble> GetInmuebles(bool Activo) {
+        List<Inmueble> resultInmuebles = new List<Inmueble>();
+        
+        string query = @$"select {nameof(Inmueble.Id)}, 
+                                {nameof(Inmueble.Direccion)},
+                                {nameof(Inmueble.Id_Tipo_Inmueble_Uso)},
+                                {nameof(Inmueble.Id_Tipo_Inmueble)},
+                                {nameof(Inmueble.Ambientes)},
+                                {nameof(Inmueble.Coordenada_Lat)}, 
+                                {nameof(Inmueble.Coordenada_Lon)}, 
+                                {nameof(Inmueble.Precio)},
+                                {nameof(Inmueble.Id_Propietario)},
+                                {nameof(Inmueble.Fecha_Creacion)},
+                                {nameof(Inmueble.Fecha_Actualizacion)},
+                                {nameof(Inmueble.Activo)}		
+                                from inmueble
+                                where {nameof(Inmueble.Activo)} = @{nameof(Activo)};";
+
+        resultInmuebles = this.ExecuteReaderList<Inmueble>(query, (parameters) => {
+            parameters.AddWithValue($"@{nameof(Activo)}", Activo);
+        }, (reader) =>  {
             return new Inmueble()
             {
                 Id = int.Parse(reader[nameof(Inmueble.Id)].ToString() ?? "0"),
@@ -279,6 +335,53 @@ public class RepositorioInmueble : RepositorioBase, IRepositorioInmueble
         return resultList;
     }
 
+    public List<Inmueble> GetInmueblesDisponiblesPorFecha(DateTime fechaDesde, DateTime fechaHasta){
+        List<Inmueble> inmuebles = new List<Inmueble>();
+
+        string query = @$"SELECT i.{nameof(Inmueble.Id)}, 
+                                i.{nameof(Inmueble.Direccion)},
+                                i.{nameof(Inmueble.Id_Tipo_Inmueble_Uso)},
+                                i.{nameof(Inmueble.Id_Tipo_Inmueble)},
+                                i.{nameof(Inmueble.Ambientes)},
+                                i.{nameof(Inmueble.Coordenada_Lat)},
+                                i.{nameof(Inmueble.Coordenada_Lon)},
+                                i.{nameof(Inmueble.Precio)},
+                                i.{nameof(Inmueble.Id_Propietario)},
+                                i.{nameof(Inmueble.Fecha_Creacion)},
+                                i.{nameof(Inmueble.Fecha_Actualizacion)},
+                                i.{nameof(Inmueble.Activo)}
+                        FROM inmueble i
+                        LEFT JOIN contrato c 
+                            ON i.id = c.id_inmueble
+                            AND c.estado = 'Vigente'
+                            AND 
+                                (c.fecha_desde <= @FechaFin AND c.fecha_hasta >= @FechaInicio) -- Contrato que cubre el rango solicitado
+                        WHERE i.activo = 1
+                        AND c.id IS NULL;";
+
+        inmuebles = this.ExecuteReaderList<Inmueble>(query,(param) => {
+            param.AddWithValue($"@FechaInicio", fechaDesde);
+            param.AddWithValue($"@FechaFin", fechaHasta);
+        },
+        (reader) => {
+            return new Inmueble(){
+                Id = int.Parse(reader[nameof(Inmueble.Id)].ToString() ?? "0"),
+                Direccion = reader["direccion"].ToString() ?? "",
+                Id_Tipo_Inmueble_Uso = int.Parse(reader[nameof(Inmueble.Id_Tipo_Inmueble_Uso)].ToString() ?? "0"),
+                Id_Tipo_Inmueble = int.Parse(reader[nameof(Inmueble.Id_Tipo_Inmueble)].ToString() ?? "0"),
+                Ambientes = int.Parse(reader[nameof(Inmueble.Ambientes)].ToString() ?? "0"),
+                Coordenada_Lat = reader[nameof(Inmueble.Coordenada_Lat)].ToString() ?? "",
+                Coordenada_Lon = reader[nameof(Inmueble.Coordenada_Lon)].ToString() ?? "",
+                Precio = decimal.Parse(reader[nameof(Inmueble.Precio)].ToString() ?? "0"),
+                Id_Propietario = int.Parse(reader[nameof(Inmueble.Id_Propietario)].ToString() ?? "0"),
+                Fecha_Creacion = DateTime.Parse(reader[nameof(Inmueble.Fecha_Creacion)].ToString() ?? "0"),
+                Fecha_Actualizacion = DateTime.Parse(reader[nameof(Inmueble.Fecha_Actualizacion)].ToString() ?? "0"),
+                Activo = bool.Parse(reader[nameof(Inmueble.Activo)].ToString() ?? "0")
+            };
+        });
+
+        return inmuebles;
+    }
     public bool EsInmuebleDisponible(int IdInmueble, DateTime fechaDesde, DateTime fechaHasta) {
         try {
             // string query = @$"SELECT COUNT(1)
