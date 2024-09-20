@@ -209,22 +209,20 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato {
         }
     }
 
-    public int ActualizarContratoPagado(int Id, MySqlTransaction transaction) {
-        using var connection = GetConnection();
+    public int ActualizarContratoPagado(int Id, MySqlTransaction? transaction) {
+        using var connection = transaction != null ? transaction.Connection : GetConnection();
 
         if(transaction == null){        
-            Console.WriteLine(" transaction null: " +  transaction);    
             using var transactionNew = BeginTransaction(connection);
             transaction = transactionNew;
         }        
         
         try{
-            Contrato? contrato = this.GetContrato(Id) ?? throw new Exception("No se encontró el contrato.");
+            // Contrato? contrato = this.GetContrato(Id) ?? throw new Exception("No se encontró el contrato.");
 
-            if (contrato.Cantidad_Cuotas-contrato.Cuotas_Pagas == 0) {
-                contrato.Estado = EstadoContrato.Finalizado;
-            }
-            Console.WriteLine(" contrato.Estado: " +  contrato.Estado);
+            // if (contrato.Cantidad_Cuotas-contrato.Cuotas_Pagas == 0) {
+            //     contrato.Estado = EstadoContrato.Finalizado;
+            // }
 
             string query = @$"UPDATE contrato SET
                                     {nameof(Contrato.Pagado)} = @{nameof(Contrato.Pagado)},
@@ -234,8 +232,10 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato {
                                 AND {nameof(Contrato.Cuotas_Pagas)} < {nameof(Contrato.Cantidad_Cuotas)};";
 
             int result = this.ExecuteNonQuery(query, (parameters) => {
-                parameters.AddWithValue($"@{nameof(Contrato.Pagado)}", contrato.EsFinalizado() || contrato.PagosCompletos());
-                parameters.AddWithValue($"@{nameof(Contrato.Estado)}", contrato.Estado.ToString());
+                // parameters.AddWithValue($"@{nameof(Contrato.Pagado)}", contrato.EsFinalizado() || contrato.PagosCompletos());
+                parameters.AddWithValue($"@{nameof(Contrato.Pagado)}", EstadoPago.Pagado.ToString());
+                // parameters.AddWithValue($"@{nameof(Contrato.Estado)}", contrato.Estado.ToString());
+                parameters.AddWithValue($"@{nameof(Contrato.Estado)}", EstadoContrato.Vigente.ToString());
                 parameters.AddWithValue($"@{nameof(Contrato.Id)}", Id);
             }, transaction);
 

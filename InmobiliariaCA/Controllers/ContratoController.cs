@@ -152,7 +152,8 @@ namespace InmobiliariaCA.Controllers {
                 contratoDb.Fecha_Finalizacion_Anticipada = contrato.Fecha_Finalizacion_Anticipada;
                 contratoDb.MultaCalculada();
                 contratoDb.Estado = EstadoContrato.Finalizado;
-                contratoDb.Id_Usuario_Finalizacion = 2;
+                var IdUser = User.FindFirst("Id");
+                contratoDb.Id_Usuario_Finalizacion = IdUser != null ? int.Parse(IdUser.Value) : 0;
 
                 _repositorioContrato.ActualizarContrato(contratoDb);
 

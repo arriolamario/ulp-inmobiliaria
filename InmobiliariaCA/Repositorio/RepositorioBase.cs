@@ -120,40 +120,10 @@ namespace InmobiliariaCA.Repositorio
 
         public int ExecuteNonQuery(string query, Action<MySqlParameterCollection> parameters, MySqlTransaction? transaction = null)
         {
-        //     int filasAfectadas = 0;
-        //     try
-        //     {
-        //         using (var connection = transaction?.Connection ?? GetConnection())
-        //         using (var command = new MySqlCommand(query, connection))
-        //         {
-        //             if (transaction != null) command.Transaction = transaction;
-        //             parameters?.Invoke(command.Parameters);
-        //             filasAfectadas = command.ExecuteNonQuery();
-        //         }
-        //     }
-        //     catch (MySqlException ex)
-        //     {
-        //         if (ex.Number == 1451) // Código de error para restricción de clave foránea
-        //         {
-        //             filasAfectadas = 0;
-        //         }
-        //         else
-        //         {
-        //             throw;
-        //         }
-        //     }
-        //     catch (Exception)
-        //     {
-        //         throw;
-        //     }
-
-
-        //     return filasAfectadas;
         int filasAfectadas = 0;
 
         if (transaction == null)
             {
-                // Si no hay transacción, crea una nueva conexión y ejecuta el comando.
                 using (var connection = GetConnection())
                 using (var command = new MySqlCommand(query, connection))
                 {
@@ -163,7 +133,6 @@ namespace InmobiliariaCA.Repositorio
             }
             else
             {
-                // Si hay una transacción, usa la conexión de la transacción y asegúrate de no abrir o cerrar la conexión.
                 if (transaction.Connection != null)
                 {
                     using (var command = new MySqlCommand(query, transaction.Connection))
@@ -176,7 +145,6 @@ namespace InmobiliariaCA.Repositorio
             }
 
             return filasAfectadas;
-
         }
     }
 }

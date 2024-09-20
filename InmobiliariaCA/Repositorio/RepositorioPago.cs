@@ -125,7 +125,7 @@ public class RepositorioPago : RepositorioBase, IRepositorioPago {
                 parameters.AddWithValue($"{nameof(Pago.Detalle)}", pago.Detalle);
                 parameters.AddWithValue($"{nameof(Pago.Importe)}", pago.Importe);
                 parameters.AddWithValue($"{nameof(Pago.Estado)}", EstadoPago.Pagado.ToString());
-                parameters.AddWithValue($"{nameof(Pago.Creado_Por_Id)}", 6);
+                parameters.AddWithValue($"{nameof(Pago.Creado_Por_Id)}", pago.Creado_Por_Id);
             }, transaction);
 
             //Actualizar el estado del contrato.
@@ -133,7 +133,10 @@ public class RepositorioPago : RepositorioBase, IRepositorioPago {
                 throw new Exception("No se pudo actualizar el estado de pagado del contrato.");
             }
 
-            transaction.Commit();
+            if(transaction.Connection.State == ConnectionState.Open){
+                transaction.Commit();   
+            }
+            
             return pagoId;
     } catch (Exception ex) {
          _logger.LogError("Error: {Error}", ex.Message);

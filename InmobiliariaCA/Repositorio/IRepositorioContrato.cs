@@ -9,7 +9,7 @@ public interface IRepositorioContrato {
     int InsertarContrato(Contrato Contrato);
     int ActualizarContrato(Contrato Contrato);
     bool BajaContrato(int Id);   
-    int ActualizarContratoPagado(int Id, MySqlTransaction transaction);
+    int ActualizarContratoPagado(int Id, MySqlTransaction? transaction);
     List<Contrato> GetContratosFiltrados(ContratoFilter filter);
 }
 
