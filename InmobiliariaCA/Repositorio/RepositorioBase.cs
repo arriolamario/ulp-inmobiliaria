@@ -92,49 +92,91 @@ namespace InmobiliariaCA.Repositorio
         public int ExecuteScalar(string query, Action<MySqlParameterCollection> parameters, MySqlTransaction? transaction = null)
         {
             int result = 0;
-
-            using (var connection = transaction?.Connection ?? GetConnection())
-            using (var command = new MySqlCommand(query, connection))
+            if (transaction == null)
             {
-                if (transaction != null) command.Transaction = transaction;
-                parameters?.Invoke(command.Parameters);
-                result = Convert.ToInt32(command.ExecuteScalar());
+                using (var connection = GetConnection())
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    if (transaction != null) command.Transaction = transaction;
+                    parameters?.Invoke(command.Parameters);
+                    result = Convert.ToInt32(command.ExecuteScalar());
+                }
+            } 
+            else
+            {
+                if ( transaction != null && transaction.Connection != null)
+                {
+                    var connection = transaction.Connection;
+                    using (var command = new MySqlCommand(query, connection))
+                    {
+                        if (transaction != null) command.Transaction = transaction;
+                        parameters?.Invoke(command.Parameters);
+                        result = Convert.ToInt32(command.ExecuteScalar());
+                    }
+                }
             }
-
             return result;
         }
 
         public int ExecuteNonQuery(string query, Action<MySqlParameterCollection> parameters, MySqlTransaction? transaction = null)
         {
-            int filasAfectadas = 0;
-            try
+        //     int filasAfectadas = 0;
+        //     try
+        //     {
+        //         using (var connection = transaction?.Connection ?? GetConnection())
+        //         using (var command = new MySqlCommand(query, connection))
+        //         {
+        //             if (transaction != null) command.Transaction = transaction;
+        //             parameters?.Invoke(command.Parameters);
+        //             filasAfectadas = command.ExecuteNonQuery();
+        //         }
+        //     }
+        //     catch (MySqlException ex)
+        //     {
+        //         if (ex.Number == 1451) // Código de error para restricción de clave foránea
+        //         {
+        //             filasAfectadas = 0;
+        //         }
+        //         else
+        //         {
+        //             throw;
+        //         }
+        //     }
+        //     catch (Exception)
+        //     {
+        //         throw;
+        //     }
+
+
+        //     return filasAfectadas;
+        int filasAfectadas = 0;
+
+        if (transaction == null)
             {
-                using (var connection = transaction?.Connection ?? GetConnection())
+                // Si no hay transacción, crea una nueva conexión y ejecuta el comando.
+                using (var connection = GetConnection())
                 using (var command = new MySqlCommand(query, connection))
                 {
-                    if (transaction != null) command.Transaction = transaction;
                     parameters?.Invoke(command.Parameters);
                     filasAfectadas = command.ExecuteNonQuery();
                 }
             }
-            catch (MySqlException ex)
+            else
             {
-                if (ex.Number == 1451) // Código de error para restricción de clave foránea
+                // Si hay una transacción, usa la conexión de la transacción y asegúrate de no abrir o cerrar la conexión.
+                if (transaction.Connection != null)
                 {
-                    filasAfectadas = 0;
-                }
-                else
-                {
-                    throw;
+                    using (var command = new MySqlCommand(query, transaction.Connection))
+                    {
+                        command.Transaction = transaction;
+                        parameters?.Invoke(command.Parameters);
+                        filasAfectadas = command.ExecuteNonQuery();
+                    }
                 }
             }
-            catch (Exception)
-            {
-                throw;
-            }
-
 
             return filasAfectadas;
+
         }
     }
 }

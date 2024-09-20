@@ -60,14 +60,14 @@
             </div>
             <div>
                 @if (!Model.PagosCompletos()) {
-                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#pagoModal">
+                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#pagoModal">
                         Pagar
                     </button>
                     <a href="@Url.Action("AltaEditar", "Contrato", new { id = Model.Id })" class="btn btn-warning">
                         Editar
                     </a>
                 }
-                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalBajaLogica">
+                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalBajaLogica">
                     Eliminar
                 </button>
                 <a href="@Url.Action("Index", "Contrato")" class="btn btn-secondary">
@@ -91,7 +91,7 @@
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
                 <h1 class="modal-title fs-5" id="exampleModalLabel">Contrato</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 ¿Está seguro que desea eliminar el contrato del inmueble @Model.Inmueble?.Direccion con el inquilino @Model.Inquilino?.Nombre @Model.Inquilino?.Apellido?
@@ -113,7 +113,7 @@
         <div class="modal-content">
             <div class="modal-header">
                     <h5 class="modal-title" id="pagoModalLabel">Realizar Pago</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
                 </div>                
                 <form id="formPago" action="@Url.Action("CrearActualizar", "Pago")" method="post" onsubmit="return validarFormularioPago();">
                     <div class="modal-body">
@@ -144,8 +144,8 @@
                         </div> *@
                     </div>
                     <div id="botoneraModalPago" class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                        <button type="submit" class="btn btn-primary">Confirmar Pago</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-primary" id="botonPago">Confirmar Pago</button>
                     </div>
                 </form>
         </div>
@@ -157,6 +157,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
     <script>
        $(document).ready(function () {
+        console.log("Fechas y cuotas:")
             $('#botonConfirmarPago').click(function (event) {
                 event.preventDefault();
 
@@ -169,7 +170,7 @@
                 }
             });
 
-            $('#botonPrePago').click(function () {
+            $('#botonPago').click(function () {
                 console.log("Botón pagar clickeado");
                 const infoContrato = $('#infoContrato');
                 const fechaDesde = new Date(infoContrato.data('fecha-desde'));
@@ -196,8 +197,9 @@
                     } *@
 
                     if (mesesTranscurridos < cuotasPagas) {
-                        $("#pagoModal .modal-body").html('<div class="alert alert-success">El pago para este mes ya ha sido realizado.</div><button id="terminarContratoBtn" class="btn btn-danger">Terminar Contrato</button>');
-                        $("#botoneraModalPago").hide();                        
+                        @* $("#pagoModal .modal-body").html('<div class="alert alert-success">El pago para este mes ya ha sido realizado.</div><button id="terminarContratoBtn" class="btn btn-danger">Terminar Contrato</button>');
+                        $("#botoneraModalPago").hide();    *@   
+                        $("#formPago").show();                  
                     } else if (mesesTranscurridos < cuotasTotales) {
                         $("#formPago").show();
                     } else {
@@ -212,23 +214,23 @@
         });
 
         function validarFormularioPago() {
-        // Obtén valores del formulario
-        let fechaPago = document.getElementById('FechaPago').value;
-        let detalle = document.getElementById('Detalle').value;
+            // Obtén valores del formulario
+            let fechaPago = document.getElementById('FechaPago').value;
+            let detalle = document.getElementById('Detalle').value;
 
-        // Verifica que la fecha de pago no esté vacía
-        if (fechaPago === '') {
-            alert('Por favor, introduzca la fecha de pago.');
-            return false;
+            // Verifica que la fecha de pago no esté vacía
+            if (fechaPago === '') {
+                alert('Por favor, introduzca la fecha de pago.');
+                return false;
+            }
+
+            // Verifica que el detalle no esté vacío
+            if (detalle.trim() === '') {
+                alert('Por favor, introduzca un detalle para el pago.');
+                return false;
+            }
+
+            return true; 
         }
-
-        // Verifica que el detalle no esté vacío
-        if (detalle.trim() === '') {
-            alert('Por favor, introduzca un detalle para el pago.');
-            return false;
-        }
-
-        return true; 
-    }
     </script>
 }

@@ -72,16 +72,8 @@ CREATE TABLE IF NOT EXISTS usuario (
     avatar_url TEXT,
     rol ENUM('empleado', 'administrador') NOT NULL,
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-<<<<<<< HEAD
-    fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    telefono varchar(100) DEFAULT NULL
-);
-=======
     fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
-
-
->>>>>>> 15301ec9a526a2a4d6ff5dc7fdd12f949ba1b746
 
 CREATE TABLE IF NOT EXISTS contrato (
     id INT AUTO_INCREMENT PRIMARY KEY,

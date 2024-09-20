@@ -5,6 +5,9 @@ using System.Collections.Generic;
 using System;
 using System.Text;
 using InmobiliariaCA.Models.ContratoModels;
+using System.Data;
+using MySql.Data.MySqlClient;
+using System.Transactions;
 
 public class RepositorioContrato : RepositorioBase, IRepositorioContrato {
 
@@ -206,10 +209,16 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato {
         }
     }
 
-    public int ActualizarContratoPagado(int Id) {
-        try{
-            Console.WriteLine("Id actualiuzar contrato pagado: " + Id);
+    public int ActualizarContratoPagado(int Id, MySqlTransaction transaction) {
+        using var connection = GetConnection();
 
+        if(transaction == null){        
+            Console.WriteLine(" transaction null: " +  transaction);    
+            using var transactionNew = BeginTransaction(connection);
+            transaction = transactionNew;
+        }        
+        
+        try{
             Contrato? contrato = this.GetContrato(Id) ?? throw new Exception("No se encontró el contrato.");
 
             if (contrato.Cantidad_Cuotas-contrato.Cuotas_Pagas == 0) {
@@ -221,19 +230,25 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato {
                                     {nameof(Contrato.Pagado)} = @{nameof(Contrato.Pagado)},
                                     {nameof(Contrato.Estado)} = @{nameof(Contrato.Estado)},
                                     {nameof(Contrato.Cuotas_Pagas)} = {nameof(Contrato.Cuotas_Pagas)} + 1                        
-                                WHERE {nameof(Contrato.Id)} = @{nameof(Contrato.Id)}
+                            WHERE {nameof(Contrato.Id)} = @{nameof(Contrato.Id)}
                                 AND {nameof(Contrato.Cuotas_Pagas)} < {nameof(Contrato.Cantidad_Cuotas)};";
-            Console.WriteLine("Id Query: " + query);           
+
             int result = this.ExecuteNonQuery(query, (parameters) => {
                 parameters.AddWithValue($"@{nameof(Contrato.Pagado)}", contrato.EsFinalizado() || contrato.PagosCompletos());
                 parameters.AddWithValue($"@{nameof(Contrato.Estado)}", contrato.Estado.ToString());
                 parameters.AddWithValue($"@{nameof(Contrato.Id)}", Id);
-            });
+            }, transaction);
 
+            transaction.Commit();
             return result;
         } catch (Exception ex) {
-             _logger.LogError("Hubo un error al updatear contrato: {Error}", ex.Message);
-            throw new Exception("Error al actualizar el contrato. Contacte con el administrador.");
+            _logger.LogError("Hubo un error al updatear contrato: {Error}", ex.Message);
+            if (connection.State != ConnectionState.Open) {
+                _logger.LogError("La conexión se ha cerrado inesperadamente.");
+            } else {
+                transaction.Rollback();
+            }
+            throw new Exception("Error al actualizar el contrato. Contacte con el administrador."); 
         }
     }
 

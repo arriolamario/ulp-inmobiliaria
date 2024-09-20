@@ -96,8 +96,7 @@ public class RepositorioPago : RepositorioBase, IRepositorioPago {
    public int InsertarPago(Pago pago) {
         using var connection = GetConnection();
         using var transaction = BeginTransaction(connection);
-        Console.WriteLine("Insertando el pago con ID: " + pago.Id + " en el contrato con ID: " + pago.Contrato_Id);
-        Console.WriteLine("Importe: " + pago.Importe + " Detalle: " + pago.Detalle + " Fecha: " + pago.Fecha_Pago + "Estado: " + pago.Estado);
+        
         try {
             // Insertar el pago.
             string query = @$"INSERT INTO pago (
@@ -129,10 +128,10 @@ public class RepositorioPago : RepositorioBase, IRepositorioPago {
                 parameters.AddWithValue($"{nameof(Pago.Creado_Por_Id)}", 6);
             }, transaction);
 
-            // Actualizar el estado del contrato.
-            // if (_repositorioContrato.ActualizarContratoPagado(pago.Contrato_Id, transaction) == 0) {
-            //     throw new Exception("No se pudo actualizar el estado de pagado del contrato.");
-            // }
+            //Actualizar el estado del contrato.
+            if (_repositorioContrato.ActualizarContratoPagado(pago.Contrato_Id, transaction) == 0) {
+                throw new Exception("No se pudo actualizar el estado de pagado del contrato.");
+            }
 
             transaction.Commit();
             return pagoId;
@@ -189,9 +188,9 @@ public class RepositorioPago : RepositorioBase, IRepositorioPago {
             parameters.AddWithValue($"{nameof(Pago.Anulado_Por_Id)}", anuladoPorId);
         });
 
-        if (_repositorioContrato.ActualizarContratoPagado(contratoId) == 0) {
-                throw new Exception("No se pudo anular el pagado del contrato.");
-        }
+        // if (_repositorioContrato.ActualizarContratoPagado(contratoId, transaction) == 0) {
+        //         throw new Exception("No se pudo anular el pagado del contrato.");
+        // }
 
         return result;
     }
