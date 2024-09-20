@@ -5,6 +5,20 @@ using System.Globalization;
 
 namespace InmobiliariaCA.Models.ContratoModels;
 public class Contrato {
+
+    public Contrato()
+    {
+        
+    }
+
+    public Contrato(ContratoAltaEditarViewModel v)
+    {
+        this.Id_Inmueble = v.Id_Inmueble;
+        this.Id_Inquilino = v.Id_Inquilino;
+        this.Monto_Alquiler = v.Monto_Alquiler;
+        this.Fecha_Desde = v.Fecha_Desde;
+        this.Fecha_Hasta = v.Fecha_Hasta;
+    }
     [Key]
     public int Id { get; set; }
 
