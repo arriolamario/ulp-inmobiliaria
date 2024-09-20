@@ -23,12 +23,6 @@ namespace InmobiliariaCA.Controllers {
             _repositorioInmueble = repositorioInmueble;
         }
 
-        // GET: Contratos
-        public int? InquilinoId { get; set; }
-        public int? InmuebleId { get; set; }
-        public EstadoContrato? Estado { get; set; }
-        public DateTime? FechaDesde { get; set; }
-        public DateTime? FechaHasta { get; set; }
         public IActionResult Index(ContratoFilter filters) {
             try {
                 var viewModel = new ContratoViewModel {

@@ -7,8 +7,10 @@ namespace InmobiliariaCA.Repositorio;
 
 public class RepositorioPago : RepositorioBase, IRepositorioPago {
     private IRepositorioContrato _repositorioContrato;
-    public RepositorioPago(IConfiguration configuration, IRepositorioContrato repositorioContrato) : base(configuration) {
+    private readonly ILogger<RepositorioPago> _logger;
+    public RepositorioPago(IConfiguration configuration, IRepositorioContrato repositorioContrato, ILogger<RepositorioPago> logger) : base(configuration) {
         _repositorioContrato = repositorioContrato;
+        _logger = logger;
     }
 
     public List<Pago> GetPagos() {
@@ -90,55 +92,55 @@ public class RepositorioPago : RepositorioBase, IRepositorioPago {
         return result;
     }
 
-    public int InsertarPago(Pago pago) {
+   public int InsertarPago(Pago pago) {
         using var connection = GetConnection();
         using var transaction = BeginTransaction(connection);
         try {
-            // Insertar el pago
+            // Insertar el pago.
             string query = @$"INSERT INTO pago (
-                                      {nameof(Pago.Contrato_Id)},
-                                      {nameof(Pago.Numero_Pago)},
-                                      {nameof(Pago.Fecha_Pago)},
-                                      {nameof(Pago.Detalle)},
-                                      {nameof(Pago.Importe)},
-                                      {nameof(Pago.Estado)},
-                                      {nameof(Pago.Creado_Por_Id)}
-                              ) VALUES (
-                                      @{nameof(Pago.Contrato_Id)},
-                                      @{nameof(Pago.Numero_Pago)},
-                                      @{nameof(Pago.Fecha_Pago)},
-                                      @{nameof(Pago.Detalle)},
-                                      @{nameof(Pago.Importe)},
-                                      @{nameof(Pago.Estado)},
-                                      @{nameof(Pago.Creado_Por_Id)}
-                              );
+                                {nameof(Pago.Contrato_Id)},
+                                {nameof(Pago.Numero_Pago)},
+                                {nameof(Pago.Fecha_Pago)},
+                                {nameof(Pago.Detalle)},
+                                {nameof(Pago.Importe)},
+                                {nameof(Pago.Estado)},
+                                {nameof(Pago.Creado_Por_Id)}
+                            ) VALUES (
+                                @{nameof(Pago.Contrato_Id)},
+                                @{nameof(Pago.Numero_Pago)},
+                                @{nameof(Pago.Fecha_Pago)},
+                                @{nameof(Pago.Detalle)},
+                                @{nameof(Pago.Importe)},
+                                @{nameof(Pago.Estado)},
+                                @{nameof(Pago.Creado_Por_Id)}
+                            );
                     SELECT LAST_INSERT_ID();";
 
-            int result = this.ExecuteScalar(query, (parameters) =>
-            {
+            int pagoId = this.ExecuteScalar(query, (parameters) => {
                 parameters.AddWithValue($"{nameof(Pago.Contrato_Id)}", pago.Contrato_Id);
                 parameters.AddWithValue($"{nameof(Pago.Numero_Pago)}", pago.Numero_Pago);
                 parameters.AddWithValue($"{nameof(Pago.Fecha_Pago)}", pago.Fecha_Pago);
                 parameters.AddWithValue($"{nameof(Pago.Detalle)}", pago.Detalle);
                 parameters.AddWithValue($"{nameof(Pago.Importe)}", pago.Importe);
                 parameters.AddWithValue($"{nameof(Pago.Estado)}", EstadoPago.Pagado.ToString());
-                parameters.AddWithValue($"{nameof(Pago.Creado_Por_Id)}", 1);
+                parameters.AddWithValue($"{nameof(Pago.Creado_Por_Id)}", 6);
             }, transaction);
 
-            // Actualizar el contrato
-            if (_repositorioContrato.ActualizarContratoPagado(pago.Contrato_Id, 1) == 0) {
-                throw new Exception("No se pudo actualizar el estado de pagado del contrato.");
-            }
+            // Actualizar el estado del contrato.
+            // if (_repositorioContrato.ActualizarContratoPagado(pago.Contrato_Id, transaction) == 0) {
+            //     throw new Exception("No se pudo actualizar el estado de pagado del contrato.");
+            // }
 
-            // Confirmamos la transacción
             transaction.Commit();
-
-            return result;
-        } catch (Exception ex) {
-            transaction.Rollback();
-            throw new Exception("Error al insertar el pago o actualizar el contrato: " + ex.Message, ex);
-        }
+            return pagoId;
+    } catch (Exception ex) {
+        _logger.LogError("Hubo un error al updatear contrato: {Error}", ex.Message);
+        transaction.Rollback();
+        throw new Exception("Error al insertar el pago o actualizar el contrato: " + ex.Message, ex);
+       
     }
+}
+
 
     public bool ActualizarPago(Pago pago) {
         string query = @$"UPDATE pago SET 
@@ -182,7 +184,7 @@ public class RepositorioPago : RepositorioBase, IRepositorioPago {
             parameters.AddWithValue($"{nameof(Pago.Anulado_Por_Id)}", anuladoPorId);
         });
 
-        if (_repositorioContrato.ActualizarContratoPagado(contratoId, 0) == 0) {
+        if (_repositorioContrato.ActualizarContratoPagado(contratoId) == 0) {
                 throw new Exception("No se pudo anular el pagado del contrato.");
         }
 

@@ -76,25 +76,8 @@ CREATE TABLE IF NOT EXISTS usuario (
     avatar_url TEXT,
     rol ENUM('empleado', 'administrador') NOT NULL,
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
-
-CREATE TABLE IF NOT EXISTS pago (
-    id int NOT NULL AUTO_INCREMENT,
-    contrato_id int NOT NULL,
-    numero_pago int NOT NULL UNIQUE,
-    fecha_pago datetime NOT NULL,
-    detalle varchar(255) NOT NULL DEFAULT '',
-    importe decimal(10, 2) NOT NULL,
-    multa decimal(10, 2) NOT NULL,
-    estado varchar(50) NOT NULL DEFAULT '',
-    creado_por_id int NOT NULL,
-    anulado_por_id int DEFAULT NULL,
-    fecha_anulacion datetime DEFAULT NULL,
-    PRIMARY KEY (Id),
-    FOREIGN KEY (contrato_id) REFERENCES contrato (Id) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (creado_por_id) REFERENCES usuario (Id) ON DELETE NO ACTION ON UPDATE CASCADE,
-    FOREIGN KEY (anulado_por_id) REFERENCES usuario (Id) ON DELETE NO ACTION ON UPDATE CASCADE
+    fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    telefono varchar(100) DEFAULT NULL
 );
 
 CREATE TABLE IF NOT EXISTS contrato (
@@ -118,6 +101,24 @@ CREATE TABLE IF NOT EXISTS contrato (
     FOREIGN KEY (id_inquilino) REFERENCES inquilino(id),
     FOREIGN KEY (id_usuario_creacion) REFERENCES usuario(id),
     FOREIGN KEY (id_usuario_finalizacion) REFERENCES usuario(id)
+);
+
+CREATE TABLE IF NOT EXISTS pago (
+    id int NOT NULL AUTO_INCREMENT,
+    contrato_id int NOT NULL,
+    numero_pago int NOT NULL UNIQUE,
+    fecha_pago datetime NOT NULL,
+    detalle varchar(255) NOT NULL DEFAULT '',
+    importe decimal(10, 2) NOT NULL,
+    multa decimal(10, 2) DEFAULT NULL,
+    estado enum('Pagado','Anulado','Pendiente') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT 'Pendiente',
+    creado_por_id int NOT NULL,
+    anulado_por_id int DEFAULT NULL,
+    fecha_anulacion datetime DEFAULT NULL,
+    PRIMARY KEY (Id),
+    FOREIGN KEY (contrato_id) REFERENCES contrato (Id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (creado_por_id) REFERENCES usuario (Id) ON DELETE NO ACTION ON UPDATE CASCADE,
+    FOREIGN KEY (anulado_por_id) REFERENCES usuario (Id) ON DELETE NO ACTION ON UPDATE CASCADE
 );
 
 -- Insertar datos en la tabla 'propietario'
@@ -152,7 +153,13 @@ INSERT INTO inmueble ( direccion, id_tipo_inmueble_uso, id_tipo_inmueble, ambien
 ('Calle Falsa 123, Springfield', 1, 1, 3, 34.0522, -118.2437, 1500.00, 1, 1),
 ('742 Evergreen Terrace, Springfield', 2, 2, 5, 34.0522, -118.2437, 2500.00, 1, 2),
 ('123 Elm Street, West Springfield', 1, 1, 4, 34.0522, -118.2437, 2000.00, 1, 3),
-('555 North Oak Trafficway, Springfield', 2, 3, 6, 34.0522, -118.2437, 3000.00, 1, 4);
+('555 North Oak Trafficway, Springfield', 2, 3, 6, 34.0522, -118.2437, 3000.00, 1, 4),  
+('1600 Amphitheatre Parkway, Mountain View', 2, 3, 8, 37.4220, -122.0841, 3200.00, 1,1),
+    ('One Apple Park Way, Cupertino', 2, 1, 7, 37.3349, -122.0090, 2800.00, 1, 2),
+    ('1 Infinite Loop, Cupertino', 1, 2, 4, 37.3318, -122.0311, 2400.00, 1, 3),
+    ('350 Fifth Avenue, Manhattan, New York', 2, 3, 9, 40.7488, -73.9854, 4500.00, 1, 2),
+    ('4059 Mt Lee Drive, Hollywood, California', 1, 1, 3, 34.1341, -118.3215, 2200.00, 1, 4),
+    ('4 Pennsylvania Plaza, New York, NY', 2, 3, 6, 40.7505, -73.9934, 3300.00, 1, 3);
 
 INSERT INTO usuario (email, password_hash, nombre, apellido, telefono, avatar_url, rol)
 VALUES

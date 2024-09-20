@@ -277,17 +277,18 @@ public class RepositorioInmueble : RepositorioBase, IRepositorioInmueble
                         FROM inmueble AS i
                         LEFT JOIN contrato AS c ON i.id = c.id_inmueble
                         WHERE i.id = @IdInmueble
-                        AND c.estado != 'Finalizado'
+                        AND (c.estado != 'Finalizado' OR c.id IS NULL)
                         AND (
-                            (c.id IS NULL) 
-                            OR 
-                            (c.fecha_desde > @FechaHasta OR c.fecha_hasta < @FechaDesde)
+                            c.id IS NULL
+                            OR c.fecha_desde > @FechaHasta
+                            OR c.fecha_hasta < @FechaDesde
                         );";
 
             int count = this.ExecuteScalar(query, (parameters) => {
                 parameters.AddWithValue("@IdInmueble", IdInmueble);
                 parameters.AddWithValue("@FechaDesde", fechaDesde.Date);
                 parameters.AddWithValue("@FechaHasta", fechaHasta.Date);
+
             });
 
             return count > 0; //DISPONIBLE
