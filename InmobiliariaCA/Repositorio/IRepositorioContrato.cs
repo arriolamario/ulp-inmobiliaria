@@ -4,6 +4,7 @@ using System.Collections.Generic;
 
 public interface IRepositorioContrato {
     List<Contrato> GetContratos();
+    List<Contrato> GetContratos(int Id_Inmueble);
     Contrato? GetContrato(int Id);
     int InsertarContrato(Contrato Contrato);
     int ActualizarContrato(Contrato Contrato);
