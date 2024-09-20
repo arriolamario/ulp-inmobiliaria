@@ -22,7 +22,7 @@ public class Contrato {
 
     [Required(ErrorMessage = "La fecha de finalización es obligatoria.")]
     [DataType(DataType.Date)]
-    public DateTime Fecha_Hasta { get; set; } = DateTime.Today;
+    public DateTime Fecha_Hasta { get; set; } = DateTime.Today.AddDays(30);
 
     [Required(ErrorMessage = "El monto del alquiler es obligatorio.")]
     [Column("monto_alquiler", TypeName = "decimal(10, 2)")]

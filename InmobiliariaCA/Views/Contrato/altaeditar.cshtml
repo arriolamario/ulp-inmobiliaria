@@ -48,8 +48,8 @@
 
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <label asp-for="Monto_Alquiler" class="form-label"><i class="fas fa-money-bill"></i> Monto del Alquiler</label>
-                        <input asp-for="Monto_Alquiler" class="form-control" placeholder="Ingrese el monto del alquiler" type="number" />
+                        <label asp-for="Monto_Alquiler" class="form-label">Monto del Alquiler</label>
+                        <input asp-for="Monto_Alquiler" class="form-control" placeholder="Ingrese el monto del alquiler" type="text" />
                         <span asp-validation-for="Monto_Alquiler" class="text-danger"></span>
                     </div>
                 </div>
@@ -74,39 +74,34 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
     <script>
-        $(document).ready(function () {            
+        $(document).ready(function () {
+            var today = new Date().toISOString().split('T')[0];
+            $('#Fecha_Desde').attr('min', today);
+
+            $('form').submit(function (event) {
+                var fechaDesde = $('#Fecha_Desde').val();
+                var fechaHasta = $('#Fecha_Hasta').val();
+                var fechaActual = new Date().toISOString().split('T')[0];
+
+                // Validación para la fecha desde no ser menor que la fecha actual
+                if (fechaDesde < fechaActual) {
+                    alert('La fecha de inicio no puede ser menor que la fecha actual.');
+                    $('#Fecha_Desde').val(today);
+                    event.preventDefault(); // Detiene el envío del formulario
+                }
+
+                // Validación para la fecha hasta ser posterior a la fecha desde
+                if (fechaDesde && fechaHasta && fechaHasta < fechaDesde) {
+                    alert('La fecha de finalización debe ser posterior a la fecha de inicio.');
+                    $('#Fecha_Hasta').val('');
+                    event.preventDefault(); // Detiene el envío del formulario
+                }
+            });
+
             $('#id_inmueble').change(function () {
                 var precio = $(this).find('option:selected').attr('data-precio');
                 precio = precio.replace(',', '.');
                 $('#Monto_Alquiler').val(precio);
-            });
-
-            var today = new Date().toISOString().split('T')[0];
-            $('#Fecha_Desde').attr('min', today);
-            $('#Fecha_Hasta').change(function() {
-                var fechaDesde = $('#Fecha_Desde').val();
-                var fechaHasta = $(this).val();
-                
-                if (fechaDesde && fechaHasta && fechaHasta < fechaDesde) {
-                    alert('La fecha de finalización debe ser posterior a la fecha de inicio.');
-                    $(this).val('');
-                }
-            });
-            $('#Fecha_Desde').change(function() {
-                var fechaDesde = $(this).val();
-                var fechaHasta = $('#Fecha_Hasta').val();
-                var fechaDesde = $(this).val();
-                var fechaActual = new Date().toISOString().split('T')[0];
-                
-                if (fechaDesde < fechaActual) {
-                    alert('La fecha de inicio no puede ser menor que la fecha actual.');
-                    $(this).val(today); // Resetear al valor mínimo permitido
-                }
-                
-                if (fechaDesde && fechaHasta && fechaHasta < fechaDesde) {
-                    alert('La fecha de finalización debe ser posterior a la fecha de inicio.');
-                    $('#Fecha_Hasta').val('');
-                }
             });
         });
     </script>
