@@ -127,7 +127,7 @@ namespace InmobiliariaCA.Repositorio
                     throw;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
