@@ -1,7 +1,9 @@
-@model InmobiliariaCA.Models.ContratoModels.Contrato
+@model InmobiliariaCA.Models.ContratoModels.ContratoAltaEditarViewModel
 
 @{
     ViewData["Title"] = Model == null || Model.Id == 0 ? "Crear Contrato" : "Editar Contrato";
+    System.Globalization.CultureInfo culturaArgentina = new System.Globalization.CultureInfo("es-AR");
+    List<Inmueble> inmuebles = ViewBag.Inmuebles != null ? ViewBag.Inmuebles : new List<Inmueble>();
 }
 
 <div class="container mt-5">
@@ -11,50 +13,74 @@
         </div>
         <div class="card-body">
             <form asp-action="CrearActualizar">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <div class="form-floating">
-                            <select asp-for="Id_Inmueble" class="form-select" id="id_inmueble" disabled="@(Model?.Id_Inmueble != 0)" required>
-                                <option value="">Seleccione un Inmueble</option>
-                                @foreach (var inmueble in ViewBag.Inmuebles) {
-                                    <option value="@inmueble.Value" data-precio="@ViewBag.InmueblesData[inmueble.Value]">@inmueble.Text</option>
-                                }
-                            </select>
-                            <label for="id_inmueble"><i class="fas fa-building"></i> Inmueble</label>
-                            <span asp-validation-for="Id_Inmueble" class="text-danger"></span>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-floating">
-                            @Html.DropDownListFor(m => m.Id_Inquilino, (SelectList)ViewBag.Inquilinos, "Seleccione un Inquilino", new { @class = "form-select", @required = "required", id = 1 })
                             <label for="Id_Inquilino"><i class="fas fa-user"></i> Inquilino</label>
+                            @Html.DropDownListFor(m => m.Id_Inquilino, (SelectList)ViewBag.Inquilinos, "Seleccione un Inquilino", new { @class = "form-select", @required = "required", id = "Id_Inquilino" })
                             <span asp-validation-for="Id_Inquilino" class="text-danger"></span>
                         </div>
                     </div>
                 </div>
 
                 <div class="row mb-3">
-                    <div class="col-md-6">
+                    <div class="col-md-5">
                         <label asp-for="Fecha_Desde" class="form-label"><i class="fas fa-calendar-alt"></i> Fecha Desde</label>
                         <input asp-for="Fecha_Desde" type="date" class="form-control" />
                         <span asp-validation-for="Fecha_Desde" class="text-danger"></span>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-5">
                         <label asp-for="Fecha_Hasta" class="form-label"><i class="fas fa-calendar-alt"></i> Fecha Hasta</label>
                         <input asp-for="Fecha_Hasta" type="date" class="form-control" />
                         <span asp-validation-for="Fecha_Hasta" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-2">
+                        <button id="btnBuscarInmueble" class="btn btn-info btn-sm mx-1 shadow-sm">Buscar</button>
                     </div>
                 </div>
 
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <label asp-for="Monto_Alquiler" class="form-label">Monto del Alquiler</label>
-                        <input asp-for="Monto_Alquiler" class="form-control" placeholder="Ingrese el monto del alquiler" type="text" />
+                        <label asp-for="Monto_Alquiler" class="form-label"><i class="fas fa-money-bill"></i> Monto del Alquiler</label>
+                        <input asp-for="Monto_Alquiler" class="form-control" placeholder="Ingrese el monto del alquiler" type="number" step="0.01" />
                         <span asp-validation-for="Monto_Alquiler" class="text-danger"></span>
                     </div>
                 </div>
 
                 <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="Id_Inmueble" />
+                <div class="row mt-4">
+                    @if (inmuebles.Any())
+                    {
+                        foreach (var inmueble in inmuebles)
+                        {
+                            <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+                                <div class="card shadow-sm h-100">
+                                    <div class="card-body d-flex flex-column">
+                                        <h5 class="card-title text-white p-2" style="background-color: #2d94f5;">@inmueble.Direccion</h5>
+                                        @* <p class="card-text"><strong>Propietario:</strong> @(inmueble.Propietario != null ? $"{inmueble.Propietario.Apellido} {inmueble.Propietario.Nombre}" : "No disponible")</p> *@
+                                        <p class="card-text">
+                                            <strong>Precio:</strong> 
+                                            <span class="text-success">@inmueble.Precio.ToString("C", culturaArgentina)</span>
+                                        </p>
+                                        <div class="form-check">
+                                            <input type="hidden" id="valor_inmueble_@inmueble.Id" value="@inmueble.Precio" />
+                                            <input type="radio" class="form-check-input" name="selectedInmueble" id="inmueble_@inmueble.Id" value="@inmueble.Id">
+                                            <label class="form-check-label" for="inmueble_@inmueble.Id">Seleccionar este inmueble</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="alert alert-info text-center" role="alert">
+                            <i class="fas fa-info-circle me-2"></i> No existen inmuebles en las fechas seleccionadas
+                        </div>
+                    }
+                </div>
 
                 <div class="d-flex justify-content-between">
                     <a href="@Url.Action("Index", "Contrato")" class="btn btn-secondary">
@@ -70,11 +96,30 @@
 </div>
 
 @section Scripts {
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+    @* <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script> *@
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
     <script>
-        $(document).ready(function () {
+        $(document).ready(function () {            
+            $('input[name="selectedInmueble"]').change(function() {
+                var selectedInmuebleId = $(this).val();
+                document.getElementById("Id_Inmueble").value = selectedInmuebleId;
+                document.getElementById("Monto_Alquiler").value = document.getElementById('valor_inmueble_' + selectedInmuebleId).value.replace(',', '.');
+            });
+
+            $('#btnBuscarInmueble').on('click', function(e) {
+                e.preventDefault(); // Evitar el comportamiento por defecto del botón
+                var fechaDesde = document.getElementById('Fecha_Desde').value;
+                var fechaHasta = document.getElementById('Fecha_Hasta').value;
+                var inmuebleId = document.getElementById("Id_Inmueble").value;
+
+                // Redireccionar a la acción del controlador con los parámetros
+                window.location.href = '@Url.Action("AltaEditar", "Contrato")' + '?fechaDesde=' + fechaDesde + '&fechaHasta=' + fechaHasta;
+            });
+
             var today = new Date().toISOString().split('T')[0];
             $('#Fecha_Desde').attr('min', today);
 

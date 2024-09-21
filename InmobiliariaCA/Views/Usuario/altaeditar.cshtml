@@ -17,11 +17,22 @@
                         <input type="email" asp-for="Email" class="form-control" placeholder="Email" />
                         <span asp-validation-for="Email" class="text-danger"></span>
                     </div>
-                    <div class="col-md-4">
-                        <label for="Rol"><i class="fas fa-user-tag"></i> Rol</label>
-                        @Html.DropDownListFor(m => m.Rol, (SelectList)ViewBag.Roles, "", new { @class = "form-control", id = "Rol" })
-                        <span asp-validation-for="Rol" class="text-danger"></span>
-                    </div>
+                    @if (User.IsInRole("administrador"))
+                    {
+                            <div class="col-md-4">
+                                <label for="Rol"><i class="fas fa-user-tag"></i> Rol</label>
+                            @Html.DropDownListFor(m => m.Rol, (SelectList)ViewBag.Roles, "", new { @class = "form-control", id = "Rol" })
+                                <span asp-validation-for="Rol" class="text-danger"></span>
+                            </div>
+                    }
+                    else{
+                        <div class="col-md-4">
+                            <input type="hidden" asp-for="Rol" />
+                                <label for="Rol"><i class="fas fa-user-tag"></i> Rol</label>
+                            @Html.DropDownListFor(m => m.Rol, (SelectList)ViewBag.Roles, "", new { @class = "form-control", id = "Rol", @disabled = "disabled"})
+                                <span asp-validation-for="Rol" class="text-danger"></span>
+                        </div>
+                    }
                 </div>
                 <div class="form-group row mb-3">
                     <div class="col-md-6">
@@ -50,6 +61,6 @@
 </div>
 
 @section Scripts {
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
 }

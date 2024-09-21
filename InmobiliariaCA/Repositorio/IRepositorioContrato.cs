@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 public interface IRepositorioContrato {
     List<Contrato> GetContratos();
+    List<Contrato> GetContratos(int Id_Inmueble);
     Contrato? GetContrato(int Id, MySqlTransaction? transaction);
     int InsertarContrato(Contrato Contrato);
     int ActualizarContrato(Contrato Contrato);

@@ -21,7 +21,29 @@ public class HomeController : Controller
 
     public IActionResult Privacy()
     {
-        return View();
+        var miembros = new List<Miembro>
+            {
+                new Miembro
+                {
+                    Nombre = "Paulo Cabrera",
+                    Rol = "Desarrollador Backend",
+                    Email = "paulocabrera90@gmail.com",
+                    Telefono = "+54 9 266 474-5525",
+                    FotoUrl = "/avatars/mario-arriola.png",
+                    LinkedInUrl = "https://www.linkedin.com/in/ana-gomez/"
+                },
+                new Miembro
+                {
+                    Nombre = "Mario Arriola",
+                    Rol = "Desarrollador Backend",
+                    Email = "arriola.mario.90@gmail.com",
+                    Telefono = "+54 9 266 461-4253",
+                    FotoUrl = "/avatars/mario-arriola.png",
+                    LinkedInUrl = "https://www.linkedin.com/in/arriola-mario-fabian/"
+                }
+            };
+
+        return View(miembros);
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

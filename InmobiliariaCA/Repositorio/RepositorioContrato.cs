@@ -74,7 +74,55 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato {
         return resultContratos;
     }
 
-    public Contrato? GetContrato(int id, MySqlTransaction? transaction) {
+    public List<Contrato> GetContratos(int Id_Inmueble) {
+        List<Contrato> resultContratos = new List<Contrato>();
+
+        string query = @$"select {nameof(Contrato.Id)},
+                                    {nameof(Contrato.Id_Inmueble)},
+                                    {nameof(Contrato.Id_Inquilino)},
+                                    {nameof(Contrato.Fecha_Desde)},
+                                    {nameof(Contrato.Fecha_Hasta)},
+                                    {nameof(Contrato.Monto_Alquiler)},
+                                    {nameof(Contrato.Fecha_Finalizacion_Anticipada)},
+                                    {nameof(Contrato.Multa)},
+                                    {nameof(Contrato.Fecha_Creacion)},
+                                    {nameof(Contrato.Fecha_Actualizacion)},                    
+                                    {nameof(Contrato.Pagado)},
+                                    {nameof(Contrato.Cantidad_Cuotas)},
+                                    {nameof(Contrato.Cuotas_Pagas)},
+                                    {nameof(Contrato.Estado)}
+                            from contrato;";
+
+        resultContratos = this.ExecuteReaderList<Contrato>(query, (parameters) => { }, (reader) => {
+            var contrato = new Contrato() {
+                Id = int.Parse(reader[nameof(Contrato.Id)].ToString() ?? "0"),
+                Id_Inmueble = int.Parse(reader[nameof(Contrato.Id_Inmueble)].ToString() ?? "0"),
+                Id_Inquilino = int.Parse(reader[nameof(Contrato.Id_Inquilino)].ToString() ?? "0"),
+                Fecha_Desde = DateTime.Parse(reader[nameof(Contrato.Fecha_Desde)].ToString() ?? "0"),
+                Fecha_Hasta = DateTime.Parse(reader[nameof(Contrato.Fecha_Hasta)].ToString() ?? "0"),
+                Monto_Alquiler = decimal.Parse(reader[nameof(Contrato.Monto_Alquiler)].ToString() ?? "0"),
+                Fecha_Finalizacion_Anticipada = reader[nameof(Contrato.Fecha_Finalizacion_Anticipada)] != DBNull.Value ? DateTime.Parse(reader["fecha_finalizacion_anticipada"].ToString() ?? "0") : (DateTime?)null,
+                Multa = reader[nameof(Contrato.Multa)] != DBNull.Value ? decimal.Parse(reader[nameof(Contrato.Multa)].ToString() ?? "0") : (decimal?)null,
+                Fecha_Creacion = DateTime.Parse(reader[nameof(Contrato.Fecha_Creacion)].ToString() ?? "0"),
+                Fecha_Actualizacion = DateTime.Parse(reader[nameof(Contrato.Fecha_Actualizacion)].ToString() ?? "0"),
+                Pagado = reader[nameof(Contrato.Pagado)].ToString() == "1",
+                Cantidad_Cuotas = int.Parse(reader[nameof(Contrato.Cantidad_Cuotas)].ToString() ?? "0"),
+                Cuotas_Pagas = int.Parse(reader[nameof(Contrato.Cuotas_Pagas)].ToString() ?? "0"),
+                Estado = Enum.TryParse(reader[nameof(Contrato.Estado)].ToString(), out EstadoContrato estado) ? estado : EstadoContrato.Vigente
+            };
+
+            // Cargar los objetos Inmueble e Inquilino usando sus IDs
+            contrato.Inmueble = _repositorioInmueble.GetInmueble(contrato.Id_Inmueble, null) ?? throw new InvalidOperationException("Inmueble no se encuentra");
+            contrato.Inquilino = _repositorioInquilino.GetInquilino(contrato.Id_Inquilino, null) ?? throw new InvalidOperationException("Inquilino no se encuentra");
+            contrato.Estado = contrato.PagosCompletos() ? EstadoContrato.Finalizado : contrato.Estado;
+
+            return contrato;
+        });
+
+        return resultContratos;
+    }
+
+     public Contrato? GetContrato(int id, MySqlTransaction? transaction) {
         Contrato? result = null;
         using var connection = transaction != null ? transaction.Connection : GetConnection();
 
@@ -139,34 +187,33 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato {
     }
 
     public int InsertarContrato(Contrato contrato) {
-        try {            
-            string query = @$"INSERT INTO contrato (
-                                    {nameof(Contrato.Id_Inmueble)},
-                                    {nameof(Contrato.Id_Inquilino)},
-                                    {nameof(Contrato.Fecha_Desde)},
-                                    {nameof(Contrato.Fecha_Hasta)},
-                                    {nameof(Contrato.Monto_Alquiler)},
-                                    {nameof(Contrato.Fecha_Finalizacion_Anticipada)},
-                                    {nameof(Contrato.Multa)},
-                                    {nameof(Contrato.Id_Usuario_Creacion)},
-                                    {nameof(Contrato.Id_Usuario_Finalizacion)},
-                                    {nameof(Contrato.Fecha_Creacion)},
-                                    {nameof(Contrato.Fecha_Actualizacion)},
-                                    {nameof(Contrato.Cantidad_Cuotas)})
-                                VALUES(
-                                    @{nameof(Contrato.Id_Inmueble)},
-                                    @{nameof(Contrato.Id_Inquilino)},
-                                    @{nameof(Contrato.Fecha_Desde)},
-                                    @{nameof(Contrato.Fecha_Hasta)},
-                                    @{nameof(Contrato.Monto_Alquiler)},
-                                    @{nameof(Contrato.Fecha_Finalizacion_Anticipada)},
-                                    @{nameof(Contrato.Multa)},
-                                    @{nameof(Contrato.Id_Usuario_Creacion)},
-                                    @{nameof(Contrato.Id_Usuario_Finalizacion)},
-                                    @{nameof(Contrato.Fecha_Creacion)},
-                                    @{nameof(Contrato.Fecha_Actualizacion)},
-                                    @{nameof(Contrato.Cantidad_Cuotas)});
-                                SELECT LAST_INSERT_ID();";
+        string query = @$"INSERT INTO contrato (
+                                {nameof(Contrato.Id_Inmueble)},
+                                {nameof(Contrato.Id_Inquilino)},
+                                {nameof(Contrato.Fecha_Desde)},
+                                {nameof(Contrato.Fecha_Hasta)},
+                                {nameof(Contrato.Monto_Alquiler)},
+                                {nameof(Contrato.Fecha_Finalizacion_Anticipada)},
+                                {nameof(Contrato.Multa)},
+                                {nameof(Contrato.Id_Usuario_Creacion)},
+                                {nameof(Contrato.Id_Usuario_Finalizacion)},
+                                {nameof(Contrato.Fecha_Creacion)},
+                                {nameof(Contrato.Fecha_Actualizacion)},
+                                {nameof(Contrato.Cantidad_Cuotas)})
+                            VALUES(
+                                @{nameof(Contrato.Id_Inmueble)},
+                                @{nameof(Contrato.Id_Inquilino)},
+                                @{nameof(Contrato.Fecha_Desde)},
+                                @{nameof(Contrato.Fecha_Hasta)},
+                                @{nameof(Contrato.Monto_Alquiler)},
+                                @{nameof(Contrato.Fecha_Finalizacion_Anticipada)},
+                                @{nameof(Contrato.Multa)},
+                                @{nameof(Contrato.Id_Usuario_Creacion)},
+                                @{nameof(Contrato.Id_Usuario_Finalizacion)},
+                                @{nameof(Contrato.Fecha_Creacion)},
+                                @{nameof(Contrato.Fecha_Actualizacion)},
+                                @{nameof(Contrato.Cantidad_Cuotas)});
+                            SELECT LAST_INSERT_ID();";
 
             int result = this.ExecuteNonQuery(query, (parameters) => {
                 parameters.AddWithValue($"@{nameof(Contrato.Id_Inmueble)}", contrato.Id_Inmueble);
@@ -183,11 +230,7 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato {
                 parameters.AddWithValue($"@{nameof(Contrato.Cantidad_Cuotas)}", CantidadCuotas(contrato));
             });
 
-            return result;
-        } catch (Exception ex) {
-             _logger.LogError("Hubo un error al crear contrato: {Error}", ex.Message);
-            throw new Exception("Error al crear el contrato. Contacte con el administrador.");
-        }
+        return result;
     }
 
     public int ActualizarContrato(Contrato contrato) {
