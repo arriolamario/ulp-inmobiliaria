@@ -64,8 +64,8 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato {
             };
 
             // Cargar los objetos Inmueble e Inquilino usando sus IDs
-            contrato.Inmueble = _repositorioInmueble.GetInmueble(contrato.Id_Inmueble) ?? throw new InvalidOperationException("Inmueble no se encuentra");
-            contrato.Inquilino = _repositorioInquilino.GetInquilino(contrato.Id_Inquilino) ?? throw new InvalidOperationException("Inquilino no se encuentra");
+            contrato.Inmueble = _repositorioInmueble.GetInmueble(contrato.Id_Inmueble,null) ?? throw new InvalidOperationException("Inmueble no se encuentra");
+            contrato.Inquilino = _repositorioInquilino.GetInquilino(contrato.Id_Inquilino,null) ?? throw new InvalidOperationException("Inquilino no se encuentra");
             contrato.Estado = contrato.PagosCompletos() ? EstadoContrato.Finalizado : contrato.Estado;
 
             return contrato;
@@ -74,51 +74,68 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato {
         return resultContratos;
     }
 
-    public Contrato? GetContrato(int id) {
+    public Contrato? GetContrato(int id, MySqlTransaction? transaction) {
         Contrato? result = null;
+        using var connection = transaction != null ? transaction.Connection : GetConnection();
 
-        string query = @$"select  {nameof(Contrato.Id)},
-                                    {nameof(Contrato.Id_Inmueble)},
-                                    {nameof(Contrato.Id_Inquilino)},
-                                    {nameof(Contrato.Fecha_Desde)},
-                                    {nameof(Contrato.Fecha_Hasta)},
-                                    {nameof(Contrato.Monto_Alquiler)},
-                                    {nameof(Contrato.Fecha_Finalizacion_Anticipada)},
-                                    {nameof(Contrato.Multa)},
-                                    {nameof(Contrato.Fecha_Creacion)},
-                                    {nameof(Contrato.Fecha_Actualizacion)},                    
-                                    {nameof(Contrato.Pagado)},
-                                    {nameof(Contrato.Cantidad_Cuotas)},
-                                    {nameof(Contrato.Cuotas_Pagas)},
-                                    {nameof(Contrato.Estado)}
-                              from contrato
-                                 where {nameof(Contrato.Id)} = {id};";
+        if(transaction == null){        
+            using var transactionNew = BeginTransaction(connection);
+            transaction = transactionNew;
+        }
 
-        result = this.ExecuteReader<Contrato>(query, (reader) => {
-            Contrato contrato = new Contrato() {
-                Id = int.Parse(reader[nameof(Contrato.Id)].ToString() ?? "0"),
-                Id_Inmueble = int.Parse(reader[nameof(Contrato.Id_Inmueble)].ToString() ?? "0"),
-                Id_Inquilino = int.Parse(reader[nameof(Contrato.Id_Inquilino)].ToString() ?? "0"),
-                Fecha_Desde = DateTime.Parse(reader[nameof(Contrato.Fecha_Desde)].ToString() ?? "0"),
-                Fecha_Hasta = DateTime.Parse(reader[nameof(Contrato.Fecha_Hasta)].ToString() ?? "0"),
-                Monto_Alquiler = decimal.Parse(reader[nameof(Contrato.Monto_Alquiler)].ToString() ?? "0"),
-                Fecha_Finalizacion_Anticipada = reader[nameof(Contrato.Fecha_Finalizacion_Anticipada)] != DBNull.Value ? DateTime.Parse(reader["fecha_finalizacion_anticipada"].ToString() ?? "0") : (DateTime?)null,
-                Multa = reader[nameof(Contrato.Multa)] != DBNull.Value ? decimal.Parse(reader[nameof(Contrato.Multa)].ToString() ?? "0") : (decimal?)null,
-                Fecha_Creacion = DateTime.Parse(reader[nameof(Contrato.Fecha_Creacion)].ToString() ?? "0"),
-                Fecha_Actualizacion = DateTime.Parse(reader[nameof(Contrato.Fecha_Actualizacion)].ToString() ?? "0"),
-                Pagado = reader[nameof(Contrato.Pagado)].ToString() == "1",
-                Cantidad_Cuotas = int.Parse(reader[nameof(Contrato.Cantidad_Cuotas)].ToString() ?? "0"),
-                Cuotas_Pagas = int.Parse(reader[nameof(Contrato.Cuotas_Pagas)].ToString() ?? "0"),
-                Estado = Enum.TryParse(reader[nameof(Contrato.Estado)].ToString(), out EstadoContrato estado) ? estado : EstadoContrato.Vigente
-            };
-            // Cargar los objetos Inmueble e Inquilino usando sus IDs
-            contrato.Inmueble  = _repositorioInmueble.GetInmueble(contrato.Id_Inmueble) ?? throw new InvalidOperationException("Inmueble no se encuentra");
-            contrato.Inquilino = _repositorioInquilino.GetInquilino(contrato.Id_Inquilino) ?? throw new InvalidOperationException("Inquilino no se encuentra");
-            contrato.Estado = contrato.PagosCompletos() ? EstadoContrato.Finalizado : contrato.Estado;
+        try {
+            string query = @$"select  {nameof(Contrato.Id)},
+                                        {nameof(Contrato.Id_Inmueble)},
+                                        {nameof(Contrato.Id_Inquilino)},
+                                        {nameof(Contrato.Fecha_Desde)},
+                                        {nameof(Contrato.Fecha_Hasta)},
+                                        {nameof(Contrato.Monto_Alquiler)},
+                                        {nameof(Contrato.Fecha_Finalizacion_Anticipada)},
+                                        {nameof(Contrato.Multa)},
+                                        {nameof(Contrato.Fecha_Creacion)},
+                                        {nameof(Contrato.Fecha_Actualizacion)},                    
+                                        {nameof(Contrato.Pagado)},
+                                        {nameof(Contrato.Cantidad_Cuotas)},
+                                        {nameof(Contrato.Cuotas_Pagas)},
+                                        {nameof(Contrato.Estado)}
+                                from contrato
+                                    where {nameof(Contrato.Id)} = {id};";
 
-            return contrato;
-        });
-        return result;
+            result = this.ExecuteReader<Contrato>(query,(reader) => {
+                Contrato contrato = new Contrato() {
+                    Id = int.Parse(reader[nameof(Contrato.Id)].ToString() ?? "0"),
+                    Id_Inmueble = int.Parse(reader[nameof(Contrato.Id_Inmueble)].ToString() ?? "0"),
+                    Id_Inquilino = int.Parse(reader[nameof(Contrato.Id_Inquilino)].ToString() ?? "0"),
+                    Fecha_Desde = DateTime.Parse(reader[nameof(Contrato.Fecha_Desde)].ToString() ?? "0"),
+                    Fecha_Hasta = DateTime.Parse(reader[nameof(Contrato.Fecha_Hasta)].ToString() ?? "0"),
+                    Monto_Alquiler = decimal.Parse(reader[nameof(Contrato.Monto_Alquiler)].ToString() ?? "0"),
+                    Fecha_Finalizacion_Anticipada = reader[nameof(Contrato.Fecha_Finalizacion_Anticipada)] != DBNull.Value ? DateTime.Parse(reader["fecha_finalizacion_anticipada"].ToString() ?? "0") : (DateTime?)null,
+                    Multa = reader[nameof(Contrato.Multa)] != DBNull.Value ? decimal.Parse(reader[nameof(Contrato.Multa)].ToString() ?? "0") : (decimal?)null,
+                    Fecha_Creacion = DateTime.Parse(reader[nameof(Contrato.Fecha_Creacion)].ToString() ?? "0"),
+                    Fecha_Actualizacion = DateTime.Parse(reader[nameof(Contrato.Fecha_Actualizacion)].ToString() ?? "0"),
+                    Pagado = reader[nameof(Contrato.Pagado)].ToString() == "1",
+                    Cantidad_Cuotas = int.Parse(reader[nameof(Contrato.Cantidad_Cuotas)].ToString() ?? "0"),
+                    Cuotas_Pagas = int.Parse(reader[nameof(Contrato.Cuotas_Pagas)].ToString() ?? "0"),
+                    Estado = Enum.TryParse(reader[nameof(Contrato.Estado)].ToString(), out EstadoContrato estado) ? estado : EstadoContrato.Vigente
+                };
+                // Cargar los objetos Inmueble e Inquilino usando sus IDs
+                contrato.Inmueble  = _repositorioInmueble.GetInmueble(contrato.Id_Inmueble, transaction) ?? throw new InvalidOperationException("Inmueble no se encuentra");
+                contrato.Inquilino = _repositorioInquilino.GetInquilino(contrato.Id_Inquilino, transaction) ?? throw new InvalidOperationException("Inquilino no se encuentra");
+                contrato.Estado = contrato.PagosCompletos() ? EstadoContrato.Finalizado : contrato.Estado;
+
+                return contrato;
+            });
+
+            return result;
+        } catch (Exception ex) {
+            _logger.LogError("Error: {Error}", ex.Message);
+            if (connection.State != ConnectionState.Open) {
+                _logger.LogError("La conexión se ha cerrado inesperadamente.");
+            } else {
+                transaction.Rollback();
+            }
+            throw;      
+        }
     }
 
     public int InsertarContrato(Contrato contrato) {
@@ -159,7 +176,7 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato {
                 parameters.AddWithValue($"@{nameof(Contrato.Monto_Alquiler)}", contrato.Monto_Alquiler);
                 parameters.AddWithValue($"@{nameof(Contrato.Fecha_Finalizacion_Anticipada)}", (object?)contrato.Fecha_Finalizacion_Anticipada ?? DBNull.Value);
                 parameters.AddWithValue($"@{nameof(Contrato.Multa)}", (object?)contrato.Multa ?? DBNull.Value);
-                parameters.AddWithValue($"@{nameof(Contrato.Id_Usuario_Creacion)}", 6);//contrato.Id_Usuario_Creacion);
+                parameters.AddWithValue($"@{nameof(Contrato.Id_Usuario_Creacion)}", contrato.Id_Usuario_Creacion);
                 parameters.AddWithValue($"@{nameof(Contrato.Id_Usuario_Finalizacion)}", (object?)contrato.Id_Usuario_Finalizacion ?? DBNull.Value);// (object?)contrato.Id_Usuario_Finalizacion ?? DBNull.Value);
                 parameters.AddWithValue($"@{nameof(Contrato.Fecha_Creacion)}", contrato.Fecha_Creacion);
                 parameters.AddWithValue($"@{nameof(Contrato.Fecha_Actualizacion)}", contrato.Fecha_Actualizacion);
@@ -218,11 +235,11 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato {
         }        
         
         try{
-            // Contrato? contrato = this.GetContrato(Id) ?? throw new Exception("No se encontró el contrato.");
+            Contrato? contrato = this.GetContrato(Id, null) ?? throw new Exception("No se encontró el contrato.");
 
-            // if (contrato.Cantidad_Cuotas-contrato.Cuotas_Pagas == 0) {
-            //     contrato.Estado = EstadoContrato.Finalizado;
-            // }
+            if (contrato.Cantidad_Cuotas-contrato.Cuotas_Pagas == 0) {
+                contrato.Estado = EstadoContrato.Finalizado;
+            }
 
             string query = @$"UPDATE contrato SET
                                     {nameof(Contrato.Pagado)} = @{nameof(Contrato.Pagado)},
@@ -232,14 +249,14 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato {
                                 AND {nameof(Contrato.Cuotas_Pagas)} < {nameof(Contrato.Cantidad_Cuotas)};";
 
             int result = this.ExecuteNonQuery(query, (parameters) => {
-                // parameters.AddWithValue($"@{nameof(Contrato.Pagado)}", contrato.EsFinalizado() || contrato.PagosCompletos());
-                parameters.AddWithValue($"@{nameof(Contrato.Pagado)}", EstadoPago.Pagado.ToString());
-                // parameters.AddWithValue($"@{nameof(Contrato.Estado)}", contrato.Estado.ToString());
-                parameters.AddWithValue($"@{nameof(Contrato.Estado)}", EstadoContrato.Vigente.ToString());
+                parameters.AddWithValue($"@{nameof(Contrato.Pagado)}", contrato.EsFinalizado() || contrato.PagosCompletos());
+                parameters.AddWithValue($"@{nameof(Contrato.Estado)}", contrato.Estado.ToString());
                 parameters.AddWithValue($"@{nameof(Contrato.Id)}", Id);
             }, transaction);
 
-            transaction.Commit();
+            // if(transaction.Connection.State == ConnectionState.Open){
+            //     transaction.Commit();   
+            // }
             return result;
         } catch (Exception ex) {
             _logger.LogError("Hubo un error al updatear contrato: {Error}", ex.Message);
@@ -264,7 +281,15 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato {
     }
 
     
-    public List<Contrato> GetContratosFiltrados(ContratoFilter filter) {
+    public List<Contrato> GetContratosFiltrados(ContratoFilter filter, MySqlTransaction? transaction) {
+
+        using var connection = transaction != null ? transaction.Connection : GetConnection();
+
+        if(transaction == null){        
+            using var transactionNew = BeginTransaction(connection);
+            transaction = transactionNew;
+        } 
+        
         try {
             var query = new StringBuilder(@"select * from contrato where 1=1");
 
@@ -317,8 +342,8 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato {
                 };
 
                 // Cargar los objetos Inmueble e Inquilino usando sus IDs
-                contrato.Inmueble = _repositorioInmueble.GetInmueble(contrato.Id_Inmueble) ?? throw new InvalidOperationException("Inmueble no se encuentra");
-                contrato.Inquilino = _repositorioInquilino.GetInquilino(contrato.Id_Inquilino) ?? throw new InvalidOperationException("Inquilino no se encuentra");
+                contrato.Inmueble = _repositorioInmueble.GetInmueble(contrato.Id_Inmueble, transaction) ?? throw new InvalidOperationException("Inmueble no se encuentra");
+                contrato.Inquilino = _repositorioInquilino.GetInquilino(contrato.Id_Inquilino, transaction) ?? throw new InvalidOperationException("Inquilino no se encuentra");
                 contrato.Estado = contrato.PagosCompletos() ? EstadoContrato.Finalizado : contrato.Estado;
 
                 return contrato;
@@ -326,7 +351,12 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato {
 
             return resultContratos;
         } catch (Exception ex) {
-             _logger.LogError("Hubo un error al updatear contrato: {Error}", ex.Message);
+            _logger.LogError("Hubo un error al updatear contrato: {Error}", ex.Message);
+            if (connection.State != ConnectionState.Open) {
+                _logger.LogError("La conexión se ha cerrado inesperadamente.");
+            } else {
+                transaction.Rollback();
+            }
             throw new Exception("Error al actualizar el contrato. Contacte con el administrador.");
         }
     }

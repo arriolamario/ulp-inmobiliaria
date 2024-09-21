@@ -5,11 +5,11 @@ using System.Collections.Generic;
 
 public interface IRepositorioContrato {
     List<Contrato> GetContratos();
-    Contrato? GetContrato(int Id);
+    Contrato? GetContrato(int Id, MySqlTransaction? transaction);
     int InsertarContrato(Contrato Contrato);
     int ActualizarContrato(Contrato Contrato);
     bool BajaContrato(int Id);   
     int ActualizarContratoPagado(int Id, MySqlTransaction? transaction);
-    List<Contrato> GetContratosFiltrados(ContratoFilter filter);
+    List<Contrato> GetContratosFiltrados(ContratoFilter filter, MySqlTransaction? transaction);
 }
 

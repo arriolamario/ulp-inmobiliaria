@@ -45,7 +45,7 @@ public class PagoController : Controller {
             if (pago.Id == 0) {
                 var IdUser = User.FindFirst("Id");
                 pago.Creado_Por_Id = IdUser != null ? int.Parse(IdUser.Value) : 0;
-                _repositorioPago.InsertarPago(pago);
+                _repositorioPago.InsertarPago(pago, null);
                 TempData["SuccessMessage"] = "Pago agregado correctamente.";
             } else {
                 _repositorioPago.ActualizarPago(pago);

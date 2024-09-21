@@ -46,7 +46,7 @@ public class RepositorioPago : RepositorioBase, IRepositorioPago {
                         };
 
                         // Cargar los objetos Contrato usando su ID
-                        pago.Contrato = _repositorioContrato.GetContrato(pago.Contrato_Id) ?? throw new InvalidOperationException("Contrato no se encuentra");
+                        pago.Contrato = _repositorioContrato.GetContrato(pago.Contrato_Id, null) ?? throw new InvalidOperationException("Contrato no se encuentra");
 
                         return pago;
                     });
@@ -85,7 +85,7 @@ public class RepositorioPago : RepositorioBase, IRepositorioPago {
                         };
 
                         // Cargar los objetos Contrato usando su ID
-                        pago.Contrato = _repositorioContrato.GetContrato(pago.Contrato_Id) ?? throw new InvalidOperationException("Contrato no se encuentra");
+                        pago.Contrato = _repositorioContrato.GetContrato(pago.Contrato_Id, null) ?? throw new InvalidOperationException("Contrato no se encuentra");
 
                         return pago;
         });
@@ -93,9 +93,13 @@ public class RepositorioPago : RepositorioBase, IRepositorioPago {
         return result;
     }
 
-   public int InsertarPago(Pago pago) {
-        using var connection = GetConnection();
-        using var transaction = BeginTransaction(connection);
+   public int InsertarPago(Pago pago, MySqlTransaction? transaction) {
+        using var connection = transaction != null ? transaction.Connection : GetConnection();
+
+        if(transaction == null){        
+            using var transactionNew = BeginTransaction(connection);
+            transaction = transactionNew;
+        }
         
         try {
             // Insertar el pago.

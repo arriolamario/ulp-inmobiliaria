@@ -50,16 +50,32 @@ namespace InmobiliariaCA.Repositorio
         {
             T? result = default;
 
-            using (var connection = transaction?.Connection ?? GetConnection())
-            using (var command = new MySqlCommand(query, connection))
+             if (transaction == null)
             {
-                if (transaction != null) command.Transaction = transaction;
-
-                using (var reader = command.ExecuteReader())
+                using (var connection = GetConnection())
+                using (var command = new MySqlCommand(query, connection))
                 {
-                    if (reader.Read())
+                    if (transaction != null) command.Transaction = transaction;
+                    using (var reader = command.ExecuteReader())
                     {
-                        result = mapper(reader);
+                        if (reader.Read())
+                        {
+                            result = mapper(reader);
+                        }
+                    }
+                }
+            }else if (transaction != null && transaction.Connection != null)
+            {
+                var connection = transaction.Connection;
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    if (transaction != null) command.Transaction = transaction;
+                    using (var reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            result = mapper(reader);
+                        }
                     }
                 }
             }
@@ -71,18 +87,35 @@ namespace InmobiliariaCA.Repositorio
         {
             T? result = default;
 
-            using (var connection = transaction?.Connection ?? GetConnection())
-            using (var command = new MySqlCommand(query, connection))
+             if (transaction == null)
             {
-                if (transaction != null) command.Transaction = transaction;
-                parameters?.Invoke(command.Parameters);
-
-                using (var reader = command.ExecuteReader())
+                using (var connection = GetConnection())
+                using (var command = new MySqlCommand(query, connection))
                 {
+                    if (transaction != null) command.Transaction = transaction;
+                    parameters?.Invoke(command.Parameters);
+                    var reader = command.ExecuteReader();
+                    
                     if (reader.Read())
-                    {
-                        result = mapper(reader);
-                    }
+                        {
+                            result = mapper(reader);
+                        }
+                    
+                }
+            }else if (transaction != null && transaction.Connection != null)
+            {
+                var connection = transaction.Connection;
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    if (transaction != null) command.Transaction = transaction;
+                    parameters?.Invoke(command.Parameters);
+                    var reader = command.ExecuteReader();
+                    
+                        if (reader.Read())
+                        {
+                            result = mapper(reader);
+                        }
+                   
                 }
             }
 

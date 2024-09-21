@@ -28,7 +28,7 @@ namespace InmobiliariaCA.Controllers {
         public IActionResult Index(ContratoFilter filters) {
             try {
                 var viewModel = new ContratoViewModel {
-                    Contratos = _repositorioContrato.GetContratosFiltrados(filters),
+                    Contratos = _repositorioContrato.GetContratosFiltrados(filters, null),
                     Filters = filters
                 };
 
@@ -50,7 +50,7 @@ namespace InmobiliariaCA.Controllers {
                 int numeroPago = random.Next(100000, 999999);
                 ViewBag.NumeroPago = numeroPago;
                 
-                var contrato = _repositorioContrato.GetContrato(Id);
+                var contrato = _repositorioContrato.GetContrato(Id, null);
                 if (contrato == null) {
                     return NotFound();
                 }
@@ -73,7 +73,7 @@ namespace InmobiliariaCA.Controllers {
                     return View(new Contrato());
                 }
 
-                var contrato = _repositorioContrato.GetContrato(Id);
+                var contrato = _repositorioContrato.GetContrato(Id, null);
                 return View(contrato);
             } catch (Exception ex) {              
                 _logger.LogError("An error occurred while getting contract: {Error}", ex.Message);               
@@ -89,7 +89,9 @@ namespace InmobiliariaCA.Controllers {
                     throw new Exception("No se puede crear el contrato en ese rango de fechas.");
                 }
             
-                if (Contrato.Id == 0) {                    
+                if (Contrato.Id == 0) {
+                    var IdUser = User.FindFirst("Id");
+                    Contrato.Id_Usuario_Creacion = IdUser != null ? int.Parse(IdUser.Value) : 0;
                     _repositorioContrato.InsertarContrato(Contrato);
                     TempData["SuccessMessage"] = "Contrato agregado correctamente.";
                 } else {
@@ -127,7 +129,7 @@ namespace InmobiliariaCA.Controllers {
 
         public IActionResult TerminarContrato(int Id) {
             try {
-                var contrato = _repositorioContrato.GetContrato(Id);
+                var contrato = _repositorioContrato.GetContrato(Id, null);
                 if (contrato == null) {
                     return NotFound("El contrato solicitado no existe.");
                 }
@@ -144,7 +146,7 @@ namespace InmobiliariaCA.Controllers {
         [HttpPost]
         public IActionResult FinalizarContrato(Contrato contrato) {
             try {
-                var contratoDb = _repositorioContrato.GetContrato(contrato.Id);
+                var contratoDb = _repositorioContrato.GetContrato(contrato.Id, null);
                 if (contratoDb == null) {
                     return NotFound("El contrato solicitado no existe.");
                 }

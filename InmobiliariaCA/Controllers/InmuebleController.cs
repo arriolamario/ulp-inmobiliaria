@@ -33,7 +33,7 @@ public class InmuebleController : Controller
 
     public IActionResult Detalle(int Id)
     {
-        return View(_repositorioInmueble.GetInmueble(Id));
+        return View(_repositorioInmueble.GetInmueble(Id, null));
     }
 
     public IActionResult AltaEditar(int Id, int idPropietario)
@@ -47,7 +47,7 @@ public class InmuebleController : Controller
             ViewBag.idPropietario = idPropietario;
             return View(new Inmueble());
         }
-        var inmueble = _repositorioInmueble.GetInmueble(Id);
+        var inmueble = _repositorioInmueble.GetInmueble(Id, null);
         ViewBag.idPropietario = inmueble?.Id_Propietario;
         return View(inmueble);
     }
