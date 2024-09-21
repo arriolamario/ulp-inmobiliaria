@@ -77,7 +77,7 @@ public class RepositorioUsuario : RepositorioBase, IRepositorioUsuario
                 Fecha_Creacion = reader.GetDateTime(nameof(Usuario.Fecha_Creacion)),
                 Fecha_Actualizacion = reader.GetDateTime(nameof(Usuario.Fecha_Actualizacion))
             };
-        });
+        }, null);
 
         return usuario;
     }

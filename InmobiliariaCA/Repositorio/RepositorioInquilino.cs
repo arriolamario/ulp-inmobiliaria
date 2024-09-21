@@ -3,10 +3,14 @@ namespace InmobiliariaCA.Repositorio;
 using InmobiliariaCA.Models;
 using MySql.Data.MySqlClient;
 using Microsoft.Extensions.Configuration;
+using System.Data;
 
 public class RepositorioInquilino : RepositorioBase, IRepositorioInquilino
 {
-    public RepositorioInquilino(IConfiguration configuration) : base(configuration) {
+
+    private readonly ILogger<RepositorioInmueble> _logger;
+    public RepositorioInquilino(IConfiguration configuration, ILogger<RepositorioInmueble> logger) : base(configuration) {
+        _logger = logger;
     }
 
     public List<Inquilino> GetInquilinos() {
@@ -41,37 +45,55 @@ public class RepositorioInquilino : RepositorioBase, IRepositorioInquilino
         return resultInquilinos;
     }
 
-    public Inquilino? GetInquilino(int Id) {
+    public Inquilino? GetInquilino(int Id, MySqlTransaction? transaction) {
         Inquilino? result = null;
 
-        string query = @$"select {nameof(Inquilino.Id)}, 
-                            {nameof(Inquilino.Dni)}, 
-                            {nameof(Inquilino.Nombre)}, 
-                            {nameof(Inquilino.Apellido)}, 
-                            {nameof(Inquilino.Telefono)}, 
-                            {nameof(Inquilino.Email)}, 
-                            {nameof(Inquilino.Direccion)}, 
-                            {nameof(Inquilino.Fecha_Creacion)}, 
-                            {nameof(Inquilino.Fecha_Actualizacion)} 
-                    from inquilino
-                    where {nameof(Inquilino.Id)} = {Id};";
+        using var connection = transaction != null ? transaction.Connection : GetConnection();
 
-        result = this.ExecuteReader<Inquilino>(query, (reader) => {
-            return new Inquilino() {
-                Apellido = reader["apellido"].ToString() ?? "",
-                Dni = reader["dni"].ToString() ?? "",
-                Email = reader["email"].ToString() ?? "",
-                Nombre = reader["nombre"].ToString() ?? "",
-                TelefonoArea = reader["telefono"].ToString()?.Split('-')[0] ?? "",
-                TelefonoNumero = reader["telefono"].ToString()?.Split('-')[1] ?? "",
-                Direccion = reader["direccion"].ToString() ?? "",
-                Id = int.Parse(reader["id"].ToString() ?? "0"),
-                Fecha_Creacion = DateTime.Parse(reader["fecha_creacion"].ToString() ?? "0"),
-                Fecha_Actualizacion = DateTime.Parse(reader["fecha_actualizacion"].ToString() ?? "0")
-            };
-        });
+        if(transaction == null){        
+            using var transactionNew = BeginTransaction(connection);
+            transaction = transactionNew;
+        }
 
-        return result;
+        try {
+            string query = @$"select {nameof(Inquilino.Id)}, 
+                                {nameof(Inquilino.Dni)}, 
+                                {nameof(Inquilino.Nombre)}, 
+                                {nameof(Inquilino.Apellido)}, 
+                                {nameof(Inquilino.Telefono)}, 
+                                {nameof(Inquilino.Email)}, 
+                                {nameof(Inquilino.Direccion)}, 
+                                {nameof(Inquilino.Fecha_Creacion)}, 
+                                {nameof(Inquilino.Fecha_Actualizacion)} 
+                        from inquilino
+                        where {nameof(Inquilino.Id)} = {Id};";
+
+            result = this.ExecuteReader<Inquilino>(query, (reader) => {
+                return new Inquilino() {
+                    Apellido = reader["apellido"].ToString() ?? "",
+                    Dni = reader["dni"].ToString() ?? "",
+                    Email = reader["email"].ToString() ?? "",
+                    Nombre = reader["nombre"].ToString() ?? "",
+                    TelefonoArea = reader["telefono"].ToString()?.Split('-')[0] ?? "",
+                    TelefonoNumero = reader["telefono"].ToString()?.Split('-')[1] ?? "",
+                    Direccion = reader["direccion"].ToString() ?? "",
+                    Id = int.Parse(reader["id"].ToString() ?? "0"),
+                    Fecha_Creacion = DateTime.Parse(reader["fecha_creacion"].ToString() ?? "0"),
+                    Fecha_Actualizacion = DateTime.Parse(reader["fecha_actualizacion"].ToString() ?? "0")
+                };
+            });
+
+            return result;
+
+        } catch (Exception ex) {
+            _logger.LogError("Error: {Error}", ex.Message);
+            if (connection.State != ConnectionState.Open) {
+                _logger.LogError("La conexión se ha cerrado inesperadamente.");
+            } else {
+                transaction.Rollback();
+            }
+            throw;      
+        }
     }
 
     public int InsertarInquilino(Inquilino inquilino) {

@@ -30,7 +30,7 @@ namespace InmobiliariaCA.Controllers
         public IActionResult Index(ContratoFilter filters) {
             try {
                 var viewModel = new ContratoViewModel {
-                    Contratos = _repositorioContrato.GetContratosFiltrados(filters),
+                    Contratos = _repositorioContrato.GetContratosFiltrados(filters, null),
                     Filters = filters
                 };
 
@@ -56,7 +56,7 @@ namespace InmobiliariaCA.Controllers
                 int numeroPago = random.Next(100000, 999999);
                 ViewBag.NumeroPago = numeroPago;
 
-                var contrato = _repositorioContrato.GetContrato(Id);
+                var contrato = _repositorioContrato.GetContrato(Id, null);
                 if (contrato == null)
                 {
                     return NotFound();
@@ -94,7 +94,7 @@ namespace InmobiliariaCA.Controllers
                     return View(contratoViewModerl);
                 }
 
-                var contrato = _repositorioContrato.GetContrato(Id);
+                var contrato = _repositorioContrato.GetContrato(Id, null);
                 return View(contrato);
             }
             catch (Exception ex)
@@ -189,7 +189,7 @@ namespace InmobiliariaCA.Controllers
         {
             try
             {
-                var contrato = _repositorioContrato.GetContrato(Id);
+                var contrato = _repositorioContrato.GetContrato(Id, null);
                 if (contrato == null)
                 {
                     return NotFound("El contrato solicitado no existe.");
@@ -211,7 +211,7 @@ namespace InmobiliariaCA.Controllers
         {
             try
             {
-                var contratoDb = _repositorioContrato.GetContrato(contrato.Id);
+                var contratoDb = _repositorioContrato.GetContrato(contrato.Id, null);
                 if (contratoDb == null)
                 {
                     return NotFound("El contrato solicitado no existe.");
@@ -220,7 +220,8 @@ namespace InmobiliariaCA.Controllers
                 contratoDb.Fecha_Finalizacion_Anticipada = contrato.Fecha_Finalizacion_Anticipada;
                 contratoDb.MultaCalculada();
                 contratoDb.Estado = EstadoContrato.Finalizado;
-                contratoDb.Id_Usuario_Finalizacion = 2;
+                var IdUser = User.FindFirst("Id");
+                contratoDb.Id_Usuario_Finalizacion = IdUser != null ? int.Parse(IdUser.Value) : 0;
 
                 _repositorioContrato.ActualizarContrato(contratoDb);
 
