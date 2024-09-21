@@ -6,23 +6,23 @@
     <form method="get" asp-action="Index" class="row g-3 mb-3 p-3 bg-light rounded shadow-sm">
         <div class="row">
             <div class="col-md-3">
-                <label for="ContratoId" class="form-label">Nro Contrato:</label>
+                <label for="Filters.ContratoId" class="form-label">Nro Contrato:</label>
                 <input type="text" class="form-control" asp-for="Filters.ContratoId">
             </div>
             <div class="col-md-3">
-                <label for="InquilinoId" class="form-label">Inquilino:</label>
+                <label for="Filters.InquilinoId" class="form-label">Inquilino:</label>
                 <select asp-items="ViewBag.Inquilinos" asp-for="Filters.InquilinoId" class="form-select">
                     <option value="">Todos</option>
                 </select>
             </div>
             <div class="col-md-3">
-                <label for="InmuebleId" class="form-label">Inmueble:</label>
+                <label for="Filters.InmuebleId" class="form-label">Inmueble:</label>
                 <select asp-items="ViewBag.Inmuebles" asp-for="Filters.InmuebleId" class="form-select">
                     <option value="">Todos</option>
                 </select>
             </div>
             <div class="col-md-3">
-                <label for="Estado" class="form-label">Estado:</label>
+                <label for="Filters.Estado" class="form-label">Estado:</label>
                 <select asp-for="Filters.Estado" asp-items="Html.GetEnumSelectList<EstadoContrato>()" class="form-select">
                     <option value="">Todos</option>
                 </select>
@@ -30,19 +30,19 @@
         </div>
         <div class="row">
             <div class="col-md-3">
-                <label for="FechaDesde_Inicio" class="form-label">Desde - Inicio:</label>
+                <label for="Filters.FechaDesde_Inicio" class="form-label">Desde - Inicio:</label>
                 <input type="date" asp-for="Filters.FechaDesde_Inicio" class="form-control" />
             </div>
             <div class="col-md-3">
-                <label for="FechaDesde_Fin" class="form-label">Desde - Fin:</label>
+                <label for="Filters.FechaDesde_Fin" class="form-label">Desde - Fin:</label>
                 <input type="date" asp-for="Filters.FechaDesde_Fin" class="form-control" />
             </div>
             <div class="col-md-3">
-                <label for="FechaHasta_Inicio" class="form-label">Hasta - Inicio:</label>
+                <label for="Filters.FechaHasta_Inicio" class="form-label">Hasta - Inicio:</label>
                 <input type="date" asp-for="Filters.FechaHasta_Inicio" class="form-control" />
             </div>
             <div class="col-md-3">
-                <label for="FechaHasta_Fin" class="form-label">Hasta - Fin:</label>
+                <label for="Filters.FechaHasta_Fin" class="form-label">Hasta - Fin:</label>
                 <input type="date" asp-for="Filters.FechaHasta_Fin" class="form-control" />
             </div>
         </div>
