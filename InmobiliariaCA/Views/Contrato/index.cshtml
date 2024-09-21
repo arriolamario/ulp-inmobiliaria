@@ -3,11 +3,11 @@
 @{ ViewData["Title"] = "Lista de Contratos"; }
 
 <div class="container mt-5">
-    <form method="get" asp-action="Index" class="row g-3 mb-3 p-3 bg-light rounded shadow-sm">
-        <div class="row">
+    <form method="get" asp-action="Index" class="container p-3 bg-light rounded shadow-sm">
+        <div class="row g-3">
             <div class="col-md-3">
                 <label for="ContratoId" class="form-label">Nro Contrato:</label>
-                <input type="text" class="form-control" asp-for="Filters.ContratoId">
+                <input type="text" class="form-control" asp-for="Filters.ContratoId" placeholder="Ingrese Nro Contrato">
             </div>
             <div class="col-md-3">
                 <label for="InquilinoId" class="form-label">Inquilino:</label>
@@ -17,7 +17,7 @@
             </div>
             <div class="col-md-3">
                 <label for="InmuebleId" class="form-label">Inmueble:</label>
-                <select asp-items="ViewBag.Inmuebles" asp-for="Filters.InmuebleId" class="form-select">
+                <select asp-items="ViewBag.Inmuebles" asp-for="Filters.InmuebleId" class="form-select form-select-lg mb-3">
                     <option value="">Todos</option>
                 </select>
             </div>
@@ -27,8 +27,6 @@
                     <option value="">Todos</option>
                 </select>
             </div>
-        </div>
-        <div class="row">
             <div class="col-md-3">
                 <label for="FechaDesde_Inicio" class="form-label">Desde - Inicio:</label>
                 <input type="date" asp-for="Filters.FechaDesde_Inicio" class="form-control" />
@@ -45,10 +43,10 @@
                 <label for="FechaHasta_Fin" class="form-label">Hasta - Fin:</label>
                 <input type="date" asp-for="Filters.FechaHasta_Fin" class="form-control" />
             </div>
-        </div>
-        <div class="col-md-12 d-flex justify-content-end mt-3">
-            <button type="submit" class="btn btn-primary" style="max-width: 150px; margin-right: 5px;">Buscar</button>
-            <button type="reset" id="clearFilters" class="btn btn-secondary" style="max-width: 150px;">Limpiar</button>
+            <div class="d-flex justify-content-end mt-3 col-12">
+                <button type="submit" class="btn btn-primary" style="width: 150px; padding-right: 5px;">Buscar</button>
+                <button type="reset" id="clearFilters" class="btn btn-secondary" style="width: 150px;">Limpiar</button>
+            </div>
         </div>
     </form>
 
@@ -71,7 +69,6 @@
                             <p class="card-text"><strong>Inquilino:</strong> @contrato.Inquilino?.NombreCompletoDNI</p>
                             <p class="card-text"><strong>Fecha Desde:</strong> @contrato.Fecha_Desde.ToShortDateString()</p>
                             <p class="card-text"><strong>Fecha Hasta:</strong> @contrato.Fecha_Hasta.ToShortDateString()</p>
-                            @* <p class="card-text"><strong>Monto de Alquiler:</strong> @contrato.Monto_Alquiler</p> *@
                             <p class="card-text"><strong>Monto de Alquiler:</strong>$ @Html.Raw(contrato.Monto_Alquiler.ToString().Replace(",", "."))</p>
                             <p class="card-text"><strong>Estado:</strong> @contrato.Estado.ToString()</p>
                             <div class="d-flex justify-content-end">

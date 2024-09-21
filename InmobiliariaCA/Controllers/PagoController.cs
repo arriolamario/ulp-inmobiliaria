@@ -56,7 +56,7 @@ public class PagoController : Controller {
             TempData["ErrorMessage"] = ex.Message;
         }
 
-        return RedirectToAction("Index");
+        return View(pago);
     }
 
     [HttpPost]
