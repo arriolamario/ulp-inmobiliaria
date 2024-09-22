@@ -67,9 +67,12 @@
                         Editar
                     </a>
                 }
-                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalBajaLogica">
-                    Eliminar
-                </button>
+                @if(User.IsInRole("administrador")){
+                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalBajaLogica">
+                        Eliminar
+                    </button>
+                }
+                
                 <a href="@Url.Action("Index", "Contrato")" class="btn btn-secondary">
                     Volver a la Lista
                 </a>

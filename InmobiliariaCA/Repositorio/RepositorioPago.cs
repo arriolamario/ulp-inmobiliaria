@@ -229,7 +229,7 @@ public class RepositorioPago : RepositorioBase, IRepositorioPago {
         Console.WriteLine("Anulando el pago con ID: " + id + " por el usuario con ID: " + anuladoPorId + " en el contrato con ID: " + contratoId);
 
         string query = @$"UPDATE pago SET 
-            {nameof(Pago.Estado)} = {EstadoPago.Anulado}, 
+            {nameof(Pago.Estado)} = '{EstadoPago.Anulado.ToString()}',
             {nameof(Pago.Anulado_Por_Id)} = @{nameof(Pago.Anulado_Por_Id)}, 
             {nameof(Pago.Fecha_Anulacion)} = CURRENT_TIMESTAMP
         WHERE {nameof(Pago.Id)} = @{nameof(Pago.Id)};";
