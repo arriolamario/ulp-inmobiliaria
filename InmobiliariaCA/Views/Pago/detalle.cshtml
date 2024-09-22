@@ -1,0 +1,97 @@
+@model InmobiliariaCA.Models.Pago
+@{
+    ViewData["Title"] = "Pago detalle";
+}
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h2>Detalles del Pago @(Model.Estado == EstadoPago.Anulado ? "- Anulado" : "")</h2>
+        </div>
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">Número de Pago</dt>
+                <dd class="col-sm-9">@Model.Numero_Pago</dd>                
+
+                <dt class="col-sm-3">Fecha de Pago</dt>
+                <dd class="col-sm-9">@Model.Fecha_Pago.ToString("dd/MM/yyyy")</dd>
+
+                <dt class="col-sm-3">Importe</dt>
+                <dd class="col-sm-9">$@Model.Importe.ToString()</dd>
+
+                <dt class="col-sm-3">Detalle</dt>
+                <dd class="col-sm-9">@Model.Detalle</dd>
+
+                <dt class="col-sm-3">Estado</dt>
+                <dd class="col-sm-9">@Model.Estado</dd>
+
+                <dt class="col-sm-3">Creado por</dt>
+                <dd class="col-sm-9">@Model.CreadoPor?.Nombre</dd>
+
+                @if (Model.Anulado_Por_Id.HasValue && User.IsInRole("administrador"))
+                {
+                    <dt class="col-sm-3">Anulado por</dt>
+                    <dd class="col-sm-9">@Model.AnuladoPor?.Nombre</dd>
+
+                    <dt class="col-sm-3">Fecha de Anulación</dt>
+                    <dd class="col-sm-9">@Model.Fecha_Anulacion?.ToString("dd/MM/yyyy")</dd>
+                }
+                
+                <div class="card mt-3">
+                    <div class="card-header bg-secondary text-white">
+                        Detalles del Contrato
+                    </div>
+                    <div class="card-body">
+                        <dl class="row">
+                            <dt class="col-sm-4">Inmueble:</dt>
+                            <dd class="col-sm-8">@Model.Contrato?.Inmueble?.Direccion</dd>
+
+                            <dt class="col-sm-4">Inquilino:</dt>
+                            <dd class="col-sm-8">@Model.Contrato?.Inquilino?.Nombre @Model.Contrato?.Inquilino?.Apellido</dd>
+
+                            <dt class="col-sm-4">Fecha Desde:</dt>
+                            <dd class="col-sm-8">@Model.Contrato?.Fecha_Desde.ToString("dd/MM/yyyy")</dd>
+
+                            <dt class="col-sm-4">Fecha Hasta:</dt>
+                            <dd class="col-sm-8">@Model.Contrato?.Fecha_Hasta.ToString("dd/MM/yyyy")</dd>
+                        </dl>
+                    </div>
+                </div>
+            </dl>
+        </div>
+        <div class="card-footer text-end">
+            @* <a href="@Url.Action("Editar", "Pago", new { id = Model.Id })" class="btn btn-warning">Editar</a> EDITAMOS PAGO?*@ 
+            <button type="button" 
+                    class="btn btn-danger" 
+                    data-toggle="@(Model.Estado == EstadoPago.Anulado ? null : "modal")" 
+                    data-target="@(Model.Estado == EstadoPago.Anulado ? null : "#modalAnularPago")"
+                    disabled="@(Model.Estado == EstadoPago.Anulado ? "disabled" : null)">
+                @(Model.Estado == EstadoPago.Anulado ? "Pago Anulado" : "Anular Pago")
+            </button>
+            <a href="@Url.Action("Index", "Pago")" class="btn btn-secondary">Volver a la Lista</a>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Anular Pago -->
+<div class="modal fade" id="modalAnularPago" tabindex="-1" aria-labelledby="modalAnularPagoLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="modalAnularPagoLabel">Anular Pago</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ¿Está seguro que desea anular el pago número @Model.Numero_Pago por el importe de $@Model.Importe.ToString()?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <form asp-action="Anular" method="post" class="d-inline">
+                    <input type="hidden" name="Id" value="@Model.Id" />
+                    <input type="hidden" name="IdAnulador" value=@Model.Anulado_Por_Id />
+                    <input type="hidden" name="ContratoId" value="@Model.Contrato?.Id" />
+                    <button type="submit" class="btn btn-danger">Anular</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

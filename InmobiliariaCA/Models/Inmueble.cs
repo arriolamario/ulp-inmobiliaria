@@ -24,10 +24,10 @@ public class Inmueble
     public string Coordenada_Lon { get; set; } = "-66.33797013891889";
     [Required(ErrorMessage = "El precio es obligatorio.")]
     public decimal Precio { get; set; }
-    [Required(ErrorMessage = "El estado es obligatorio.")]
-    public int Estado { get; set; }
     [Required(ErrorMessage = "El id del propietario es obligatorio.")]
     public int Id_Propietario { get; set; }
+
+    public bool Activo { get; set; }
     public Propietario? Propietario { get; set; }
     public DateTime Fecha_Creacion { get; set; }
     public DateTime Fecha_Actualizacion { get; set; }

@@ -1,81 +1,66 @@
 @model InmobiliariaCA.Models.Inquilino
 
 @{
-    ViewData["Title"] = "Formulario de Registro";
+    ViewData["Title"] = Model == null || Model.Id == 0 ? "Formulario de Registro" : "Formulario de Actualización";
 }
 
 <div class="container mt-5">
     <div class="card shadow-sm">
         <div class="card-header bg-primary text-white">
-            <h2>@(Model == null || Model.Id == 0 ? "Formulario de Registro" : "Formulario de Actualización")</h2>
+            <h2>@ViewData["Title"]</h2>
         </div>
         <div class="card-body">
-           
             <form asp-action="CrearActualizar">
-                <div class="row mb-3">
+                <div class="form-group row mb-3">
                     <div class="col-md-6">
-                        <div class="form-floating">
-                            <input asp-for="Nombre" class="form-control" placeholder="Nombre")">
-                            <label asp-for="Nombre">Nombre</label>
-                            <span asp-validation-for="Nombre" class="text-danger"></span>
-                        </div>
+                        <label asp-for="Nombre"><i class="fas fa-user"></i> Nombre</label>
+                        <input asp-for="Nombre" class="form-control" placeholder="Nombre" />
+                        <span asp-validation-for="Nombre" class="text-danger"></span>
                     </div>
                     <div class="col-md-6">
-                        <div class="form-floating">
-                            <input asp-for="Apellido" class="form-control" placeholder="Apellido">
-                            <label asp-for="Apellido">Apellido</label>
-                            <span asp-validation-for="Apellido" class="text-danger"></span>
-                        </div>
+                        <label asp-for="Apellido"><i class="fas fa-user"></i> Apellido</label>
+                        <input asp-for="Apellido" class="form-control" placeholder="Apellido" />
+                        <span asp-validation-for="Apellido" class="text-danger"></span>
                     </div>
                 </div>
-                <div class="row mb-3">
+                <div class="form-group row mb-3">
                     <div class="col-md-6">
-                        <div class="form-floating">
-                            <input asp-for="Dni" class="form-control" placeholder="DNI" readonly="@(Model != null && Model.Id != 0)">
-                            <label asp-for="Dni">DNI</label>
-                            <span asp-validation-for="Dni" class="text-danger"></span>
-                        </div>
+                        <label asp-for="Dni"><i class="fas fa-id-card"></i> DNI</label>
+                        <input asp-for="Dni" class="form-control" placeholder="DNI"
+                            readonly="@(Model != null && Model.Id != 0)" />
+                        <span asp-validation-for="Dni" class="text-danger"></span>
                     </div>
                     <div class="col-md-6">
-                        <div class="form-floating">
-                            <input asp-for="Email" class="form-control" placeholder="Email">
-                            <label asp-for="Email">Email</label>
-                            <span asp-validation-for="Email" class="text-danger"></span>
-                        </div>
+                        <label asp-for="Email"><i class="fas fa-envelope"></i> Email</label>
+                        <input asp-for="Email" class="form-control" placeholder="Email" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
                     </div>
                 </div>
-                <div class="row mb-3">
+                <div class="form-group row mb-3">
                     <div class="col-md-4">
-                        <div class="form-floating">
-                            <input asp-for="TelefonoArea" class="form-control" placeholder="Área">
-                            <label asp-for="TelefonoArea">Área</label>
+                            <label asp-for="TelefonoArea"><i class="fas fa-phone-alt"></i> Área</label>
+                            <input asp-for="TelefonoArea" class="form-control" placeholder="Área" />
                             <span asp-validation-for="TelefonoArea" class="text-danger"></span>
-                        </div>
                     </div>
                     <div class="col-md-8">
-                        <div class="form-floating">
-                            <input asp-for="TelefonoNumero" class="form-control" placeholder="Número">
-                            <label asp-for="TelefonoNumero">Número</label>
+                            <label asp-for="TelefonoNumero"><i class="fas fa-phone"></i> Número</label>
+                            <input asp-for="TelefonoNumero" class="form-control" placeholder="Número" />
                             <span asp-validation-for="TelefonoNumero" class="text-danger"></span>
-                        </div>
                     </div>
                 </div>
-                <div class="mb-3">
-                    <div class="form-floating">
-                        <input asp-for="Direccion" class="form-control" placeholder="Dirección">
-                        <label asp-for="Direccion">Dirección</label>
+                <div class="form-group row mb-12">
+                        <label asp-for="Direccion"><i class="fas fa-map-marker-alt"></i> Dirección</label>
+                        <input asp-for="Direccion" class="form-control" placeholder="Dirección" />
                         <span asp-validation-for="Direccion" class="text-danger"></span>
-                    </div>
                 </div>
-
                 <input type="hidden" asp-for="Id" />
-
                 <div class="d-flex justify-content-between">
-                    <a href="@Url.Action(Model == null ? "Index" : "Detalle", "Inquilino", Model == null || Model.Id == 0 ? null : new { id = Model.Id })" class="btn btn-secondary">
-                        @(Model == null ? "Volver a la Lista" : "Volver")
+                    <a href="@Url.Action(Model == null ? "Index" : "Detalle", "Inquilino", Model == null || Model.Id == 0 ? null : new { id = Model.Id })"
+                        class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> @(Model == null ? "Volver a la Lista" : "Volver")
                     </a>
                     <button type="submit" class="btn btn-primary">
-                        @(Model == null || Model.Id == 0 ? "Registrar" : "Actualizar")
+                        <i class="fas fa-save"></i> @(Model == null || Model.Id == 0 ? "Registrar" : "Actualizar")
                     </button>
                 </div>
             </form>

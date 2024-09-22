@@ -1,0 +1,103 @@
+@model InmobiliariaCA.Models.Usuario
+
+@{
+    ViewData["Title"] = "Usuario Cargar Avatar";
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6">
+            <dt class="col-sm-3">Nombre Completo</dt>
+            <dd class="col-sm-9">@Model.NombreCompleto</dd>
+            <dt class="col-sm-3">Email</dt>
+            <dd class="col-sm-9">@Model.Email</dd>
+            <input type="file" name="input-file" id="input-file" style="display:none" accept=".png,.jpg,.jpeg">
+            <label for="input-file" class="btn btn-danger" type="button">Haz click aquí para subir una imagen</label>
+        </div>
+        <div class="col-md-6">
+            <img src="/img/user.png" style="width: 100%;" alt="" class="crop-image" id="crop-image">
+        </div>
+    </div>
+</div>
+
+<!-- Modal Alta Edición -->
+<div class="modal fade" id="modelCargarAvatar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-action="UploadAvatar" method="post" class="d-inline" enctype="multipart/form-data">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Recorta tu foto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="content-imagen-cropper">
+                        <img src="" alt="" style="width: 150%;" class="img-cropper" id="avatarImg">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="cerrarModal()" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="button" onclick="aceptarModal()" class="btn btn-danger" data-bs-dismiss="modal" id="btnCargar">Aceptar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+    <script>
+        let avatarInput = document.getElementById('input-file');
+        let cropper = null;
+
+        avatarInput.onchange = function (e) {
+            let image = document.getElementById('avatarImg');
+            let input = document.getElementById('input-file');
+            let archivos = input.files;
+
+            if (!archivos || !archivos.length) {
+                image.src = "";
+                input.value = "";
+            }
+            else {
+                let imagenUrl = URL.createObjectURL(archivos[0]);
+                image.src = imagenUrl;
+                cropper = new Cropper(image, {
+                    aspectRatio: 1,
+                    preview: '.avatarDiv',
+                    zoomable: false,
+                    viewMode: 1,
+                    responsive: false,
+                    dragMode: 'none'
+                });
+
+                let modalCargarAvatar = new bootstrap.Modal(document.getElementById('modelCargarAvatar'));
+                modalCargarAvatar.show();
+            }
+        }
+
+        function cerrarModal() {
+            let image = document.getElementById('avatarImg');
+            let input = document.getElementById('input-file');
+            image.src = "";
+            input.value = "";
+            cropper.destroy();
+        }
+
+        function aceptarModal() {
+            let imagePrincipal = document.getElementById('crop-image');
+            let canvas = cropper.getCroppedCanvas();
+
+            canvas.toBlob(function(blob) {
+                let urlBlob = URL.createObjectURL(blob);
+                imagePrincipal.src = urlBlob;
+            });
+
+            let image = document.getElementById('avatarImg');
+            let input = document.getElementById('input-file');
+            image.src = "";
+            input.value = "";
+            cropper.destroy();
+        }
+    </script>
+}

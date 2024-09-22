@@ -1,26 +1,40 @@
-namespace InmobiliariaCA.Repositorio;
-
 using MySql.Data.MySqlClient;
 
-public abstract class RepositorioBase
+namespace InmobiliariaCA.Repositorio
 {
-    private string connectionString;
-    public RepositorioBase(IConfiguration configuration)
+    public abstract class RepositorioBase
     {
-        connectionString = configuration.GetConnectionString("DefaultConnection") ?? "";
-    }
+        private readonly string connectionString;
 
-    public List<T> ExecuteReaderList<T>(string query, Func<MySqlDataReader, T> mapper)
-    {
-        List<T> result = new List<T>();
-
-
-        using (MySqlConnection connection = new MySqlConnection(connectionString))
+        public RepositorioBase(IConfiguration configuration)
         {
+            connectionString = configuration.GetConnectionString("DefaultConnection") ?? throw new ArgumentNullException(nameof(configuration));
+        }
+
+        protected MySqlConnection GetConnection()
+        {
+            var connection = new MySqlConnection(connectionString);
             connection.Open();
-            using (MySqlCommand command = new MySqlCommand(query, connection))
+            
+            return connection;
+        }
+
+        public MySqlTransaction BeginTransaction(MySqlConnection connection)
+        {
+            return connection.BeginTransaction();
+        }
+
+        public List<T> ExecuteReaderList<T>(string query, Action<MySqlParameterCollection> parameters, Func<MySqlDataReader, T> mapper, MySqlTransaction? transaction = null)
+        {
+            List<T> result = new List<T>();
+
+            using (var connection = transaction?.Connection ?? GetConnection())
+            using (var command = new MySqlCommand(query, connection))
             {
-                using (MySqlDataReader reader = command.ExecuteReader())
+                if (transaction != null) command.Transaction = transaction;
+                parameters?.Invoke(command.Parameters);
+
+                using (var reader = command.ExecuteReader())
                 {
                     while (reader.Read())
                     {
@@ -28,87 +42,142 @@ public abstract class RepositorioBase
                     }
                 }
             }
+
+            return result;
         }
-        return result;
-    }
 
-    public T? ExecuteReader<T>(string query, Func<MySqlDataReader, T> mapper)
-    {
-        T? result = default(T);
-
-        using (MySqlConnection connection = new MySqlConnection(connectionString))
+        public T? ExecuteReader<T>(string query, Func<MySqlDataReader, T> mapper, MySqlTransaction? transaction = null)
         {
-            connection.Open();
-            using (MySqlCommand command = new MySqlCommand(query, connection))
+            T? result = default;
+
+             if (transaction == null)
             {
-                using (MySqlDataReader reader = command.ExecuteReader())
+                using (var connection = GetConnection())
+                using (var command = new MySqlCommand(query, connection))
                 {
-                    if (reader.Read())
+                    if (transaction != null) command.Transaction = transaction;
+                    using (var reader = command.ExecuteReader())
                     {
-                        result = mapper(reader);
+                        if (reader.Read())
+                        {
+                            result = mapper(reader);
+                        }
+                    }
+                }
+            }else if (transaction != null && transaction.Connection != null)
+            {
+                var connection = transaction.Connection;
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    if (transaction != null) command.Transaction = transaction;
+                    using (var reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            result = mapper(reader);
+                        }
                     }
                 }
             }
+
+            return result;
         }
 
-        return result;
-    }
-
-    public T? ExecuteReader<T>(string query, Action<MySqlParameterCollection> parameters, Func<MySqlDataReader, T> mapper)
-    {
-        T? result = default(T);
-
-        using (MySqlConnection connection = new MySqlConnection(connectionString))
+        public T? ExecuteReader<T>(string query, Action<MySqlParameterCollection> parameters, Func<MySqlDataReader, T> mapper, MySqlTransaction? transaction = null)
         {
-            connection.Open();
-            using (MySqlCommand command = new MySqlCommand(query, connection))
+            T? result = default;
+
+             if (transaction == null)
             {
-                parameters(command.Parameters);
-                using (MySqlDataReader reader = command.ExecuteReader())
+                using (var connection = GetConnection())
+                using (var command = new MySqlCommand(query, connection))
                 {
+                    if (transaction != null) command.Transaction = transaction;
+                    parameters?.Invoke(command.Parameters);
+                    var reader = command.ExecuteReader();
+                    
                     if (reader.Read())
+                        {
+                            result = mapper(reader);
+                        }
+                    
+                }
+            }else if (transaction != null && transaction.Connection != null)
+            {
+                var connection = transaction.Connection;
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    if (transaction != null) command.Transaction = transaction;
+                    parameters?.Invoke(command.Parameters);
+                    var reader = command.ExecuteReader();
+                    
+                        if (reader.Read())
+                        {
+                            result = mapper(reader);
+                        }
+                   
+                }
+            }
+
+            return result;
+        }
+
+        public int ExecuteScalar(string query, Action<MySqlParameterCollection> parameters, MySqlTransaction? transaction = null)
+        {
+            int result = 0;
+            if (transaction == null)
+            {
+                using (var connection = GetConnection())
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    if (transaction != null) command.Transaction = transaction;
+                    parameters?.Invoke(command.Parameters);
+                    result = Convert.ToInt32(command.ExecuteScalar());
+                }
+            } 
+            else
+            {
+                if ( transaction != null && transaction.Connection != null)
+                {
+                    var connection = transaction.Connection;
+                    using (var command = new MySqlCommand(query, connection))
                     {
-                        result = mapper(reader);
+                        if (transaction != null) command.Transaction = transaction;
+                        parameters?.Invoke(command.Parameters);
+                        result = Convert.ToInt32(command.ExecuteScalar());
                     }
                 }
             }
+            return result;
         }
 
-        return result;
-    }
-
-    public int ExecuteScalar(string query, Action<MySqlParameterCollection> parameters)
-    {
-        int result = default(int);
-
-        using (MySqlConnection connection = new MySqlConnection(connectionString))
+        public int ExecuteNonQuery(string query, Action<MySqlParameterCollection> parameters, MySqlTransaction? transaction = null)
         {
-            connection.Open();
-            using (MySqlCommand command = new MySqlCommand(query, connection))
+        int filasAfectadas = 0;
+
+        if (transaction == null)
             {
-                parameters(command.Parameters);
-                result = Convert.ToInt32(command.ExecuteScalar());
+                using (var connection = GetConnection())
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    parameters?.Invoke(command.Parameters);
+                    filasAfectadas = command.ExecuteNonQuery();
+                }
             }
-        }
-
-        return result;
-    }
-
-    public int ExecuteNonQuery(string query, Action<MySqlParameterCollection> parameters)
-    {
-        int filasAfectadas = default(int);
-
-        using (MySqlConnection connection = new MySqlConnection(connectionString))
-        {
-            connection.Open();
-            using (MySqlCommand command = new MySqlCommand(query, connection))
+            else
             {
-                parameters(command.Parameters);
-                filasAfectadas = Convert.ToInt32(command.ExecuteNonQuery());
+                if (transaction.Connection != null)
+                {
+                    using (var command = new MySqlCommand(query, transaction.Connection))
+                    {
+                        command.Transaction = transaction;
+                        parameters?.Invoke(command.Parameters);
+                        filasAfectadas = command.ExecuteNonQuery();
+                    }
+                }
             }
+
+            return filasAfectadas;
         }
-
-        return filasAfectadas;
     }
-
 }

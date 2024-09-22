@@ -1,28 +1,78 @@
-@model IEnumerable<InmobiliariaCA.Models.Contrato>
+@model InmobiliariaCA.Models.ContratoModels.ContratoViewModel
 
-@{
-    ViewData["Title"] = "Lista de Contratos";
-}
+@{ ViewData["Title"] = "Lista de Contratos"; }
 
 <div class="container mt-5">
+    <form method="get" asp-action="Index" class="container p-3 bg-light rounded shadow-sm">
+        <div class="row g-3">
+            <div class="col-md-3">
+                <label for="Filters.ContratoId" class="form-label">Nro Contrato:</label>
+                <input type="text" class="form-control" asp-for="Filters.ContratoId" placeholder="Ingrese Nro Contrato">
+            </div>
+            <div class="col-md-3">
+                <label for="Filters.InquilinoId" class="form-label">Inquilino:</label>
+                <select asp-items="ViewBag.Inquilinos" asp-for="Filters.InquilinoId" class="form-select">
+                    <option value="">Todos</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="Filters.InmuebleId" class="form-label">Inmueble:</label>
+                <select asp-items="ViewBag.Inmuebles" asp-for="Filters.InmuebleId" class="form-select">
+                    <option value="">Todos</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="Filters.Estado" class="form-label">Estado:</label>
+                <select asp-for="Filters.Estado" asp-items="Html.GetEnumSelectList<EstadoContrato>()" class="form-select">
+                    <option value="">Todos</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="Filters.FechaDesde_Inicio" class="form-label">Desde - Inicio:</label>
+                <input type="date" asp-for="Filters.FechaDesde_Inicio" class="form-control" />
+            </div>
+            <div class="col-md-3">
+                <label for="Filters.FechaDesde_Fin" class="form-label">Desde - Fin:</label>
+                <input type="date" asp-for="Filters.FechaDesde_Fin" class="form-control" />
+            </div>
+            <div class="col-md-3">
+                <label for="Filters.FechaHasta_Inicio" class="form-label">Hasta - Inicio:</label>
+                <input type="date" asp-for="Filters.FechaHasta_Inicio" class="form-control" />
+            </div>
+            <div class="col-md-3">
+                <label for="Filters.FechaHasta_Fin" class="form-label">Hasta - Fin:</label>
+                <input type="date" asp-for="Filters.FechaHasta_Fin" class="form-control" />
+            </div>
+            <div class="d-flex justify-content-end mt-3 col-12">
+                <button type="submit" class="btn btn-primary" style="width: 150px; margin-right: 5px;">Buscar</button>
+                <button type="reset" id="clearFilters" class="btn btn-secondary" style="width: 150px;">Limpiar</button>
+            </div>
+        </div>
+    </form>
+
+    <hr class="my-4" />
+
+    <!-- Listado de contratos -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="text-primary"><i class="fas fa-file-contract"></i> Lista de Contratos</h2>
-        <a href="@Url.Action("AltaEditar", "Contrato")" class="btn btn-success shadow-sm">Agregar Nuevo Contrato</a>
+        <a href="@Url.Action("AltaEditar", "Contrato")" class="btn btn-success shadow-sm"><i class="fas fa-plus-circle"></i> Agregar Nuevo Contrato</a>
     </div>
+    
     <div class="row">
-        @if (Model.Any()) {
-            foreach (var contrato in Model) {
+        @if (Model.Contratos.Any()) {
+            foreach (var contrato in Model.Contratos) {
                 <div class="col-12 mb-4">
                     <div class="card shadow-sm">
                         <div class="card-body">
-                             <h5 class="card-title text-white p-2" style="background-color: #2d94f5;">Nro: @contrato.Id</h5>
+                            <h5 class="card-title text-white p-2" style="background-color: @(contrato.EsFinalizado() ? "#f26060" : "#2d94f5");">Nro Contrato: @contrato.Id</h5>                            
                             <p class="card-text"><strong>Inmueble:</strong> @contrato.Inmueble?.NombreInmueble</p>
                             <p class="card-text"><strong>Inquilino:</strong> @contrato.Inquilino?.NombreCompletoDNI</p>
                             <p class="card-text"><strong>Fecha Desde:</strong> @contrato.Fecha_Desde.ToShortDateString()</p>
                             <p class="card-text"><strong>Fecha Hasta:</strong> @contrato.Fecha_Hasta.ToShortDateString()</p>
-                            <p class="card-text"><strong>Monto de Alquiler:</strong> @contrato.Monto_Alquiler</p>
+                            <p class="card-text"><strong>Monto de Alquiler:</strong>$ @Html.Raw(contrato.Monto_Alquiler.ToString().Replace(",", "."))</p>
+                            <p class="card-text"><strong>Estado:</strong> @contrato.Estado.ToString()</p>
                             <div class="d-flex justify-content-end">
-                                <a href="@Url.Action("Detalle", "Contrato", new { id = contrato.Id })" class="btn btn-info btn-sm mx-1 shadow-sm">Ver</a>
+                                <a href="@Url.Action("Detalle", "Contrato", new { id = contrato.Id })" class="btn btn-info btn-sm mx-1 shadow-sm"><i class="fas fa-eye"></i> Ver</a>
                             </div>
                         </div>
                     </div>
@@ -30,9 +80,23 @@
             }
         } else {
             <div class="alert alert-info" role="alert">
-                No existen contratos realizados.
+                <i class="fas fa-info-circle"></i> No existen contratos realizados.
             </div>
         }
     </div>
 </div>
 
+@section Scripts {
+    <script>
+        document.getElementById("clearFilters").addEventListener("click", function() {
+            document.getElementById("Filters_InquilinoId").value = "";
+            document.getElementById("Filters_InmuebleId").value = "";
+            document.getElementById("Filters_Estado").value = "";
+            document.getElementById("Filters_FechaDesde_Inicio").value = "";
+            document.getElementById("Filters_FechaDesde_Fin").value = "";
+            document.getElementById("Filters_FechaHasta_Inicio").value = "";
+            document.getElementById("Filters_FechaHasta_Fin").value = "";
+            document.getElementById("Filters_ContratoId").value = "";
+        });
+    </script>
+}

@@ -1,0 +1,66 @@
+@model InmobiliariaCA.Models.UsuarioAltaEditarViewModel
+
+@{
+    ViewData["Title"] = Model == null || Model.Id == 0 ? "Formulario de Registro" : "Formulario de Actualización";
+}
+
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h2><i class="fas fa-user-plus"></i> @(Model == null || Model.Id == 0 ? "Formulario de Registro" : "Formulario de Actualización")</h2>
+        </div>
+        <div class="card-body">
+            <form asp-action="AltaEditar">
+                <div class="form-group row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="Email"><i class="fas fa-envelope"></i> Email</label>
+                        <input type="email" asp-for="Email" class="form-control" placeholder="Email" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    @if (User.IsInRole("administrador"))
+                    {
+                            <div class="col-md-4">
+                                <label for="Rol"><i class="fas fa-user-tag"></i> Rol</label>
+                            @Html.DropDownListFor(m => m.Rol, (SelectList)ViewBag.Roles, "", new { @class = "form-control", id = "Rol" })
+                                <span asp-validation-for="Rol" class="text-danger"></span>
+                            </div>
+                    }
+                    else{
+                        <div class="col-md-4">
+                            <input type="hidden" asp-for="Rol" />
+                                <label for="Rol"><i class="fas fa-user-tag"></i> Rol</label>
+                            @Html.DropDownListFor(m => m.Rol, (SelectList)ViewBag.Roles, "", new { @class = "form-control", id = "Rol", @disabled = "disabled"})
+                                <span asp-validation-for="Rol" class="text-danger"></span>
+                        </div>
+                    }
+                </div>
+                <div class="form-group row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="Nombre"><i class="fas fa-user"></i> Nombre</label>
+                        <input asp-for="Nombre" class="form-control" placeholder="Nombre" />
+                        <span asp-validation-for="Nombre" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Apellido"><i class="fas fa-user"></i> Apellido</label>
+                        <input asp-for="Apellido" class="form-control" placeholder="Apellido" />
+                        <span asp-validation-for="Apellido" class="text-danger"></span>
+                    </div>
+                </div>
+                <input type="hidden" asp-for="Id" />
+                <div class="d-flex justify-content-between">
+                    <a href="@Url.Action(Model == null || Model.Id == 0 ? "Index" : "Detalle", "Usuario", Model == null || Model.Id == 0 ? null : new { id = Model.Id })" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> @(Model == null || Model.Id == 0 ? "Volver a la Lista" : "Volver")
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> @(Model == null || Model.Id == 0 ? "Registrar" : "Actualizar")
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
+}

@@ -31,4 +31,5 @@ public class Propietario
     [RegularExpression(@"^\d+$", ErrorMessage = "El numero solo debe tener dígitos.")]	
     public string TelefonoNumero { get; set; } = "";
     public int Estado { get; set; } = 1;
+    public List<Inmueble> Inmuebles = new List<Inmueble>();
 }

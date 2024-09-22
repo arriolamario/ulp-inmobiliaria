@@ -1,0 +1,159 @@
+﻿@model InmobiliariaCA.Models.TiposViewModel
+@{
+    ViewData["Title"] = "Inmueble Tipos";
+}
+<div class="container">
+    <div>
+        <h2 class="my-4">Lista de Tipos de Inmuebles</h2>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalAltaEditar"
+            onclick="setAltaEditarModal('0', '', 'tipoInmueble', 'alta')">
+            <i class="fas fa-plus"></i> Agregar
+        </button>
+        <table class="table table-striped table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Descripción</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.TiposInmuebles.Count; i++)
+                {
+                    <tr>
+                        <td>@Model.TiposInmuebles[i].Id</td>
+                        <td>@Model.TiposInmuebles[i].Descripcion</td>
+                        <td>
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalAltaEditar"
+                                onclick="setAltaEditarModal('@Model.TiposInmuebles[i].Id', '@Model.TiposInmuebles[i].Descripcion', 'tipoInmueble', 'editar')">
+                                <i class="fas fa-edit"></i> Editar
+                            </button>
+                            @if (User.IsInRole("administrador"))
+                            {
+                                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalBajaLogica"
+                                    onclick="setDeleteModal('@Model.TiposInmuebles[i].Id', '@Model.TiposInmuebles[i].Descripcion', 'tipoInmueble')">
+                                    <i class="fas fa-trash-alt"></i> Eliminar
+                                </button>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div>
+        <h2 class="my-4">Lista de Tipos de Inmuebles Usos</h2>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalAltaEditar"
+            onclick="setAltaEditarModal('0', '', 'tipoInmuebleUso', 'alta')">
+            <i class="fas fa-plus"></i> Agregar
+        </button>
+        <table class="table table-striped table-bordered">
+            <thead class="thead-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Descripción</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.TiposInmueblesUsos.Count; i++)
+                {
+                    <tr>
+                        <td>@Model.TiposInmueblesUsos[i].Id</td>
+                        <td>@Model.TiposInmueblesUsos[i].Descripcion</td>
+                        <td>
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalAltaEditar"
+                                onclick="setAltaEditarModal('@Model.TiposInmueblesUsos[i].Id', '@Model.TiposInmueblesUsos[i].Descripcion', 'tipoInmuebleUso', 'editar')">
+                                <i class="fas fa-edit"></i> Editar
+                            </button>
+                            @if (User.IsInRole("administrador"))
+                            {
+                                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalBajaLogica"
+                                    onclick="setDeleteModal('@Model.TiposInmueblesUsos[i].Id', '@Model.TiposInmueblesUsos[i].Descripcion', 'tipoInmuebleUso')">
+                                    <i class="fas fa-trash-alt"></i> Eliminar
+                                </button>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal Baja Logica -->
+<div class="modal fade" id="modalBajaLogica" tabindex="-1" role="dialog" aria-labelledby="modalBajaLogicaLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="tituloModal">Confirmación</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="descripcionModal"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                <form asp-action="Baja" method="post" class="d-inline">
+                    <input type="hidden" id="eliminarId" name="eliminarId" />
+                    <input type="hidden" id="eliminarTipo" name="eliminarTipo" />
+                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Alta Edicion -->
+<div class="modal fade" id="modalAltaEditar" tabindex="-1" role="dialog" aria-labelledby="modalAltaEditarLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <form asp-action="AltaEdicion" method="post" class="d-inline">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="tituloAltaModificarModal">Agregar/Modificar</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p id="descripcionAltaModificarModal"></p>
+                    <div class="input-group input-group-sm mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Descripción</span>
+                        </div>
+                        <input type="text" class="form-control" name="descripcion" id="descripcion">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <input type="hidden" id="altaEditarId" name="altaEditarId" />
+                    <input type="hidden" id="altaEditarTipo" name="altaEditarTipo" />
+                    <button type="submit" class="btn btn-success" id="btnAltaEditar">Agregar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function setDeleteModal(id, descripcion, tipo) {
+        document.getElementById('eliminarId').value = id;
+        document.getElementById('descripcionModal').innerText = "¿Está seguro que desea eliminar el Tipo " + descripcion + "?";
+        document.getElementById('tituloModal').innerText = tipo == "tipoInmueble" ? "Eliminar Tipo de Inmueble" : "Eliminar Tipo de Inmueble Uso";
+        document.getElementById('eliminarTipo').value = tipo;
+    }
+
+    function setAltaEditarModal(id, descripcion, tipo, metodo) {
+        document.getElementById('altaEditarId').value = id;
+        document.getElementById('descripcion').value = descripcion;
+        document.getElementById('descripcionAltaModificarModal').innerText = metodo == "alta" ? "Agregar nuevo" : "Modificar";
+        document.getElementById('btnAltaEditar').innerText = metodo == "alta" ? "Agregar" : "Modificar";
+        document.getElementById('tituloAltaModificarModal').innerText = tipo == "tipoInmueble" ? "Tipo de Inmueble" : "Tipo de Inmueble Uso";
+        document.getElementById('altaEditarTipo').value = tipo;
+    }
+</script>

@@ -1,19 +1,18 @@
 using Microsoft.AspNetCore.Mvc;
 using InmobiliariaCA.Models;
 using InmobiliariaCA.Repositorio;
+using Microsoft.AspNetCore.Authorization;
 
 namespace InmobiliariaCA.Controllers;
-
+[Authorize]
 public class InquilinoController: Controller {
 
     private readonly ILogger<HomeController> _logger;
-    private IConfiguration _Configuration;
-    private RepositorioInquilino _repositorioInquilino;
+    private IRepositorioInquilino _repositorioInquilino;
 
-    public InquilinoController(ILogger<HomeController> logger, IConfiguration configuration) {
+    public InquilinoController(ILogger<HomeController> logger, IRepositorioInquilino repositorioInquilino) {
         _logger = logger;
-        _Configuration = configuration;
-        _repositorioInquilino = new RepositorioInquilino(_Configuration);
+        _repositorioInquilino = repositorioInquilino;
     }
 
     public IActionResult Index() {      
@@ -28,7 +27,7 @@ public class InquilinoController: Controller {
     }
 
     public IActionResult Detalle(int Id) {
-        var inquilino = _repositorioInquilino.GetInquilino(Id);
+        var inquilino = _repositorioInquilino.GetInquilino(Id, null);
         if(inquilino == null) {
             return NotFound();
         }
@@ -38,7 +37,7 @@ public class InquilinoController: Controller {
         if (Id == 0)
             return View();
 
-        return View(_repositorioInquilino.GetInquilino(Id));
+        return View(_repositorioInquilino.GetInquilino(Id, null));
     }
 
     [HttpPost]
@@ -68,8 +67,9 @@ public class InquilinoController: Controller {
     }
 
     [HttpPost]
+    [Authorize(Policy = "administrador")]
     public IActionResult BajaLogica(int id) {
-        var success = _repositorioInquilino.BajaLogicaInquilino(id);
+        var success = _repositorioInquilino.BajaInquilino(id);
         
         if (success) {
             TempData["SuccessMessage"] = "Inquilino dado de baja correctamente.";
