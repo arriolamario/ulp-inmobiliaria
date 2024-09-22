@@ -27,7 +27,7 @@
                 <dt class="col-sm-3">Creado por</dt>
                 <dd class="col-sm-9">@Model.CreadoPor?.Nombre</dd>
 
-                @if (Model.Anulado_Por_Id.HasValue)
+                @if (Model.Anulado_Por_Id.HasValue && User.IsInRole("administrador"))
                 {
                     <dt class="col-sm-3">Anulado por</dt>
                     <dd class="col-sm-9">@Model.AnuladoPor?.Nombre</dd>
@@ -59,11 +59,11 @@
             </dl>
         </div>
         <div class="card-footer text-end">
-            @* <a href="@Url.Action("Editar", "Pago", new { id = Model.Id })" class="btn btn-warning">Editar</a> *@
+            @* <a href="@Url.Action("Editar", "Pago", new { id = Model.Id })" class="btn btn-warning">Editar</a> EDITAMOS PAGO?*@ 
             <button type="button" 
                     class="btn btn-danger" 
-                    data-bs-toggle="@(Model.Estado == EstadoPago.Anulado ? null : "modal")" 
-                    data-bs-target="@(Model.Estado == EstadoPago.Anulado ? null : "#modalAnularPago")"
+                    data-toggle="@(Model.Estado == EstadoPago.Anulado ? null : "modal")" 
+                    data-target="@(Model.Estado == EstadoPago.Anulado ? null : "#modalAnularPago")"
                     disabled="@(Model.Estado == EstadoPago.Anulado ? "disabled" : null)">
                 @(Model.Estado == EstadoPago.Anulado ? "Pago Anulado" : "Anular Pago")
             </button>
@@ -87,9 +87,8 @@
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                 <form asp-action="Anular" method="post" class="d-inline">
                     <input type="hidden" name="Id" value="@Model.Id" />
-                    @* <input type="hidden" name="IdAnulador" value=@Model.AnuladoPor?.Id /> *@
-                    <input type="hidden" name="IdAnulador" value=1 />
-                    <input type="hidden" name="contratoId" value="@Model.Contrato?.Id" />
+                    <input type="hidden" name="IdAnulador" value=@Model.Anulado_Por_Id />
+                    <input type="hidden" name="ContratoId" value="@Model.Contrato?.Id" />
                     <button type="submit" class="btn btn-danger">Anular</button>
                 </form>
             </div>

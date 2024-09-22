@@ -61,11 +61,13 @@ public class PagoController : Controller {
 
     [HttpPost]
     [Authorize(Policy = "administrador")]
-    public IActionResult Anular(int Id, int IdAnulador, int IdContrato) {
+    public IActionResult Anular(int Id, int IdContrato) {
         
         if (Id == 0) {
             TempData["ErrorMessage"] = "No se pudo dar de baja al propietario.";
         } else {
+            var IdUser = User.FindFirst("Id");
+            var IdAnulador = IdUser != null ? int.Parse(IdUser.Value) : 0;
             var res = _repositorioPago.AnularPago(Id, IdAnulador, IdContrato);
             if (res)
                 TempData["SuccessMessage"] = "Propietario dado de baja correctamente.";

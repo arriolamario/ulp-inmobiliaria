@@ -1,7 +1,7 @@
 @model InmobiliariaCA.Models.ContratoModels.ContratoAltaEditarViewModel
 
 @{
-    ViewData["Title"] = Model == null || Model.Id == 0 ? "Crear Contrato" : "Editar Contrato";
+    ViewData["Title"] = Model == null || Model.Id == 0 ? "Crear Contrato" : "Editar Contrato Nro:" + Model.Id;
     System.Globalization.CultureInfo culturaArgentina = new System.Globalization.CultureInfo("es-AR");
     List<Inmueble> inmuebles = ViewBag.Inmuebles != null ? ViewBag.Inmuebles : new List<Inmueble>();
 }

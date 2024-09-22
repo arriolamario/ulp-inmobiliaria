@@ -148,8 +148,10 @@ namespace InmobiliariaCA.Controllers
                     ViewBag.Inmuebles = listInmueble;
                     return View("AltaEditar", Contrato);
                 }
+
                 Contrato contratoNew = new Contrato(Contrato);
                 var idUsuarioCookie = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "Id")?.Value;
+
                 if (idUsuarioCookie == null)
                     contratoNew.Id_Usuario_Creacion = 1;
                 else
@@ -283,7 +285,6 @@ namespace InmobiliariaCA.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = "administrador")]
         public IActionResult RenovarContrato(Contrato contrato) {
             try {
                 var contratoDb = _repositorioContrato.GetContrato(contrato.Id, null);
@@ -295,6 +296,14 @@ namespace InmobiliariaCA.Controllers
                 //--Renoovacion del contrato, con el ID del contrato viejo
                 contratoDb.Fecha_Desde = contrato.Fecha_Desde;
                 contratoDb.Fecha_Hasta = contrato.Fecha_Hasta;
+                IEnumerable<Inmueble> listadoInmueble = this.GetInmueblesDisponibles(contratoDb.Fecha_Desde.Date, contratoDb.Fecha_Hasta.Date);
+
+                if(listadoInmueble.FirstOrDefault(x => x.Id == contratoDb.Id_Inmueble) == null) {
+                    _logger.LogError("Inmueble no disponible en el rango de fechas ingresado.");
+                    TempData["ErrorMessage"] = "Inmueble no disponible en el rango de fechas ingresado.";
+                    return View(contratoDb);
+                }
+
                 contratoDb.Monto_Alquiler = contrato.Monto_Alquiler;
                 contratoDb.Estado = EstadoContrato.Vigente;
                 contratoDb.Fecha_Finalizacion_Anticipada= null;
