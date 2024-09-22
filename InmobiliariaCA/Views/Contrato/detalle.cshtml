@@ -68,18 +68,21 @@
                 </a>
             </div>
             <div>
-                @if (!Model.PagosCompletos()) 
+                @if (!Model.PagosCompletos())
                 {
-                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#pagoModal">
+                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#pagoModal">
                         Pagar
                     </button>
                     <a href="@Url.Action("AltaEditar", "Contrato", new { id = Model.Id })" class="btn btn-warning">
                         Editar
                     </a>
                 }
-                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalBajaLogica">
-                    Eliminar
-                </button>
+                @if (User.IsInRole("administrador"))
+                {
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalBajaLogica">
+                        Eliminar
+                    </button>
+                }
                 <a href="@Url.Action("Index", "Contrato")" class="btn btn-secondary">
                     Volver a la Lista
                 </a>
@@ -99,7 +102,7 @@
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
                 <h1 class="modal-title fs-5" id="exampleModalLabel">Contrato</h1>
-                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 ¿Está seguro que desea eliminar el contrato del inmueble @Model.Inmueble?.Direccion con el inquilino
@@ -121,42 +124,45 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                    <h5 class="modal-title" id="pagoModalLabel">Realizar Pago</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>                
-                <form id="formPago" action="@Url.Action("CrearActualizar", "Pago")" method="post" onsubmit="return validarFormularioPago();">
-                    <div class="modal-body">
-                        <input type="hidden" name="Contrato_Id" value="@Model.Id">
-                        <div class="mb-3">
-                            <label for="Numero_Pago" class="form-label">Número de Pago</label>
-                            <input type="number" class="form-control" id="Numero_Pago" name="Numero_Pago" value="@ViewBag.NumeroPago" readonly>
-                        </div>
-                        <div class="mb-3">
-                            <label for="Fecha_Pago" class="form-label">Fecha de Pago</label>
-                            <input type="date" class="form-control" id="Fecha_Pago" name="Fecha_Pago" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="Detalle" class="form-label">Detalle</label>
-                            <input type="text" class="form-control" id="Detalle" name="Detalle" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="Importe" class="form-label">Monto del Alquiler</label>
-                            <input type="text" class="form-control" id="Importe" name="Importe" value="@Model.Monto_Alquiler" readonly>
-                        </div>
-                        @* <div class="mb-3">
-                            <label for="Multa" class="form-label">Monto Multa</label>
-                            <input type="text" class="form-control" id="Multa" name="Multa" value="@Model.Multa" readonly>
-                        </div>
-                        <div class="mb-3">
-                            <label for="Total" class="form-label">Total</label>
-                            <input type="text" class="form-control" id="Total" name="Total" value="@Model.Total" readonly>
-                        </div> *@
+                <h5 class="modal-title" id="pagoModalLabel">Realizar Pago</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="formPago" action="@Url.Action("CrearActualizar", "Pago")" method="post"
+                onsubmit="return validarFormularioPago();">
+                <div class="modal-body">
+                    <input type="hidden" name="Contrato_Id" value="@Model.Id">
+                    <div class="mb-3">
+                        <label for="Numero_Pago" class="form-label">Número de Pago</label>
+                        <input type="number" class="form-control" id="Numero_Pago" name="Numero_Pago"
+                            value="@ViewBag.NumeroPago" readonly>
                     </div>
-                    <div id="botoneraModalPago" class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                        <button type="submit" class="btn btn-primary">Confirmar Pago</button>
+                    <div class="mb-3">
+                        <label for="Fecha_Pago" class="form-label">Fecha de Pago</label>
+                        <input type="date" class="form-control" id="Fecha_Pago" name="Fecha_Pago" required>
                     </div>
-                </form>
+                    <div class="mb-3">
+                        <label for="Detalle" class="form-label">Detalle</label>
+                        <input type="text" class="form-control" id="Detalle" name="Detalle" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="Importe" class="form-label">Monto del Alquiler</label>
+                        <input type="text" class="form-control" id="Importe" name="Importe"
+                            value="@Model.Monto_Alquiler" readonly>
+                    </div>
+                    @* <div class="mb-3">
+                    <label for="Multa" class="form-label">Monto Multa</label>
+                    <input type="text" class="form-control" id="Multa" name="Multa" value="@Model.Multa" readonly>
+                    </div>
+                    <div class="mb-3">
+                    <label for="Total" class="form-label">Total</label>
+                    <input type="text" class="form-control" id="Total" name="Total" value="@Model.Total" readonly>
+                    </div> *@
+                </div>
+                <div id="botoneraModalPago" class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary">Confirmar Pago</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -166,7 +172,7 @@
     <script
         src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
     <script>
-       $(document).ready(function () {
+        $(document).ready(function () {
             $('#botonConfirmarPago').click(function (event) {
                 event.preventDefault();
 
@@ -179,7 +185,7 @@
                 }
             });
 
-            $('#botonPago').click(function () {
+            $('#botonPrePago').click(function () {
                 console.log("Botón pagar clickeado");
                 const infoContrato = $('#infoContrato');
                 const fechaDesde = new Date(infoContrato.data('fecha-desde'));
@@ -196,18 +202,18 @@
 
                 if (fechaActual.getMonth() >= fechaDesdeCorrecta.getMonth() && fechaActual <= fechaHastaCorrecta) {
                     const mesesTranscurridos = ((fechaActual.getFullYear() - fechaDesdeCorrecta.getFullYear()) * 12) + (fechaActual.getMonth() - fechaDesdeCorrecta.getMonth());
-                    
+
                     console.log("Meses Transcurridos:", mesesTranscurridos);
 
-                    @* if (cuotasPagas == cuotasTotales) {
-                        $("#pagoModal .modal-body").html('<div class="alert alert-info">Todos los pagos del contrato han sido completados.</div>');
-                        $("#botoneraModalPago").hide();
-                        return;
+        @* if (cuotasPagas == cuotasTotales) {
+                    $("#pagoModal .modal-body").html('<div class="alert alert-info">Todos los pagos del contrato han sido completados.</div>');
+                    $("#botoneraModalPago").hide();
+                    return;
                     } *@
 
-                    if (mesesTranscurridos < cuotasPagas) {
+                        if (mesesTranscurridos < cuotasPagas) {
                         $("#pagoModal .modal-body").html('<div class="alert alert-success">El pago para este mes ya ha sido realizado.</div><button id="terminarContratoBtn" class="btn btn-danger">Terminar Contrato</button>');
-                        $("#botoneraModalPago").hide();                        
+                        $("#botoneraModalPago").hide();
                     } else if (mesesTranscurridos < cuotasTotales) {
                         $("#formPago").show();
                     } else {
@@ -238,7 +244,7 @@
                 return false;
             }
 
-        return true; 
-    }
+            return true;
+        }
     </script>
 }
