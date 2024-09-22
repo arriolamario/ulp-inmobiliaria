@@ -39,5 +39,6 @@ public class ContratoDetalleViewModel {
     public EstadoContrato Estado { get; set; } = EstadoContrato.Vigente;
     public bool PagosCompletos() => Cantidad_Cuotas == Cuotas_Pagas;
     public bool EsFinalizado() => EstadoContrato.Finalizado == Estado;
+    public List<Pago> Pagos { get; set; } = new List<Pago>();
 
 }

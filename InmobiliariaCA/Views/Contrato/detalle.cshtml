@@ -70,7 +70,7 @@
             <div>
                 @if (!Model.PagosCompletos())
                 {
-                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#pagoModal">
+                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#pagoModal">
                         Pagar
                     </button>
                     <a href="@Url.Action("AltaEditar", "Contrato", new { id = Model.Id })" class="btn btn-warning">
@@ -79,7 +79,7 @@
                 }
                 @if (User.IsInRole("administrador"))
                 {
-                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalBajaLogica">
+                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalBajaLogica">
                         Eliminar
                     </button>
                 }
@@ -89,6 +89,48 @@
             </div>
         </div>
     </div>
+</div>
+
+<div class="row">
+    @if (Model.Pagos.Any())
+    {
+        foreach (var pago in Model.Pagos)
+        {
+            <div class="col-12 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title text-white p-2"
+                            style="background-color: @(pago.Estado == EstadoPago.Anulado ? "#f26060" : "#2d94f5");">Nro Pago:
+                            @pago.Numero_Pago</h5>
+                        <p class="card-text"><strong>Número de Contrato:</strong> @pago.Contrato_Id</p>
+                        <p class="card-text"><strong>Fecha de Pago:</strong> @pago.Fecha_Pago.ToString("dd/MM/yyyy")</p>
+                        <p class="card-text"><strong>Detalle:</strong> @pago.Detalle</p>
+                        <p class="card-text"><strong>Importe:</strong> $@pago.Importe</p>
+                        @if (User.IsInRole("administrador"))
+                        {
+                            <p class="card-text"><strong>Creado Por:</strong> @pago.CreadoPor?.NombreCompleto</p>
+                            @if (pago.Anulado_Por_Id.HasValue)
+                            {
+                                <p class="card-text"><strong>Anulado Por:</strong> @pago.AnuladoPor?.NombreCompleto</p>
+                                <p class="card-text"><strong>Fecha Anulación:</strong> @pago.Fecha_Anulacion?.ToString("dd/MM/yyyy")</p>
+                            }
+                        }
+                        <p class="card-text"><strong>Estado: @pago.Estado</strong></p>
+                        <div class="d-flex justify-content-end">
+                            <a href="@Url.Action("Detalle", "Pago", new { id = pago.Id })"
+                                class="btn btn-info btn-sm mx-1 shadow-sm">Ver Detalles</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="alert alert-info" role="alert">
+            No existen pagos realizados.
+        </div>
+    }
 </div>
 
 <div id="infoContrato" data-fecha-desde="@Model.Fecha_Desde.ToString("yyyy-MM-ddT00:00:00Z")"
@@ -211,7 +253,7 @@
                     return;
                     } *@
 
-                        if (mesesTranscurridos < cuotasPagas) {
+                            if (mesesTranscurridos < cuotasPagas) {
                         $("#pagoModal .modal-body").html('<div class="alert alert-success">El pago para este mes ya ha sido realizado.</div><button id="terminarContratoBtn" class="btn btn-danger">Terminar Contrato</button>');
                         $("#botoneraModalPago").hide();
                     } else if (mesesTranscurridos < cuotasTotales) {

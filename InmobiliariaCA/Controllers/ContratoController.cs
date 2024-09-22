@@ -14,17 +14,20 @@ namespace InmobiliariaCA.Controllers
         private IRepositorioContrato _repositorioContrato;
         private IRepositorioInquilino _repositorioInquilino;
         private IRepositorioInmueble _repositorioInmueble;
+        private IRepositorioPago _repositorioPago;
         private readonly ILogger<HomeController> _logger;
 
         public ContratoController(ILogger<HomeController> logger,
                         IRepositorioContrato repositorioContrato,
                         IRepositorioInquilino repositorioInquilino,
-                        IRepositorioInmueble repositorioInmueble)
+                        IRepositorioInmueble repositorioInmueble,
+                        IRepositorioPago repositorioPago)
         {
             _logger = logger;
             _repositorioContrato = repositorioContrato;
             _repositorioInquilino = repositorioInquilino;
             _repositorioInmueble = repositorioInmueble;
+            _repositorioPago = repositorioPago;
         }
 
         public IActionResult Index(ContratoFilter filters) {
@@ -56,14 +59,19 @@ namespace InmobiliariaCA.Controllers
                 int numeroPago = random.Next(100000, 999999);
                 ViewBag.NumeroPago = numeroPago;
 
-                var contrato = _repositorioContrato.GetContrato(
-                    Id);
+                var contrato = _repositorioContrato.GetContrato(Id);
+
                 if (contrato == null)
                 {
                     return NotFound();
                 }
 
+                List<Pago> pagos = _repositorioPago.GetPagosContrato(contrato.Id);
+
                 ContratoDetalleViewModel viewModel = new ContratoDetalleViewModel(contrato);
+
+                viewModel.Pagos = pagos;
+
                 return View(viewModel);
             }
             catch (Exception ex)
