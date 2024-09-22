@@ -42,7 +42,7 @@ public class InmuebleController : Controller
 
     public IActionResult Detalle(int Id)
     {
-        Inmueble? inmueble =_repositorioInmueble.GetInmueble(Id, null);
+        Inmueble? inmueble =_repositorioInmueble.GetInmueble(Id);
         if(inmueble == null){
             return NotFound();
         }
@@ -63,7 +63,7 @@ public class InmuebleController : Controller
             ViewBag.idPropietario = idPropietario;
             return View(new Inmueble());
         }
-        var inmueble = _repositorioInmueble.GetInmueble(Id, null);
+        var inmueble = _repositorioInmueble.GetInmueble(Id);
         ViewBag.idPropietario = inmueble?.Id_Propietario;
         return View(inmueble);
     }

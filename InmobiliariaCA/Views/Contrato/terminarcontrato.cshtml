@@ -32,7 +32,7 @@
                     </div>
                     <div class="col-md-6">
                         <label asp-for="Fecha_Finalizacion_Anticipada" class="form-label">Fecha Finalización Anticipada </label>
-                        <input asp-for="Fecha_Finalizacion_Anticipada" type="date" class="form-control" min="@DateTime.Now.ToString("yyyy-MM-dd")" required/>
+                        <input asp-for="Fecha_Finalizacion_Anticipada" type="date" class="form-control" required/>
                         <span asp-validation-for="Fecha_Finalizacion_Anticipada" class="text-danger"></span>
                     </div>
                 </div>
@@ -44,7 +44,7 @@
                         <button type="submit" class="btn btn-success" style="margin-right: 5px;"> Terminar </button>
                     </div>
                     <div>
-                        <button onclick="window.location.href='@Url.Action("Detalle", "Contrato",new { id = Model.Id })'" class="btn btn-secondary"> Volver al Contrato </button>
+                        <button onclick="window.location.href='@Url.Action("AltaEditar", "Contrato",new { id = Model.Id })'" class="btn btn-secondary"> Volver al Contrato </button>
                     </div>                   
                 </div>
             </form>
