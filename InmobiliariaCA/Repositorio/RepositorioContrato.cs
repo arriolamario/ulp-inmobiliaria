@@ -91,7 +91,8 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato {
                                     {nameof(Contrato.Cantidad_Cuotas)},
                                     {nameof(Contrato.Cuotas_Pagas)},
                                     {nameof(Contrato.Estado)}
-                            from contrato;";
+                            from contrato
+                                where {nameof(Contrato.Id_Inmueble)} = {Id_Inmueble};";
 
         resultContratos = this.ExecuteReaderList<Contrato>(query, (parameters) => { }, (reader) => {
             var contrato = new Contrato() {

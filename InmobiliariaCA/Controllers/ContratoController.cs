@@ -226,7 +226,6 @@ namespace InmobiliariaCA.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = "administrador")]
         public IActionResult FinalizarContrato(Contrato contrato)
         {
             try
@@ -237,22 +236,25 @@ namespace InmobiliariaCA.Controllers
                     return NotFound("El contrato solicitado no existe.");
                 }
 
+                var UserCookie = User.FindFirst("Id");
+                var UserId = UserCookie != null ? int.Parse(UserCookie.Value) : 0;
+
                 contratoDb.Fecha_Finalizacion_Anticipada = contrato.Fecha_Finalizacion_Anticipada;
                 contratoDb.MultaCalculada();
                 contratoDb.Estado = EstadoContrato.Finalizado;
                 var IdUser = User.FindFirst("Id");
-                contratoDb.Id_Usuario_Finalizacion = IdUser != null ? int.Parse(IdUser.Value) : 0;
+                contratoDb.Id_Usuario_Finalizacion = UserId;
                 _repositorioContrato.ActualizarContrato(contratoDb);
                 
-                //Insertar en pagos
+                //Insertar en pagos Con Multa por FINALIZACION CONTRATO
                 var pago = new Pago();
                 pago.Contrato_Id = contratoDb.Id;
                 pago.Numero_Pago = NroRandomPago();
                 pago.Fecha_Pago = DateTime.Now;
                 pago.Detalle = "Pago con Multa";
                 pago.Importe = contratoDb.Monto_Alquiler + (contratoDb.Multa ?? 0);
-                pago.Estado = EstadoPago.Anulado;
-                pago.Fecha_Anulacion = contratoDb.Fecha_Finalizacion_Anticipada ?? DateTime.Now;
+                pago.Estado = EstadoPago.Pagado;
+                pago.Creado_Por_Id = UserId;
 
                 _repositorioPago.InsertarPago(pago, null);
 
