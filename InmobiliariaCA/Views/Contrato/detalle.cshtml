@@ -1,4 +1,4 @@
-@model InmobiliariaCA.Models.ContratoModels.Contrato
+@model InmobiliariaCA.Models.ContratoModels.ContratoDetalleViewModel
 
 <div class="container mt-5">
     <div class="card shadow-sm">
@@ -6,12 +6,15 @@
             <h2>Detalles del Contrato Nro: @Model.Id</h2>
             <div>
                 <h3 class="mb-0">Pagos: @Model.Cuotas_Pagas/@Model.Cantidad_Cuotas</h3>
-                @if(@Model.Estado == EstadoContrato.Vigente) {
+                @if (@Model.Estado == EstadoContrato.Vigente)
+                {
                     <span class="badge bg-success">@Model.Estado</span>
-                } else {
+                }
+                else
+                {
                     <span class="badge bg-danger">@Model.Estado</span>
                 }
-                
+
             </div>
         </div>
         <div class="card-body">
@@ -33,18 +36,24 @@
 
                 <dt class="col-sm-3">Fecha Finalización Anticipada</dt>
                 <dd class="col-sm-9">
-                    @if(Model.Fecha_Finalizacion_Anticipada.HasValue) {
+                    @if (Model.Fecha_Finalizacion_Anticipada.HasValue)
+                    {
                         @Model.Fecha_Finalizacion_Anticipada.Value.ToString("dd/MM/yyyy")
-                    } else {
+                    }
+                    else
+                    {
                         <span>No Aplica</span>
                     }
                 </dd>
 
                 <dt class="col-sm-3">Multa</dt>
                 <dd class="col-sm-9">
-                    @if(Model.Multa.HasValue) {
-                         <span>$ @Model.Multa.Value.ToString("N2") </span>
-                    } else {
+                    @if (Model.Multa.HasValue)
+                    {
+                        <span>$ @Model.Multa.Value.ToString("N2") </span>
+                    }
+                    else
+                    {
                         <span>No Aplica</span>
                     }
                 </dd>
@@ -67,9 +76,12 @@
                         Editar
                     </a>
                 }
-                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalBajaLogica">
-                    Eliminar
-                </button>
+                @if (User.IsInRole("administrador"))
+                {
+                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modalBajaLogica">
+                        Eliminar
+                    </button>
+                }
                 <a href="@Url.Action("Index", "Contrato")" class="btn btn-secondary">
                     Volver a la Lista
                 </a>
@@ -78,11 +90,51 @@
     </div>
 </div>
 
-<div id="infoContrato" 
-     data-fecha-desde="@Model.Fecha_Desde.ToString("yyyy-MM-ddT00:00:00Z")"
-     data-fecha-hasta="@Model.Fecha_Hasta.ToString("yyyy-MM-ddT00:00:00Z")"
-     data-cuotas-pagas="@Model.Cuotas_Pagas"
-     data-cuotas-totales="@Model.Cantidad_Cuotas">
+<div class="row">
+    @if (Model.Pagos.Any())
+    {
+        foreach (var pago in Model.Pagos)
+        {
+            <div class="col-12 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title text-white p-2"
+                            style="background-color: @(pago.Estado == EstadoPago.Anulado ? "#f26060" : "#2d94f5");">Nro Pago:
+                            @pago.Numero_Pago</h5>
+                        <p class="card-text"><strong>Número de Contrato:</strong> @pago.Contrato_Id</p>
+                        <p class="card-text"><strong>Fecha de Pago:</strong> @pago.Fecha_Pago.ToString("dd/MM/yyyy")</p>
+                        <p class="card-text"><strong>Detalle:</strong> @pago.Detalle</p>
+                        <p class="card-text"><strong>Importe:</strong> $@pago.Importe</p>
+                        @if (User.IsInRole("administrador"))
+                        {
+                            <p class="card-text"><strong>Creado Por:</strong> @pago.CreadoPor?.NombreCompleto</p>
+                            @if (pago.Anulado_Por_Id.HasValue)
+                            {
+                                <p class="card-text"><strong>Anulado Por:</strong> @pago.AnuladoPor?.NombreCompleto</p>
+                                <p class="card-text"><strong>Fecha Anulación:</strong> @pago.Fecha_Anulacion?.ToString("dd/MM/yyyy")</p>
+                            }
+                        }
+                        <p class="card-text"><strong>Estado: @pago.Estado</strong></p>
+                        <div class="d-flex justify-content-end">
+                            <a href="@Url.Action("Detalle", "Pago", new { id = pago.Id })"
+                                class="btn btn-info btn-sm mx-1 shadow-sm">Ver Detalles</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="alert alert-info" role="alert">
+            No existen pagos realizados.
+        </div>
+    }
+</div>
+
+<div id="infoContrato" data-fecha-desde="@Model.Fecha_Desde.ToString("yyyy-MM-ddT00:00:00Z")"
+    data-fecha-hasta="@Model.Fecha_Hasta.ToString("yyyy-MM-ddT00:00:00Z")" data-cuotas-pagas="@Model.Cuotas_Pagas"
+    data-cuotas-totales="@Model.Cantidad_Cuotas">
 </div>
 
 <!-- Modal Anulacion -->
@@ -91,10 +143,11 @@
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
                 <h1 class="modal-title fs-5" id="exampleModalLabel">Contrato</h1>
-                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                ¿Está seguro que desea eliminar el contrato del inmueble @Model.Inmueble?.Direccion con el inquilino @Model.Inquilino?.Nombre @Model.Inquilino?.Apellido?
+                ¿Está seguro que desea eliminar el contrato del inmueble @Model.Inmueble?.Direccion con el inquilino
+                @Model.Inquilino?.Nombre @Model.Inquilino?.Apellido?
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -135,21 +188,43 @@
                             <input type="text" class="form-control" id="Importe" name="Importe" value="@Model.Monto_Alquiler" readonly>
                         </div>
                     </div>
-                    <div id="botoneraModalPago" class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                        <button type="submit" class="btn btn-primary" id="botonPago">Confirmar Pago</button>
+                    <div class="mb-3">
+                        <label for="Fecha_Pago" class="form-label">Fecha de Pago</label>
+                        <input type="date" class="form-control" id="Fecha_Pago" name="Fecha_Pago" required>
                     </div>
-                </form>
+                    <div class="mb-3">
+                        <label for="Detalle" class="form-label">Detalle</label>
+                        <input type="text" class="form-control" id="Detalle" name="Detalle" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="Importe" class="form-label">Monto del Alquiler</label>
+                        <input type="text" class="form-control" id="Importe" name="Importe"
+                            value="@Model.Monto_Alquiler" readonly>
+                    </div>
+                    @* <div class="mb-3">
+                    <label for="Multa" class="form-label">Monto Multa</label>
+                    <input type="text" class="form-control" id="Multa" name="Multa" value="@Model.Multa" readonly>
+                    </div>
+                    <div class="mb-3">
+                    <label for="Total" class="form-label">Total</label>
+                    <input type="text" class="form-control" id="Total" name="Total" value="@Model.Total" readonly>
+                    </div> *@
+                </div>
+                <div id="botoneraModalPago" class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary">Confirmar Pago</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
 
 @section Scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
     <script>
-       $(document).ready(function () {
-        console.log("Fechas y cuotas:")
+        $(document).ready(function () {
             $('#botonConfirmarPago').click(function (event) {
                 event.preventDefault();
 
@@ -162,7 +237,7 @@
                 }
             });
 
-            $('#botonPago').click(function () {
+            $('#botonPrePago').click(function () {
                 console.log("Botón pagar clickeado");
                 const infoContrato = $('#infoContrato');
                 const fechaDesde = new Date(infoContrato.data('fecha-desde'));
@@ -175,17 +250,22 @@
                 const fechaActual = new Date();
 
                 console.log("Fechas y cuotas:", fechaDesde, fechaHasta, cuotasPagas, cuotasTotales);
-                
+
 
                 if (fechaActual.getMonth() >= fechaDesdeCorrecta.getMonth() && fechaActual <= fechaHastaCorrecta) {
                     const mesesTranscurridos = ((fechaActual.getFullYear() - fechaDesdeCorrecta.getFullYear()) * 12) + (fechaActual.getMonth() - fechaDesdeCorrecta.getMonth());
-                    
-                    console.log("Meses Transcurridos:", mesesTranscurridos);                   
 
-                    if (mesesTranscurridos < cuotasPagas) {
-                        @* $("#pagoModal .modal-body").html('<div class="alert alert-success">El pago para este mes ya ha sido realizado.</div><button id="terminarContratoBtn" class="btn btn-danger">Terminar Contrato</button>');
-                        $("#botoneraModalPago").hide();    *@   
-                        $("#formPago").show();                  
+                    console.log("Meses Transcurridos:", mesesTranscurridos);
+
+        @* if (cuotasPagas == cuotasTotales) {
+                    $("#pagoModal .modal-body").html('<div class="alert alert-info">Todos los pagos del contrato han sido completados.</div>');
+                    $("#botoneraModalPago").hide();
+                    return;
+                    } *@
+
+                            if (mesesTranscurridos < cuotasPagas) {
+                        $("#pagoModal .modal-body").html('<div class="alert alert-success">El pago para este mes ya ha sido realizado.</div><button id="terminarContratoBtn" class="btn btn-danger">Terminar Contrato</button>');
+                        $("#botoneraModalPago").hide();
                     } else if (mesesTranscurridos < cuotasTotales) {
                         $("#formPago").show();
                     } else {
@@ -216,7 +296,7 @@
                 return false;
             }
 
-            return true; 
+            return true;
         }
     </script>
 }

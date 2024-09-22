@@ -14,23 +14,26 @@ namespace InmobiliariaCA.Controllers
         private IRepositorioContrato _repositorioContrato;
         private IRepositorioInquilino _repositorioInquilino;
         private IRepositorioInmueble _repositorioInmueble;
+        private IRepositorioPago _repositorioPago;
         private readonly ILogger<HomeController> _logger;
 
         public ContratoController(ILogger<HomeController> logger,
                         IRepositorioContrato repositorioContrato,
                         IRepositorioInquilino repositorioInquilino,
-                        IRepositorioInmueble repositorioInmueble)
+                        IRepositorioInmueble repositorioInmueble,
+                        IRepositorioPago repositorioPago)
         {
             _logger = logger;
             _repositorioContrato = repositorioContrato;
             _repositorioInquilino = repositorioInquilino;
             _repositorioInmueble = repositorioInmueble;
+            _repositorioPago = repositorioPago;
         }
 
         public IActionResult Index(ContratoFilter filters) {
             try {
                 var viewModel = new ContratoViewModel {
-                    Contratos = _repositorioContrato.GetContratosFiltrados(filters, null),
+                    Contratos = _repositorioContrato.GetContratosFiltrados(filters),
                     Filters = filters
                 };
 
@@ -56,13 +59,20 @@ namespace InmobiliariaCA.Controllers
                 int numeroPago = random.Next(100000, 999999);
                 ViewBag.NumeroPago = numeroPago;
 
-                var contrato = _repositorioContrato.GetContrato(Id, null);
+                var contrato = _repositorioContrato.GetContrato(Id);
+
                 if (contrato == null)
                 {
                     return NotFound();
                 }
 
-                return View(contrato);
+                List<Pago> pagos = _repositorioPago.GetPagosContrato(contrato.Id);
+
+                ContratoDetalleViewModel viewModel = new ContratoDetalleViewModel(contrato);
+
+                viewModel.Pagos = pagos;
+
+                return View(viewModel);
             }
             catch (Exception ex)
             {
@@ -198,7 +208,7 @@ namespace InmobiliariaCA.Controllers
         {
             try
             {
-                var contrato = _repositorioContrato.GetContrato(Id, null);
+                var contrato = _repositorioContrato.GetContrato(Id);
                 if (contrato == null)
                 {
                     return NotFound("El contrato solicitado no existe.");
@@ -221,7 +231,7 @@ namespace InmobiliariaCA.Controllers
         {
             try
             {
-                var contratoDb = _repositorioContrato.GetContrato(contrato.Id, null);
+                var contratoDb = _repositorioContrato.GetContrato(contrato.Id);
                 if (contratoDb == null)
                 {
                     return NotFound("El contrato solicitado no existe.");
@@ -230,8 +240,7 @@ namespace InmobiliariaCA.Controllers
                 contratoDb.Fecha_Finalizacion_Anticipada = contrato.Fecha_Finalizacion_Anticipada;
                 contratoDb.MultaCalculada();
                 contratoDb.Estado = EstadoContrato.Finalizado;
-                var IdUser = User.FindFirst("Id");
-                contratoDb.Id_Usuario_Finalizacion = IdUser != null ? int.Parse(IdUser.Value) : 0;
+                contratoDb.Id_Usuario_Finalizacion = 2;
 
                 _repositorioContrato.ActualizarContrato(contratoDb);
 
