@@ -73,7 +73,13 @@ namespace InmobiliariaCA.Controllers
             }
         }
 
-        public IActionResult AltaEditar(int Id, [FromQuery] DateTime? FechaDesde, [FromQuery] DateTime? FechaHasta, [FromQuery] int? Id_Inquilino, [FromQuery] decimal? Monto_Alquiler)
+        public IActionResult AltaEditar(
+            int Id, 
+            [FromQuery] DateTime? FechaDesde, 
+            [FromQuery] DateTime? FechaHasta, 
+            [FromQuery] int? Id_Inquilino, 
+            [FromQuery] decimal? Monto_Alquiler
+            )
         {
             try
             {
@@ -84,6 +90,8 @@ namespace InmobiliariaCA.Controllers
                     FechaHasta = DateTime.Today;
 
                 ViewBag.Inmuebles = GetInmueblesDisponibles(FechaDesde.Value, FechaHasta.Value);
+                ContratoViewModel model = new ContratoViewModel();
+
                 if (Id == 0)
                 {
                     var contratoViewModerl = new ContratoAltaEditarViewModel();
@@ -91,11 +99,12 @@ namespace InmobiliariaCA.Controllers
                     contratoViewModerl.Fecha_Hasta = FechaHasta.Value;
                     contratoViewModerl.Id_Inquilino = Id_Inquilino.HasValue ? Id_Inquilino.Value : 0;
                     contratoViewModerl.Monto_Alquiler = Monto_Alquiler.HasValue ? Monto_Alquiler.Value : 0;
-                    return View(contratoViewModerl);
+                    model.ContratoAltaEditarViewModel = contratoViewModerl;
+                }else {
+                    model.Contrato =_repositorioContrato.GetContrato(Id, null) ?? new Contrato();
                 }
-
-                var contrato = _repositorioContrato.GetContrato(Id, null);
-                return View(contrato);
+                
+                return View(model);
             }
             catch (Exception ex)
             {
@@ -184,7 +193,7 @@ namespace InmobiliariaCA.Controllers
                 return View();
             }
         }
-
+        
         public IActionResult TerminarContrato(int Id)
         {
             try
@@ -207,6 +216,7 @@ namespace InmobiliariaCA.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "administrador")]
         public IActionResult FinalizarContrato(Contrato contrato)
         {
             try
@@ -237,6 +247,57 @@ namespace InmobiliariaCA.Controllers
             }
         }
 
+        public IActionResult RenovarContrato(int Id) {
+            try {
+                var contrato = _repositorioContrato.GetContrato(Id, null);
+                if (contrato == null) {
+                    return NotFound("El contrato solicitado no existe.");
+                }
+
+                return View("RenovarContrato", contrato);
+            } catch (Exception ex) {
+                _logger.LogError("An error occurred while getting contract: {Error}", ex.Message);
+
+                TempData["ErrorMessage"] = ex.Message;
+                return View();
+            }
+        }
+
+        [HttpPost]
+        [Authorize(Policy = "administrador")]
+        public IActionResult RenovarContrato(Contrato contrato) {
+            try {
+                var contratoDb = _repositorioContrato.GetContrato(contrato.Id, null);
+                var IdUser = User.FindFirst("Id");
+
+                if (contratoDb == null) {
+                    return NotFound("El contrato solicitado no existe.");
+                }
+                //--Renoovacion del contrato, con el ID del contrato viejo
+                contratoDb.Fecha_Desde = contrato.Fecha_Desde;
+                contratoDb.Fecha_Hasta = contrato.Fecha_Hasta;
+                contratoDb.Monto_Alquiler = contrato.Monto_Alquiler;
+                contratoDb.Estado = EstadoContrato.Vigente;
+                contratoDb.Fecha_Finalizacion_Anticipada= null;
+                contratoDb.Multa = null;
+                contratoDb.Pagado = false;
+                contratoDb.Cantidad_Cuotas = contratoDb.CantidadCuotas();
+                contratoDb.Cuotas_Pagas = 0;
+                contratoDb.Id_Usuario_Finalizacion = null;               
+                contratoDb.Id_Usuario_Creacion = IdUser != null ? int.Parse(IdUser.Value) : 0;
+
+                _repositorioContrato.InsertarContrato(contratoDb);
+
+                TempData["SuccessMessage"] = "Contrato Renovado correctamente.";
+                return RedirectToAction("Index");
+            } catch (Exception ex) {
+                _logger.LogError("An error occurred while getting contract: {Error}", ex.Message);
+
+                TempData["ErrorMessage"] = ex.Message;
+                return RedirectToAction("Index");
+            }
+        }
+        
         private IEnumerable<Inquilino> GetInquilinos()
         {
             return _repositorioInquilino.GetInquilinos();
@@ -253,5 +314,6 @@ namespace InmobiliariaCA.Controllers
         {
             return _repositorioInmueble.GetInmueblesDisponiblesPorFecha(fechaDesde, fechaHasta);
         }
+    
     }
 }
