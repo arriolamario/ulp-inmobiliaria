@@ -99,18 +99,17 @@ namespace InmobiliariaCA.Controllers
                     FechaHasta = DateTime.Today;
 
                 ViewBag.Inmuebles = GetInmueblesDisponibles(FechaDesde.Value, FechaHasta.Value);
-                ContratoViewModel model = new ContratoViewModel();
-
+                ContratoAltaEditarViewModel model = new ContratoAltaEditarViewModel();
                 if (Id == 0)
                 {
-                    var contratoViewModerl = new ContratoAltaEditarViewModel();
-                    contratoViewModerl.Fecha_Desde = FechaDesde.Value;
-                    contratoViewModerl.Fecha_Hasta = FechaHasta.Value;
-                    contratoViewModerl.Id_Inquilino = Id_Inquilino.HasValue ? Id_Inquilino.Value : 0;
-                    contratoViewModerl.Monto_Alquiler = Monto_Alquiler.HasValue ? Monto_Alquiler.Value : 0;
-                    model.ContratoAltaEditarViewModel = contratoViewModerl;
+                    model.Fecha_Desde = FechaDesde.Value;
+                    model.Fecha_Hasta = FechaHasta.Value;
+                    model.Id_Inquilino = Id_Inquilino.HasValue ? Id_Inquilino.Value : 0;
+                    model.Monto_Alquiler = Monto_Alquiler.HasValue ? Monto_Alquiler.Value : 0;
                 }else {
-                    model.Contrato =_repositorioContrato.GetContrato(Id, null) ?? new Contrato();
+                    var contrato = _repositorioContrato.GetContrato(Id, null);
+                    model = new ContratoAltaEditarViewModel(contrato ?? new Contrato());
+    
                 }
                 
                 return View(model);
