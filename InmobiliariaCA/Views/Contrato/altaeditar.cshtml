@@ -1,7 +1,7 @@
-@model InmobiliariaCA.Models.ContratoModels.ContratoAltaEditarViewModel
+@model InmobiliariaCA.Models.ContratoModels.ContratoViewModel
 
 @{
-    ViewData["Title"] = Model == null || Model.Id == 0 ? "Crear Contrato" : "Editar Contrato";
+    ViewData["Title"] = Model == null || Model.Contrato.Id == 0 ? "Crear Contrato" : "Editar Contrato";
     System.Globalization.CultureInfo culturaArgentina = new System.Globalization.CultureInfo("es-AR");
     List<Inmueble> inmuebles = ViewBag.Inmuebles != null ? ViewBag.Inmuebles : new List<Inmueble>();
 }
@@ -17,14 +17,14 @@
                 <h2>Buscar inmueble disponible</h2>
                 <div class="row mb-3 container p-3 bg-light rounded shadow-sm">
                     <div class="col-md-5">
-                        <label asp-for="Fecha_Desde" class="form-label"><i class="fas fa-calendar-alt"></i> Fecha Desde</label>
-                        <input asp-for="Fecha_Desde" type="date" class="form-control" />
-                        <span asp-validation-for="Fecha_Desde" class="text-danger"></span>
+                        <label asp-for="Contrato.Fecha_Desde" class="form-label"><i class="fas fa-calendar-alt"></i> Fecha Desde</label>
+                        <input asp-for="Contrato.Fecha_Desde" id="Fecha_Desde" type="date" class="form-control" min="@DateTime.Now.ToString("yyyy-MM-dd")" required />
+                        <span asp-validation-for="Contrato.Fecha_Desde" class="text-danger"></span>
                     </div>
                     <div class="col-md-5">
-                        <label asp-for="Fecha_Hasta" class="form-label"><i class="fas fa-calendar-alt"></i> Fecha Hasta</label>
-                        <input asp-for="Fecha_Hasta" type="date" class="form-control" />
-                        <span asp-validation-for="Fecha_Hasta" class="text-danger"></span>
+                        <label asp-for="Contrato.Fecha_Hasta" class="form-label"><i class="fas fa-calendar-alt"></i> Fecha Hasta</label>
+                        <input asp-for="Contrato.Fecha_Hasta" id="Fecha_Hasta" type="date" class="form-control" />
+                        <span asp-validation-for="Contrato.Fecha_Hasta" class="text-danger"></span>
                     </div>
                     <div class="col-md-2">
                         <button id="btnBuscarInmueble" class="btn btn-info btn-sm mx-1 shadow-sm">Buscar</button>
@@ -35,22 +35,22 @@
                     <div class="col-md-6">
                         <div class="form-floating">
                             <label for="Id_Inquilino"><i class="fas fa-user"></i> Inquilino</label>
-                            @Html.DropDownListFor(m => m.Id_Inquilino, (SelectList)ViewBag.Inquilinos, "Seleccione un Inquilino", new { @class = "form-select", @required = "required", id = "Id_Inquilino" })
-                            <span asp-validation-for="Id_Inquilino" class="text-danger"></span>
+                            @Html.DropDownListFor(m => m.Contrato.Id_Inquilino, (SelectList)ViewBag.Inquilinos, "Seleccione un Inquilino", new { @class = "form-select", @required = "required", id = "Id_Inquilino" })
+                            <span asp-validation-for="Contrato.Id_Inquilino" class="text-danger"></span>
                         </div>
                     </div>
                 </div>
 
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <label asp-for="Monto_Alquiler" class="form-label"><i class="fas fa-money-bill"></i> Monto del Alquiler</label>
-                        <input asp-for="Monto_Alquiler" class="form-control" placeholder="Ingrese el monto del alquiler" type="number" step="0.01" />
-                        <span asp-validation-for="Monto_Alquiler" class="text-danger"></span>
+                        <label asp-for="Contrato.Monto_Alquiler" class="form-label"><i class="fas fa-money-bill"></i> Monto del Alquiler</label>
+                        <input asp-for="Contrato.Monto_Alquiler" class="form-control" placeholder="Ingrese el monto del alquiler" type="number" step="0.01" />
+                        <span asp-validation-for="Contrato.Monto_Alquiler" class="text-danger"></span>
                     </div>
                 </div>
 
-                <input type="hidden" asp-for="Id" />
-                <input type="hidden" asp-for="Id_Inmueble" />
+                <input type="hidden" asp-for="Contrato.Id" />
+                <input type="hidden" asp-for="Contrato.Id_Inmueble" />
                 <div class="row mt-4">
                     @if (inmuebles.Any())
                     {
@@ -65,9 +65,10 @@
                                             <strong>Precio:</strong> 
                                             <span class="text-success">@inmueble.Precio.ToString("C", culturaArgentina)</span>
                                         </p>
-                                        <div class="form-check">
+                                       <div class="form-check">
                                             <input type="hidden" id="valor_inmueble_@inmueble.Id" value="@inmueble.Precio" />
-                                            <input type="radio" class="form-check-input" name="selectedInmueble" id="inmueble_@inmueble.Id" value="@inmueble.Id">
+                                            <input type="radio" id="Id_Inmueble" class="form-check-input" name="selectedInmueble" id="inmueble_@inmueble.Id" value="@inmueble.Id"
+                                                @(Model?.Contrato.Id_Inmueble == inmueble.Id ? "checked" : "")>
                                             <label class="form-check-label" for="inmueble_@inmueble.Id">Seleccionar este inmueble</label>
                                         </div>
                                     </div>
@@ -88,7 +89,7 @@
                         <i class="fas fa-arrow-left"></i> Volver a la Lista
                     </a>
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> @(Model == null || Model.Id == 0 ? "Registrar" : "Actualizar")
+                        <i class="fas fa-save"></i> @(Model == null || Model.Contrato.Id == 0 ? "Registrar" : "Actualizar")
                     </button>
                 </div>
             </form>
@@ -97,9 +98,6 @@
 </div>
 
 @section Scripts {
-    @* <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script> *@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
     <script
         src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
