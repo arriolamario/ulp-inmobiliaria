@@ -5,6 +5,19 @@ using System.Globalization;
 
 namespace InmobiliariaCA.Models.ContratoModels;
 public class ContratoAltaEditarViewModel {
+
+
+    public ContratoAltaEditarViewModel() { }
+
+    public ContratoAltaEditarViewModel(Contrato contrato) {
+        Id = contrato.Id;
+        Id_Inmueble = contrato.Id_Inmueble;
+        Id_Inquilino = contrato.Id_Inquilino;
+        Monto_Alquiler = contrato.Monto_Alquiler;
+        Fecha_Desde = contrato.Fecha_Desde;
+        Fecha_Hasta = contrato.Fecha_Hasta;
+        Id_Usuario_Creacion = contrato.Id_Usuario_Creacion;
+    }
     [Key]
     public int Id { get; set; }
 
