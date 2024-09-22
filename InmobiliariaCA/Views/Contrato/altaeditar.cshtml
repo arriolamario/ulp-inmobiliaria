@@ -12,19 +12,10 @@
             <h2>@ViewData["Title"]</h2>
         </div>
         <div class="card-body">
-            <form asp-action="CrearActualizar">
+            <form asp-action="CrearActualizar" >
                 <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <div class="form-floating">
-                            <label for="Id_Inquilino"><i class="fas fa-user"></i> Inquilino</label>
-                            @Html.DropDownListFor(m => m.Id_Inquilino, (SelectList)ViewBag.Inquilinos, "Seleccione un Inquilino", new { @class = "form-select", @required = "required", id = "Id_Inquilino" })
-                            <span asp-validation-for="Id_Inquilino" class="text-danger"></span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row mb-3">
+                <h2>Buscar inmueble disponible</h2>
+                <div class="row mb-3 container p-3 bg-light rounded shadow-sm">
                     <div class="col-md-5">
                         <label asp-for="Contrato.Fecha_Desde" class="form-label"><i class="fas fa-calendar-alt"></i> Fecha Desde</label>
                         <input asp-for="Contrato.Fecha_Desde" id="Fecha_Desde" type="date" class="form-control" min="@DateTime.Now.ToString("yyyy-MM-dd")" required />

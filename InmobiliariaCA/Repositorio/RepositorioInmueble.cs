@@ -1,15 +1,21 @@
 namespace InmobiliariaCA.Repositorio;
+
+using System.Data;
 using InmobiliariaCA.Models;
+using MySql.Data.MySqlClient;
 
 public class RepositorioInmueble : RepositorioBase, IRepositorioInmueble
 {
     private IRepositorioPropietario _repositorioPropietario;
     private IRepositorioTipos _repositorioTipos;
+    private readonly ILogger<RepositorioInmueble> _logger;
     public RepositorioInmueble(
         IConfiguration configuration, 
         IRepositorioPropietario repositorioPropietario, 
-        IRepositorioTipos repositorioTipos) : base(configuration)
+        IRepositorioTipos repositorioTipos,
+        ILogger<RepositorioInmueble> logger) : base(configuration)
     {
+        _logger = logger;
         _repositorioPropietario = repositorioPropietario;
         _repositorioTipos = repositorioTipos;
     }
@@ -236,55 +242,72 @@ public class RepositorioInmueble : RepositorioBase, IRepositorioInmueble
             return resultInmuebles;
     }
 
-    public Inmueble? GetInmueble(int Id) {
+    public Inmueble? GetInmueble(int Id, MySqlTransaction? transaction) {
         Inmueble? result = null;
-        string query = @$"select {nameof(Inmueble.Id)}, 
-                                {nameof(Inmueble.Direccion)},
-                                {nameof(Inmueble.Id_Tipo_Inmueble_Uso)},
-                                {nameof(Inmueble.Id_Tipo_Inmueble)},
-                                {nameof(Inmueble.Ambientes)},
-                                {nameof(Inmueble.Coordenada_Lat)}, 
-                                {nameof(Inmueble.Coordenada_Lon)}, 
-                                {nameof(Inmueble.Precio)},
-                                {nameof(Inmueble.Id_Propietario)},
-                                {nameof(Inmueble.Fecha_Creacion)},
-                                {nameof(Inmueble.Fecha_Actualizacion)},
-                                {nameof(Inmueble.Activo)}		
-                                from inmueble where {nameof(Inmueble.Id)} = @{nameof(Inmueble.Id)};";
+        using var connection = transaction != null ? transaction.Connection : GetConnection();
 
-        result = this.ExecuteReader<Inmueble>(query, (parameters) => {
-            parameters.AddWithValue($"@{nameof(Inmueble.Id)}", Id);
-        },  (reader) =>  {
-            return new Inmueble()
-            {
-                Id = int.Parse(reader[nameof(Inmueble.Id)].ToString() ?? "0"),
-                Direccion = reader["direccion"].ToString() ?? "",
-                Id_Tipo_Inmueble_Uso = int.Parse(reader[nameof(Inmueble.Id_Tipo_Inmueble_Uso)].ToString() ?? "0"),
-                Id_Tipo_Inmueble = int.Parse(reader[nameof(Inmueble.Id_Tipo_Inmueble)].ToString() ?? "0"),
-                Ambientes = int.Parse(reader[nameof(Inmueble.Ambientes)].ToString() ?? "0"),
-                Coordenada_Lat = reader[nameof(Inmueble.Coordenada_Lat)].ToString() ?? "0",
-                Coordenada_Lon = reader[nameof(Inmueble.Coordenada_Lon)].ToString() ?? "0",
-                Precio = decimal.Parse(reader[nameof(Inmueble.Precio)].ToString() ?? "0"),
-                Id_Propietario = int.Parse(reader[nameof(Inmueble.Id_Propietario)].ToString() ?? "0"),
-                Fecha_Creacion = DateTime.Parse(reader[nameof(Inmueble.Fecha_Creacion)].ToString() ?? "0"),
-                Fecha_Actualizacion = DateTime.Parse(reader[nameof(Inmueble.Fecha_Actualizacion)].ToString() ?? "0"),
-                Activo = bool.Parse(reader[nameof(Inmueble.Activo)].ToString() ?? "0")
-            };
-        }); 
-
-        List<int> propietariosIds = new List<int>();
-        if (result != null) propietariosIds.Add(result.Id_Propietario);
-
-        var propietarios = _repositorioPropietario.GetPropietarios(propietariosIds);
-        var tiposInmuebles = _repositorioTipos.GetTipoInmuebles();
-        var tiposInmueblesUsos = _repositorioTipos.GetTipoInmueblesUsos();
-        if(result != null){
-            result.Propietario = propietarios.FirstOrDefault(y => y.Id == result.Id_Propietario) ?? new Propietario();
-            result.Tipo = tiposInmuebles.FirstOrDefault(y => y.Id == result.Id_Tipo_Inmueble);
-            result.Tipo_Uso = tiposInmueblesUsos.FirstOrDefault(y => y.Id == result.Id_Tipo_Inmueble_Uso);
-
+        if(transaction == null){        
+            using var transactionNew = BeginTransaction(connection);
+            transaction = transactionNew;
         }
-        return result;
+
+        try {
+            string query = @$"select {nameof(Inmueble.Id)}, 
+                                    {nameof(Inmueble.Direccion)},
+                                    {nameof(Inmueble.Id_Tipo_Inmueble_Uso)},
+                                    {nameof(Inmueble.Id_Tipo_Inmueble)},
+                                    {nameof(Inmueble.Ambientes)},
+                                    {nameof(Inmueble.Coordenada_Lat)}, 
+                                    {nameof(Inmueble.Coordenada_Lon)}, 
+                                    {nameof(Inmueble.Precio)},
+                                    {nameof(Inmueble.Id_Propietario)},
+                                    {nameof(Inmueble.Fecha_Creacion)},
+                                    {nameof(Inmueble.Fecha_Actualizacion)},
+                                    {nameof(Inmueble.Activo)}		
+                                    from inmueble where {nameof(Inmueble.Id)} = @{nameof(Inmueble.Id)};";
+
+            result = this.ExecuteReader<Inmueble>(query, (parameters) => {
+                parameters.AddWithValue($"@{nameof(Inmueble.Id)}", Id);
+            },  (reader) =>  {
+                return new Inmueble()
+                {
+                    Id = int.Parse(reader[nameof(Inmueble.Id)].ToString() ?? "0"),
+                    Direccion = reader["direccion"].ToString() ?? "",
+                    Id_Tipo_Inmueble_Uso = int.Parse(reader[nameof(Inmueble.Id_Tipo_Inmueble_Uso)].ToString() ?? "0"),
+                    Id_Tipo_Inmueble = int.Parse(reader[nameof(Inmueble.Id_Tipo_Inmueble)].ToString() ?? "0"),
+                    Ambientes = int.Parse(reader[nameof(Inmueble.Ambientes)].ToString() ?? "0"),
+                    Coordenada_Lat = reader[nameof(Inmueble.Coordenada_Lat)].ToString() ?? "0",
+                    Coordenada_Lon = reader[nameof(Inmueble.Coordenada_Lon)].ToString() ?? "0",
+                    Precio = decimal.Parse(reader[nameof(Inmueble.Precio)].ToString() ?? "0"),
+                    Id_Propietario = int.Parse(reader[nameof(Inmueble.Id_Propietario)].ToString() ?? "0"),
+                    Fecha_Creacion = DateTime.Parse(reader[nameof(Inmueble.Fecha_Creacion)].ToString() ?? "0"),
+                    Fecha_Actualizacion = DateTime.Parse(reader[nameof(Inmueble.Fecha_Actualizacion)].ToString() ?? "0"),
+                    Activo = bool.Parse(reader[nameof(Inmueble.Activo)].ToString() ?? "0")
+                };
+            }); 
+
+            List<int> propietariosIds = new List<int>();
+            if (result != null) propietariosIds.Add(result.Id_Propietario);
+
+            var propietarios = _repositorioPropietario.GetPropietarios(propietariosIds);
+            var tiposInmuebles = _repositorioTipos.GetTipoInmuebles();
+            var tiposInmueblesUsos = _repositorioTipos.GetTipoInmueblesUsos();
+            if(result != null){
+                result.Propietario = propietarios.FirstOrDefault(y => y.Id == result.Id_Propietario) ?? new Propietario();
+                result.Tipo = tiposInmuebles.FirstOrDefault(y => y.Id == result.Id_Tipo_Inmueble);
+                result.Tipo_Uso = tiposInmueblesUsos.FirstOrDefault(y => y.Id == result.Id_Tipo_Inmueble_Uso);
+
+            }
+            return result;
+        } catch (Exception ex) {
+            _logger.LogError("Error: {Error}", ex.Message);
+            if (connection.State != ConnectionState.Open) {
+                _logger.LogError("La conexión se ha cerrado inesperadamente.");
+            } else {
+                transaction.Rollback();
+            }
+            throw;      
+        }
     }
 
     public bool BajaInmueble(int id) {
