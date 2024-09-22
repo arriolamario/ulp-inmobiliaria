@@ -26,10 +26,10 @@
                 <dd class="col-sm-9">@Model.Inquilino?.Nombre @Model.Inquilino?.NombreCompletoDNI</dd>
 
                 <dt class="col-sm-3">Fecha Desde</dt>
-                <dd class="col-sm-9">@Model.Fecha_Desde</dd>
+                <dd class="col-sm-9">@Model.Fecha_Desde.ToString("dd/MM/yyyy")</dd>
 
                 <dt class="col-sm-3">Fecha Hasta</dt>
-                <dd class="col-sm-9">@Model.Fecha_Hasta</dd>
+                <dd class="col-sm-9">@Model.Fecha_Hasta.ToString("dd/MM/yyyy")</dd>
 
                 <dt class="col-sm-3">Monto Alquiler</dt>
                 <dd class="col-sm-9">$@Model.Monto_Alquiler.ToString("N2")</dd>
@@ -62,14 +62,13 @@
         </div>
         <div class="card-footer d-flex justify-content-between">
             <div>
-                <a href="@Url.Action(Model.PagosCompletos() ? "RenovarContrato" : "TerminarContrato", "Contrato", new { id = Model.Id })"
-                    class="btn @(Model.PagosCompletos() || Model.EsFinalizado() ? "btn-success" : "btn-danger")">
-                    @(Model.PagosCompletos() || Model.EsFinalizado() ? "Renovar Contrato" : "Terminar Contrato")
+                <a href="@Url.Action(Model.EsFinalizado() ? "RenovarContrato" : "TerminarContrato", "Contrato", new { id = Model.Id })" 
+                class="btn @(Model.EsFinalizado() ? "btn-success" : "btn-danger")">
+                    @(Model.EsFinalizado() ? "Renovar Contrato" : "Terminar Contrato")
                 </a>
             </div>
             <div>
-                @if (!Model.PagosCompletos())
-                {
+                @if (!Model.EsFinalizado() ) {
                     <button type="button" class="btn btn-success" data-toggle="modal" data-target="#pagoModal">
                         Pagar
                     </button>
@@ -166,17 +165,28 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="pagoModalLabel">Realizar Pago</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form id="formPago" action="@Url.Action("CrearActualizar", "Pago")" method="post"
-                onsubmit="return validarFormularioPago();">
-                <div class="modal-body">
-                    <input type="hidden" name="Contrato_Id" value="@Model.Id">
-                    <div class="mb-3">
-                        <label for="Numero_Pago" class="form-label">Número de Pago</label>
-                        <input type="number" class="form-control" id="Numero_Pago" name="Numero_Pago"
-                            value="@ViewBag.NumeroPago" readonly>
+                    <h5 class="modal-title" id="pagoModalLabel">Realizar Pago</h5>
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                </div>                
+                <form id="formPago" action="@Url.Action("CrearActualizar", "Pago")" method="post" onsubmit="return validarFormularioPago();">
+                    <div class="modal-body">
+                        <input type="hidden" name="Contrato_Id" value="@Model.Id">
+                        <div class="mb-3">
+                            <label for="Numero_Pago" class="form-label">Número de Pago</label>
+                            <input type="number" class="form-control" id="Numero_Pago" name="Numero_Pago" value="@ViewBag.NumeroPago" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="Fecha_Pago" class="form-label">Fecha de Pago</label>
+                            <input type="date" class="form-control" id="Fecha_Pago" name="Fecha_Pago" min="@DateTime.Now.ToString("yyyy-MM-dd")" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="Detalle" class="form-label">Detalle</label>
+                            <input type="text" class="form-control" id="Detalle" name="Detalle" value="@($"Pago {Model.Cuotas_Pagas + 1}")" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="Importe" class="form-label">Monto del Alquiler</label>
+                            <input type="text" class="form-control" id="Importe" name="Importe" value="@Model.Monto_Alquiler" readonly>
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label for="Fecha_Pago" class="form-label">Fecha de Pago</label>

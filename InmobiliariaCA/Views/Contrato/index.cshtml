@@ -66,7 +66,7 @@
                 <div class="col-12 mb-4">
                     <div class="card shadow-sm">
                         <div class="card-body">
-                            <h5 class="card-title text-white p-2" style="background-color: @(contrato.PagosCompletos() || contrato.EsFinalizado() ? "#f26060" : "#2d94f5");">Nro Contrato: @contrato.Id</h5>                            
+                            <h5 class="card-title text-white p-2" style="background-color: @(contrato.EsFinalizado() ? "#f26060" : "#2d94f5");">Nro Contrato: @contrato.Id</h5>                            
                             <p class="card-text"><strong>Inmueble:</strong> @contrato.Inmueble?.NombreInmueble</p>
                             <p class="card-text"><strong>Inquilino:</strong> @contrato.Inquilino?.NombreCompletoDNI</p>
                             <p class="card-text"><strong>Fecha Desde:</strong> @contrato.Fecha_Desde.ToShortDateString()</p>

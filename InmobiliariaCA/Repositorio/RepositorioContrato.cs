@@ -109,8 +109,8 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato {
             };
 
             // Cargar los objetos Inmueble e Inquilino usando sus IDs
-            // contrato.Inmueble = _repositorioInmueble.GetInmueble(contrato.Id_Inmueble) ?? throw new InvalidOperationException("Inmueble no se encuentra");
-            contrato.Inquilino = _repositorioInquilino.GetInquilino(contrato.Id_Inquilino) ?? throw new InvalidOperationException("Inquilino no se encuentra");
+            contrato.Inmueble = _repositorioInmueble.GetInmueble(Id_Inmueble, null) ?? throw new InvalidOperationException("Inmueble no se encuentra");
+            contrato.Inquilino = _repositorioInquilino.GetInquilino(contrato.Id_Inquilino, null) ?? throw new InvalidOperationException("Inquilino no se encuentra");
             contrato.Estado = contrato.PagosCompletos() ? EstadoContrato.Finalizado : contrato.Estado;
 
             return contrato;
@@ -195,20 +195,20 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato {
                                 @{nameof(Contrato.Cantidad_Cuotas)});
                             SELECT LAST_INSERT_ID();";
 
-        int result = this.ExecuteScalar(query, (parameters) => {
-            parameters.AddWithValue($"@{nameof(Contrato.Id_Inmueble)}", contrato.Id_Inmueble);
-            parameters.AddWithValue($"@{nameof(Contrato.Id_Inquilino)}", contrato.Id_Inquilino);
-            parameters.AddWithValue($"@{nameof(Contrato.Fecha_Desde)}", contrato.Fecha_Desde);
-            parameters.AddWithValue($"@{nameof(Contrato.Fecha_Hasta)}", contrato.Fecha_Hasta);
-            parameters.AddWithValue($"@{nameof(Contrato.Monto_Alquiler)}", contrato.Monto_Alquiler);
-            parameters.AddWithValue($"@{nameof(Contrato.Fecha_Finalizacion_Anticipada)}", (object?)contrato.Fecha_Finalizacion_Anticipada ?? DBNull.Value);
-            parameters.AddWithValue($"@{nameof(Contrato.Multa)}", (object?)contrato.Multa ?? DBNull.Value);
-            parameters.AddWithValue($"@{nameof(Contrato.Id_Usuario_Creacion)}", 1);//contrato.Id_Usuario_Creacion);
-            parameters.AddWithValue($"@{nameof(Contrato.Id_Usuario_Finalizacion)}", (object?)contrato.Id_Usuario_Finalizacion ?? DBNull.Value);// (object?)contrato.Id_Usuario_Finalizacion ?? DBNull.Value);
-            parameters.AddWithValue($"@{nameof(Contrato.Fecha_Creacion)}", contrato.Fecha_Creacion);
-            parameters.AddWithValue($"@{nameof(Contrato.Fecha_Actualizacion)}", contrato.Fecha_Actualizacion);
-            parameters.AddWithValue($"@{nameof(Contrato.Cantidad_Cuotas)}", CantidadCuotas(contrato));
-        });
+            int result = this.ExecuteNonQuery(query, (parameters) => {
+                parameters.AddWithValue($"@{nameof(Contrato.Id_Inmueble)}", contrato.Id_Inmueble);
+                parameters.AddWithValue($"@{nameof(Contrato.Id_Inquilino)}", contrato.Id_Inquilino);
+                parameters.AddWithValue($"@{nameof(Contrato.Fecha_Desde)}", contrato.Fecha_Desde);
+                parameters.AddWithValue($"@{nameof(Contrato.Fecha_Hasta)}", contrato.Fecha_Hasta);
+                parameters.AddWithValue($"@{nameof(Contrato.Monto_Alquiler)}", contrato.Monto_Alquiler);
+                parameters.AddWithValue($"@{nameof(Contrato.Fecha_Finalizacion_Anticipada)}", (object?)contrato.Fecha_Finalizacion_Anticipada ?? DBNull.Value);
+                parameters.AddWithValue($"@{nameof(Contrato.Multa)}", (object?)contrato.Multa ?? DBNull.Value);
+                parameters.AddWithValue($"@{nameof(Contrato.Id_Usuario_Creacion)}", contrato.Id_Usuario_Creacion);
+                parameters.AddWithValue($"@{nameof(Contrato.Id_Usuario_Finalizacion)}", (object?)contrato.Id_Usuario_Finalizacion ?? DBNull.Value);// (object?)contrato.Id_Usuario_Finalizacion ?? DBNull.Value);
+                parameters.AddWithValue($"@{nameof(Contrato.Fecha_Creacion)}", contrato.Fecha_Creacion);
+                parameters.AddWithValue($"@{nameof(Contrato.Fecha_Actualizacion)}", contrato.Fecha_Actualizacion);
+                parameters.AddWithValue($"@{nameof(Contrato.Cantidad_Cuotas)}", contrato.CantidadCuotas());
+            });
 
         return result;
     }
@@ -268,7 +268,7 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato {
                                 AND {nameof(Contrato.Cuotas_Pagas)} < {nameof(Contrato.Cantidad_Cuotas)};";
             Console.WriteLine("Id Query: " + query);           
             int result = this.ExecuteNonQuery(query, (parameters) => {
-                parameters.AddWithValue($"@{nameof(Contrato.Pagado)}", contrato.EsFinalizado() || contrato.PagosCompletos());
+                parameters.AddWithValue($"@{nameof(Contrato.Pagado)}", contrato.EsFinalizado());
                 parameters.AddWithValue($"@{nameof(Contrato.Estado)}", contrato.Estado.ToString());
                 parameters.AddWithValue($"@{nameof(Contrato.Id)}", Id);
             });
@@ -308,11 +308,6 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato {
             if (filter.Estado.HasValue)
                 query.Append($" AND Estado = '{filter.Estado}'");
 
-            // if (filter.FechaDesde.HasValue)
-            //     query.Append($" AND Fecha_Desde >= '{filter.FechaDesde.Value.ToString("yyyy-MM-dd")}'");
-
-            // if (filter.FechaHasta.HasValue)
-            //     query.Append($" AND Fecha_Hasta <= '{filter.FechaHasta.Value.ToString("yyyy-MM-dd")}'"); //DESDE -> CONSULTAR PROFE
             if (filter.FechaDesde_Inicio.HasValue)
                 query.Append($" AND Fecha_Desde >= '{filter.FechaDesde_Inicio.Value.ToString("yyyy-MM-dd")}'");
 
@@ -357,11 +352,5 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato {
              _logger.LogError("Hubo un error al updatear contrato: {Error}", ex.Message);
             throw new Exception("Error al actualizar el contrato. Contacte con el administrador.");
         }
-    }
-
-    private int CantidadCuotas(Contrato contrato) {
-
-        int meses = ((contrato.Fecha_Hasta.Year - contrato.Fecha_Desde.Year) * 12) + contrato.Fecha_Hasta.Month - contrato.Fecha_Desde.Month;
-        return Math.Max(meses, 1);
-    }
+    }    
 }

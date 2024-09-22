@@ -98,6 +98,11 @@ public class Contrato {
 
     public bool PagosCompletos() => Cantidad_Cuotas == Cuotas_Pagas;
 
-    public bool EsFinalizado() => EstadoContrato.Finalizado == Estado;
+    public bool EsFinalizado() => this.PagosCompletos() || EstadoContrato.Finalizado == Estado;
+
+    public int CantidadCuotas() {
+        int meses = ((Fecha_Hasta.Year - Fecha_Desde.Year) * 12) + Fecha_Hasta.Month - Fecha_Desde.Month;
+        return Math.Max(meses, 1);
+    }
 
 }

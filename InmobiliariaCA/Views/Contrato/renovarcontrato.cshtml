@@ -1,0 +1,93 @@
+@model InmobiliariaCA.Models.ContratoModels.Contrato
+
+@{
+    ViewData["Title"] = $"Renovar Contrato Nro: {Model.Id}";
+}
+
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h2>@ViewData["Title"]</h2>
+        </div>
+        <div class="card-body">
+            <form asp-action="RenovarContrato">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="Fecha_Desde" class="form-label">Fecha Desde</label>
+                        <input asp-for="Fecha_Desde" type="date" class="form-control"/>
+                        <span asp-validation-for="Fecha_Desde" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Fecha_Hasta" class="form-label">Fecha Hasta</label>
+                        <input asp-for="Fecha_Hasta" type="date" class="form-control"/>
+                        <span asp-validation-for="Fecha_Hasta" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="Monto_Alquiler" class="form-label">Monto del Alquiler</label>
+                        <input asp-for="Monto_Alquiler" class="form-control" type="number" readonly/>
+                        <span asp-validation-for="Monto_Alquiler" class="text-danger"></span>
+                    </div>
+                     <div class="col-md-6">
+                        <label asp-for="Inquilino" class="form-label">Inquilino</label>
+                        @if (Model.Inmueble?.Id != null) {
+                            <input asp-for="Inquilino" class="form-control" type="text" readonly 
+                                value="@Model.Inquilino?.NombreCompletoDNI"/>
+                        } else {
+                            <input asp-for="Inquilino" class="form-control" type="text" readonly 
+                                value="No Disponible"/>
+                        }                        
+                        <span asp-validation-for="Inquilino" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label asp-for="Inmueble" class="form-label">Inmueble</label>
+                        @if (Model.Inquilino?.Id != null) {
+                            <input asp-for="Inmueble" class="form-control" type="text" readonly 
+                                value="@Model.Inmueble?.NombreInmueble"/>
+                        } else{
+                            <input asp-for="Inmueble" class="form-control" type="text" readonly 
+                                value="No Disponible"/>
+                        }                        
+                        <span asp-validation-for="Inmueble" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <input type="hidden" asp-for="Id" />
+                @if (Model.Inmueble?.Id != null) {
+                    <input type="hidden" asp-for="Inmueble.Id" />
+                }
+                @if (Model.Inquilino?.Id != null) {
+                    <input type="hidden" asp-for="Inquilino.Id" />
+                }
+
+                <div class="card-footer d-flex justify-content-end">
+                    <div>
+                        <button type="submit" class="btn btn-success" style="margin-right: 5px;"> Renovar </button>
+                    </div>
+                    <div>
+                        <button onclick="window.location.href='@Url.Action("Detalle", "Contrato",new { id = Model.Id })'" class="btn btn-secondary"> Volver al Contrato </button>
+                    </div>                   
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
+    <script>
+        $(document).ready(function () {            
+            $('#id_inmueble').change(function () {
+                var precio = $(this).find('option:selected').attr('data-precio');
+                precio = precio.replace(',', '.');
+                $('#Monto_Alquiler').val(precio);
+            });            
+        });
+    </script>
+}
