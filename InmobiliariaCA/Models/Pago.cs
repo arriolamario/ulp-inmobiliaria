@@ -4,6 +4,10 @@ using System.ComponentModel.DataAnnotations;
 using InmobiliariaCA.Models.ContratoModels;
 
 public class Pago {
+    public Pago()
+    {
+        
+    }
 
     public int Id { get; set; }
 

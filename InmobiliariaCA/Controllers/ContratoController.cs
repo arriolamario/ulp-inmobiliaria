@@ -13,18 +13,21 @@ namespace InmobiliariaCA.Controllers
     {
         private IRepositorioContrato _repositorioContrato;
         private IRepositorioInquilino _repositorioInquilino;
+        private IRepositorioPago _repositorioPago;
         private IRepositorioInmueble _repositorioInmueble;
         private readonly ILogger<HomeController> _logger;
 
         public ContratoController(ILogger<HomeController> logger,
                         IRepositorioContrato repositorioContrato,
                         IRepositorioInquilino repositorioInquilino,
-                        IRepositorioInmueble repositorioInmueble)
+                        IRepositorioInmueble repositorioInmueble,
+                        IRepositorioPago repositorioPago)
         {
             _logger = logger;
             _repositorioContrato = repositorioContrato;
             _repositorioInquilino = repositorioInquilino;
             _repositorioInmueble = repositorioInmueble;
+            _repositorioPago = repositorioPago;
         }
 
         public IActionResult Index(ContratoFilter filters) {
@@ -52,8 +55,7 @@ namespace InmobiliariaCA.Controllers
         {
             try
             {
-                Random random = new Random();
-                int numeroPago = random.Next(100000, 999999);
+                int numeroPago = NroRandomPago();
                 ViewBag.NumeroPago = numeroPago;
 
                 var contrato = _repositorioContrato.GetContrato(Id, null);
@@ -232,8 +234,19 @@ namespace InmobiliariaCA.Controllers
                 contratoDb.Estado = EstadoContrato.Finalizado;
                 var IdUser = User.FindFirst("Id");
                 contratoDb.Id_Usuario_Finalizacion = IdUser != null ? int.Parse(IdUser.Value) : 0;
-
                 _repositorioContrato.ActualizarContrato(contratoDb);
+                
+                //Insertar en pagos
+                var pago = new Pago();
+                pago.Contrato_Id = contratoDb.Id;
+                pago.Numero_Pago = NroRandomPago();
+                pago.Fecha_Pago = DateTime.Now;
+                pago.Detalle = "Pago con Multa";
+                pago.Importe = contratoDb.Monto_Alquiler + (contratoDb.Multa ?? 0);
+                pago.Estado = EstadoPago.Anulado;
+                pago.Fecha_Anulacion = contratoDb.Fecha_Finalizacion_Anticipada ?? DateTime.Now;
+
+                _repositorioPago.InsertarPago(pago, null);
 
                 TempData["SuccessMessage"] = "Contrato Finalizado correctamente.";
                 return RedirectToAction("Index");
@@ -313,6 +326,13 @@ namespace InmobiliariaCA.Controllers
         private IEnumerable<Inmueble> GetInmueblesDisponibles(DateTime fechaDesde, DateTime fechaHasta)
         {
             return _repositorioInmueble.GetInmueblesDisponiblesPorFecha(fechaDesde, fechaHasta);
+        }
+
+        private static int NroRandomPago() 
+        {
+            Random random = new Random();
+            int numeroPago = random.Next(100000, 999999);
+            return numeroPago;
         }
     
     }
