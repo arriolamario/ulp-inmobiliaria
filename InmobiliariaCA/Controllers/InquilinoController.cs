@@ -27,7 +27,7 @@ public class InquilinoController: Controller {
     }
 
     public IActionResult Detalle(int Id) {
-        var inquilino = _repositorioInquilino.GetInquilino(Id);
+        var inquilino = _repositorioInquilino.GetInquilino(Id, null);
         if(inquilino == null) {
             return NotFound();
         }
@@ -37,7 +37,7 @@ public class InquilinoController: Controller {
         if (Id == 0)
             return View();
 
-        return View(_repositorioInquilino.GetInquilino(Id));
+        return View(_repositorioInquilino.GetInquilino(Id, null));
     }
 
     [HttpPost]
