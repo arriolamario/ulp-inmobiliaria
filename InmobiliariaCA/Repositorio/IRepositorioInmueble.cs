@@ -10,7 +10,7 @@ public interface IRepositorioInmueble
     List<Inmueble> GetInmuebles(bool Activo);
     List<Inmueble> GetInmuebles(int IdPropietario);
     List<Inmueble> GetInmueblesSinUso();
-    Inmueble? GetInmueble(int Id, MySqlTransaction? transaction);
+    Inmueble? GetInmueble(int Id,  MySqlTransaction? transaction);
     bool BajaInmueble(int Id);
     bool ActualizarInmueble(Inmueble Inmueble);
     bool EsInmuebleDisponible(int IdInmueble, DateTime FechaDesde, DateTime FechaHasta);

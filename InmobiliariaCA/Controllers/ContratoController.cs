@@ -59,12 +59,19 @@ namespace InmobiliariaCA.Controllers
                 ViewBag.NumeroPago = numeroPago;
 
                 var contrato = _repositorioContrato.GetContrato(Id, null);
+
                 if (contrato == null)
                 {
                     return NotFound();
                 }
 
-                return View(contrato);
+                List<Pago> pagos = _repositorioPago.GetPagosContrato(contrato.Id);
+
+                ContratoDetalleViewModel viewModel = new ContratoDetalleViewModel(contrato);
+
+                viewModel.Pagos = pagos;
+
+                return View(viewModel);
             }
             catch (Exception ex)
             {

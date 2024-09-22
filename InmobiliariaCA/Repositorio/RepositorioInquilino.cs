@@ -7,7 +7,6 @@ using System.Data;
 
 public class RepositorioInquilino : RepositorioBase, IRepositorioInquilino
 {
-
     private readonly ILogger<RepositorioInmueble> _logger;
     public RepositorioInquilino(IConfiguration configuration, ILogger<RepositorioInmueble> logger) : base(configuration) {
         _logger = logger;

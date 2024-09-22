@@ -50,32 +50,16 @@ namespace InmobiliariaCA.Repositorio
         {
             T? result = default;
 
-             if (transaction == null)
+            using (var connection = transaction?.Connection ?? GetConnection())
+            using (var command = new MySqlCommand(query, connection))
             {
-                using (var connection = GetConnection())
-                using (var command = new MySqlCommand(query, connection))
+                if (transaction != null) command.Transaction = transaction;
+
+                using (var reader = command.ExecuteReader())
                 {
-                    if (transaction != null) command.Transaction = transaction;
-                    using (var reader = command.ExecuteReader())
+                    if (reader.Read())
                     {
-                        if (reader.Read())
-                        {
-                            result = mapper(reader);
-                        }
-                    }
-                }
-            }else if (transaction != null && transaction.Connection != null)
-            {
-                var connection = transaction.Connection;
-                using (var command = new MySqlCommand(query, connection))
-                {
-                    if (transaction != null) command.Transaction = transaction;
-                    using (var reader = command.ExecuteReader())
-                    {
-                        if (reader.Read())
-                        {
-                            result = mapper(reader);
-                        }
+                        result = mapper(reader);
                     }
                 }
             }
@@ -87,35 +71,18 @@ namespace InmobiliariaCA.Repositorio
         {
             T? result = default;
 
-             if (transaction == null)
+            using (var connection = transaction?.Connection ?? GetConnection())
+            using (var command = new MySqlCommand(query, connection))
             {
-                using (var connection = GetConnection())
-                using (var command = new MySqlCommand(query, connection))
+                if (transaction != null) command.Transaction = transaction;
+                parameters?.Invoke(command.Parameters);
+
+                using (var reader = command.ExecuteReader())
                 {
-                    if (transaction != null) command.Transaction = transaction;
-                    parameters?.Invoke(command.Parameters);
-                    var reader = command.ExecuteReader();
-                    
                     if (reader.Read())
-                        {
-                            result = mapper(reader);
-                        }
-                    
-                }
-            }else if (transaction != null && transaction.Connection != null)
-            {
-                var connection = transaction.Connection;
-                using (var command = new MySqlCommand(query, connection))
-                {
-                    if (transaction != null) command.Transaction = transaction;
-                    parameters?.Invoke(command.Parameters);
-                    var reader = command.ExecuteReader();
-                    
-                        if (reader.Read())
-                        {
-                            result = mapper(reader);
-                        }
-                   
+                    {
+                        result = mapper(reader);
+                    }
                 }
             }
 
@@ -125,57 +92,47 @@ namespace InmobiliariaCA.Repositorio
         public int ExecuteScalar(string query, Action<MySqlParameterCollection> parameters, MySqlTransaction? transaction = null)
         {
             int result = 0;
-            if (transaction == null)
+
+            using (var connection = transaction?.Connection ?? GetConnection())
+            using (var command = new MySqlCommand(query, connection))
             {
-                using (var connection = GetConnection())
-                using (var command = new MySqlCommand(query, connection))
-                {
-                    if (transaction != null) command.Transaction = transaction;
-                    parameters?.Invoke(command.Parameters);
-                    result = Convert.ToInt32(command.ExecuteScalar());
-                }
-            } 
-            else
-            {
-                if ( transaction != null && transaction.Connection != null)
-                {
-                    var connection = transaction.Connection;
-                    using (var command = new MySqlCommand(query, connection))
-                    {
-                        if (transaction != null) command.Transaction = transaction;
-                        parameters?.Invoke(command.Parameters);
-                        result = Convert.ToInt32(command.ExecuteScalar());
-                    }
-                }
+                if (transaction != null) command.Transaction = transaction;
+                parameters?.Invoke(command.Parameters);
+                result = Convert.ToInt32(command.ExecuteScalar());
             }
+
             return result;
         }
 
         public int ExecuteNonQuery(string query, Action<MySqlParameterCollection> parameters, MySqlTransaction? transaction = null)
         {
-        int filasAfectadas = 0;
-
-        if (transaction == null)
+            int filasAfectadas = 0;
+            try
             {
-                using (var connection = GetConnection())
+                using (var connection = transaction?.Connection ?? GetConnection())
                 using (var command = new MySqlCommand(query, connection))
                 {
+                    if (transaction != null) command.Transaction = transaction;
                     parameters?.Invoke(command.Parameters);
                     filasAfectadas = command.ExecuteNonQuery();
                 }
             }
-            else
+            catch (MySqlException ex)
             {
-                if (transaction.Connection != null)
+                if (ex.Number == 1451) // Código de error para restricción de clave foránea
                 {
-                    using (var command = new MySqlCommand(query, transaction.Connection))
-                    {
-                        command.Transaction = transaction;
-                        parameters?.Invoke(command.Parameters);
-                        filasAfectadas = command.ExecuteNonQuery();
-                    }
+                    filasAfectadas = 0;
+                }
+                else
+                {
+                    throw;
                 }
             }
+            catch (Exception)
+            {
+                throw;
+            }
+
 
             return filasAfectadas;
         }

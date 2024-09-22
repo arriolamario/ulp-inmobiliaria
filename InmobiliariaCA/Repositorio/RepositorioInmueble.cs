@@ -438,7 +438,7 @@ public class RepositorioInmueble : RepositorioBase, IRepositorioInmueble
                 parameters.AddWithValue("@FechaDesde", fechaDesde.Date);
                 parameters.AddWithValue("@FechaHasta", fechaHasta.Date);
 
-            }, null);
+            });
 
             return count > 0; //DISPONIBLE
         } catch (Exception ex) {
