@@ -26,6 +26,7 @@ public class InmuebleTiposController : Controller
     }
 
     [HttpPost]
+    [Authorize(Policy = "administrador")]
     public IActionResult Baja(int eliminarId, string eliminarTipo)
     {
 

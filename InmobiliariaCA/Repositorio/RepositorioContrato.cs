@@ -387,7 +387,7 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato {
                 query.Append($" AND Id_Inmueble = {filter.InmuebleId}");
 
             if (filter.Estado.HasValue)
-                query.Append($" AND Estado = '{filter.Estado}'");
+                query.Append($" AND Estado = '{filter.Estado.ToString()}'");
 
             if (filter.FechaDesde_Inicio.HasValue)
                 query.Append($" AND Fecha_Desde >= '{filter.FechaDesde_Inicio.Value.ToString("yyyy-MM-dd")}'");
