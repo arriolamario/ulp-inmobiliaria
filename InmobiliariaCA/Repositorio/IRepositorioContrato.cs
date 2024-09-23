@@ -11,6 +11,8 @@ public interface IRepositorioContrato {
     int ActualizarContrato(Contrato Contrato);
     bool BajaContrato(int Id);   
     int ActualizarContratoPagado(int Id, MySqlTransaction? transaction);
+
+    int ActualizarContratoPagoAnulado(int Id, MySqlTransaction? transaction);
     List<Contrato> GetContratosFiltrados(ContratoFilter filter, MySqlTransaction? transaction);
 }
 

@@ -32,7 +32,7 @@
                     </div>
                     <div class="col-md-6">
                         <label asp-for="Fecha_Finalizacion_Anticipada" class="form-label">Fecha Finalización Anticipada </label>
-                        <input asp-for="Fecha_Finalizacion_Anticipada" type="date" class="form-control" required/>
+                        <input asp-for="Fecha_Finalizacion_Anticipada" type="date" class="form-control" min="@DateTime.Now.ToString("yyyy-MM-dd")" required/>
                         <span asp-validation-for="Fecha_Finalizacion_Anticipada" class="text-danger"></span>
                     </div>
                 </div>

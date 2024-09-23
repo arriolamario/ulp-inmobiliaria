@@ -7,9 +7,9 @@
 
 <div class="container mt-5">
     <div class="mb-4">
-        <form asp-action="Index" method="get" class="d-flex align-items-center">
-            <label for="activo" class="me-2"><strong>Mostrar:</strong></label>
-            <select name="Activo" id="Activo" class="form-select me-2" style="width: 200px;">
+        <form asp-action="Index" method="get" class="container p-3 bg-light rounded shadow-sm">
+            <label for="activo" class="me-2" style="margin-left:15px ;"><strong>Mostrar:</strong></label>
+            <select name="Activo" id="Activo" class="form-select me-2" style="width: 200px; margin-right:10px ;">
                 @if(@ViewBag.SelectActivo == "Todos"){
                     <option value="" selected>Todos</option>
                 }

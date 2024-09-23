@@ -29,8 +29,8 @@ public class HomeController : Controller
                     Rol = "Desarrollador Backend",
                     Email = "paulocabrera90@gmail.com",
                     Telefono = "+54 9 266 474-5525",
-                    FotoUrl = "/avatars/mario-arriola.png",
-                    LinkedInUrl = "https://www.linkedin.com/in/ana-gomez/"
+                    FotoUrl = "/avatars/paulo-cabrera.jpg",
+                    LinkedInUrl = "https://www.linkedin.com/in/pncabrera/"
                 },
                 new Miembro
                 {

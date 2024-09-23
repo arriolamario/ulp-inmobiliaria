@@ -6,11 +6,11 @@
 
 <div class="container mt-5">
     <h1 class="text-center mb-4">Nuestro Equipo de Trabajo</h1>
-    <div class="row">
+    <div class="row justify-content-center">
         @foreach (var miembro in Model)
         {
-            <div class="col-md-4 col-sm-6 mb-4">
-                <div class="card shadow-sm h-100">
+            <div class="col-md-4 col-sm-6 mb-4 d-flex align-items-stretch">
+                <div class="card shadow-sm w-100">
                     <div class="card-body text-center">
                         <img src="@(miembro.FotoUrl ?? "~/images/default-avatar.png")" alt="Foto de @miembro.Nombre" class="img-fluid rounded-circle mb-3" style="width: 150px; height: 150px;">
                         <h4 class="card-title">@miembro.Nombre</h4>
