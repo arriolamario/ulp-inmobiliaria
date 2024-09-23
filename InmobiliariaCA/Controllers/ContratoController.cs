@@ -30,9 +30,12 @@ namespace InmobiliariaCA.Controllers
             _repositorioPago = repositorioPago;
         }
 
-        public IActionResult Index(ContratoFilter filters) {
-            try {
-                var viewModel = new ContratoViewModel {
+        public IActionResult Index(ContratoFilter filters)
+        {
+            try
+            {
+                var viewModel = new ContratoViewModel
+                {
                     Contratos = _repositorioContrato.GetContratosFiltrados(filters, null),
                     Filters = filters
                 };
@@ -83,10 +86,10 @@ namespace InmobiliariaCA.Controllers
         }
 
         public IActionResult AltaEditar(
-            int Id, 
-            [FromQuery] DateTime? FechaDesde, 
-            [FromQuery] DateTime? FechaHasta, 
-            [FromQuery] int? Id_Inquilino, 
+            int Id,
+            [FromQuery] DateTime? FechaDesde,
+            [FromQuery] DateTime? FechaHasta,
+            [FromQuery] int? Id_Inquilino,
             [FromQuery] decimal? Monto_Alquiler
             )
         {
@@ -98,20 +101,20 @@ namespace InmobiliariaCA.Controllers
                 if (!FechaHasta.HasValue)
                     FechaHasta = DateTime.Today;
 
-                ViewBag.Inmuebles = GetInmueblesDisponibles(FechaDesde.Value, FechaHasta.Value);
+                ViewBag.Inmuebles = GetInmueblesDisponibles(FechaDesde.Value, FechaHasta.Value, Id);
                 ContratoAltaEditarViewModel model = new ContratoAltaEditarViewModel();
-                if (Id == 0)
+                if (Id != 0)
                 {
-                    model.Fecha_Desde = FechaDesde.Value;
-                    model.Fecha_Hasta = FechaHasta.Value;
-                    model.Id_Inquilino = Id_Inquilino.HasValue ? Id_Inquilino.Value : 0;
-                    model.Monto_Alquiler = Monto_Alquiler.HasValue ? Monto_Alquiler.Value : 0;
-                }else {
                     var contrato = _repositorioContrato.GetContrato(Id, null);
                     model = new ContratoAltaEditarViewModel(contrato ?? new Contrato());
-    
+
                 }
-                
+
+                model.Fecha_Desde = FechaDesde.Value;
+                model.Fecha_Hasta = FechaHasta.Value;
+                model.Id_Inquilino = Id_Inquilino.HasValue ? Id_Inquilino.Value : 0;
+                model.Monto_Alquiler = Monto_Alquiler.HasValue ? Monto_Alquiler.Value : 0;
+
                 return View(model);
             }
             catch (Exception ex)
@@ -127,19 +130,20 @@ namespace InmobiliariaCA.Controllers
         {
             try
             {
-                var listInmueble = GetInmueblesDisponibles(Contrato.Fecha_Desde, Contrato.Fecha_Hasta);
+
                 if (!ModelState.IsValid)
                 {
-                    return  View("AltaEditar", Contrato);
+                    return View("AltaEditar", Contrato);
                 }
-                else if (Contrato.Id_Inmueble == 0)
+                var listInmueble = GetInmueblesDisponibles(Contrato.Fecha_Desde, Contrato.Fecha_Hasta, Contrato.Id);
+                if (Contrato.Id_Inmueble == 0)
                 {
                     ModelState.AddModelError("", "Debe seleccionar un inmueble");
                     ViewBag.Inquilinos = new SelectList(GetInquilinos(), "Id", "NombreCompletoDNI");
                     ViewBag.Inmuebles = listInmueble;
                     return View("AltaEditar", Contrato);
                 }
-
+                
                 var inmuebleDisponible = listInmueble.FirstOrDefault(x => x.Id == Contrato.Id_Inmueble);
                 if (inmuebleDisponible == null)
                 {
@@ -148,26 +152,47 @@ namespace InmobiliariaCA.Controllers
                     ViewBag.Inmuebles = listInmueble;
                     return View("AltaEditar", Contrato);
                 }
+                if (Contrato.Id == 0)
+                {
+                    Contrato contratoNew = new Contrato(Contrato);
+                    var idUsuarioCookie = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "Id")?.Value;
 
-                Contrato contratoNew = new Contrato(Contrato);
-                var idUsuarioCookie = HttpContext.User.Claims.FirstOrDefault(x => x.Type == "Id")?.Value;
+                    if (idUsuarioCookie == null)
+                        contratoNew.Id_Usuario_Creacion = 1;
+                    else
+                        contratoNew.Id_Usuario_Creacion = int.Parse(idUsuarioCookie);
 
-                if (idUsuarioCookie == null)
-                    contratoNew.Id_Usuario_Creacion = 1;
+                    contratoNew.Id = _repositorioContrato.InsertarContrato(contratoNew);
+
+                    if (contratoNew.Id > 0)
+                    {
+                        TempData["SuccessMessage"] = "Contrato agregado correctamente.";
+                    }
+                    else
+                    {
+                        TempData["ErrorMessage"] = "Contrato no se pudo crear.";
+                    }
+
+                    return Redirect("Index");
+                }
                 else
-                    contratoNew.Id_Usuario_Creacion = int.Parse(idUsuarioCookie);
-
-                contratoNew.Id = _repositorioContrato.InsertarContrato(contratoNew);
-
-                if (contratoNew.Id > 0){
-                    TempData["SuccessMessage"] = "Contrato agregado correctamente.";
+                {
+                    Contrato contrato = _repositorioContrato.GetContrato(Contrato.Id, null) ?? new Contrato();
+                    contrato.Id_Inmueble = Contrato.Id_Inmueble;
+                    contrato.Id_Inquilino = Contrato.Id_Inquilino;
+                    contrato.Monto_Alquiler = Contrato.Monto_Alquiler;
+                    contrato.Fecha_Desde = Contrato.Fecha_Desde;
+                    contrato.Fecha_Hasta = Contrato.Fecha_Hasta;
+                    var res = _repositorioContrato.ActualizarContrato(contrato);
+                    if(res> 0){
+                        TempData["SuccessMessage"] = "Contrato actualizado correctamente.";
+                    }
+                    else{
+                        TempData["ErrorMessage"] = "Contrato no se pudo actualizar.";
+                    }
+                    return Redirect("Index");
                 }
-                else{
-                    TempData["ErrorMessage"] = "Contrato no se pudo crear.";
-                }
-                
 
-                return Redirect("Index");
             }
             catch (Exception ex)
             {
@@ -203,7 +228,7 @@ namespace InmobiliariaCA.Controllers
                 return View();
             }
         }
-        
+
         public IActionResult TerminarContrato(int Id)
         {
             try
@@ -245,7 +270,7 @@ namespace InmobiliariaCA.Controllers
                 var IdUser = User.FindFirst("Id");
                 contratoDb.Id_Usuario_Finalizacion = UserId;
                 _repositorioContrato.ActualizarContrato(contratoDb);
-                
+
                 //Insertar en pagos Con Multa por FINALIZACION CONTRATO
                 var pago = new Pago();
                 pago.Contrato_Id = contratoDb.Id;
@@ -270,15 +295,20 @@ namespace InmobiliariaCA.Controllers
             }
         }
 
-        public IActionResult RenovarContrato(int Id) {
-            try {
+        public IActionResult RenovarContrato(int Id)
+        {
+            try
+            {
                 var contrato = _repositorioContrato.GetContrato(Id, null);
-                if (contrato == null) {
+                if (contrato == null)
+                {
                     return NotFound("El contrato solicitado no existe.");
                 }
 
                 return View("RenovarContrato", contrato);
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 _logger.LogError("An error occurred while getting contract: {Error}", ex.Message);
 
                 TempData["ErrorMessage"] = ex.Message;
@@ -287,12 +317,15 @@ namespace InmobiliariaCA.Controllers
         }
 
         [HttpPost]
-        public IActionResult RenovarContrato(Contrato contrato) {
-            try {
+        public IActionResult RenovarContrato(Contrato contrato)
+        {
+            try
+            {
                 var contratoDb = _repositorioContrato.GetContrato(contrato.Id, null);
                 var IdUser = User.FindFirst("Id");
 
-                if (contratoDb == null) {
+                if (contratoDb == null)
+                {
                     return NotFound("El contrato solicitado no existe.");
                 }
                 //--Renoovacion del contrato, con el ID del contrato viejo
@@ -300,7 +333,8 @@ namespace InmobiliariaCA.Controllers
                 contratoDb.Fecha_Hasta = contrato.Fecha_Hasta;
                 IEnumerable<Inmueble> listadoInmueble = this.GetInmueblesDisponibles(contratoDb.Fecha_Desde.Date, contratoDb.Fecha_Hasta.Date);
 
-                if(listadoInmueble.FirstOrDefault(x => x.Id == contratoDb.Id_Inmueble) == null) {
+                if (listadoInmueble.FirstOrDefault(x => x.Id == contratoDb.Id_Inmueble) == null)
+                {
                     _logger.LogError("Inmueble no disponible en el rango de fechas ingresado.");
                     TempData["ErrorMessage"] = "Inmueble no disponible en el rango de fechas ingresado.";
                     return View(contratoDb);
@@ -308,26 +342,28 @@ namespace InmobiliariaCA.Controllers
 
                 contratoDb.Monto_Alquiler = contrato.Monto_Alquiler;
                 contratoDb.Estado = EstadoContrato.Vigente;
-                contratoDb.Fecha_Finalizacion_Anticipada= null;
+                contratoDb.Fecha_Finalizacion_Anticipada = null;
                 contratoDb.Multa = null;
                 contratoDb.Pagado = false;
                 contratoDb.Cantidad_Cuotas = contratoDb.CantidadCuotas();
                 contratoDb.Cuotas_Pagas = 0;
-                contratoDb.Id_Usuario_Finalizacion = null;               
+                contratoDb.Id_Usuario_Finalizacion = null;
                 contratoDb.Id_Usuario_Creacion = IdUser != null ? int.Parse(IdUser.Value) : 0;
 
                 _repositorioContrato.InsertarContrato(contratoDb);
 
                 TempData["SuccessMessage"] = "Contrato Renovado correctamente.";
                 return RedirectToAction("Index");
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 _logger.LogError("An error occurred while getting contract: {Error}", ex.Message);
 
                 TempData["ErrorMessage"] = ex.Message;
                 return RedirectToAction("Index");
             }
         }
-        
+
         private IEnumerable<Inquilino> GetInquilinos()
         {
             return _repositorioInquilino.GetInquilinos();
@@ -340,17 +376,17 @@ namespace InmobiliariaCA.Controllers
             return new SelectList(inmuebles, "Id", "NombreInmueble");
         }
 
-        private IEnumerable<Inmueble> GetInmueblesDisponibles(DateTime fechaDesde, DateTime fechaHasta)
+        private IEnumerable<Inmueble> GetInmueblesDisponibles(DateTime fechaDesde, DateTime fechaHasta, int IdContrato = 0)
         {
-            return _repositorioInmueble.GetInmueblesDisponiblesPorFecha(fechaDesde, fechaHasta);
+            return _repositorioInmueble.GetInmueblesDisponiblesPorFecha(fechaDesde, fechaHasta, IdContrato);
         }
 
-        private static int NroRandomPago() 
+        private static int NroRandomPago()
         {
             Random random = new Random();
             int numeroPago = random.Next(100000, 999999);
             return numeroPago;
         }
-    
+
     }
 }

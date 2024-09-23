@@ -109,6 +109,12 @@
                 document.getElementById("Monto_Alquiler").value = document.getElementById('valor_inmueble_' + selectedInmuebleId).value.replace(',', '.');
             });
 
+            $('input[name="selectedInmueble"]').on('click',function() {
+                var selectedInmuebleId = $(this).val();
+                document.getElementById("Id_Inmueble").value = selectedInmuebleId;
+                document.getElementById("Monto_Alquiler").value = document.getElementById('valor_inmueble_' + selectedInmuebleId).value.replace(',', '.');
+            });
+
             $('#btnBuscarInmueble').on('click', function(e) {
                 e.preventDefault(); // Evitar el comportamiento por defecto del botón
                 var fechaDesde = document.getElementById('Fecha_Desde').value;
