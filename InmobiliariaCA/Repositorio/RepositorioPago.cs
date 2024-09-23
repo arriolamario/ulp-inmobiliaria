@@ -225,25 +225,39 @@ public class RepositorioPago : RepositorioBase, IRepositorioPago {
         return result;
     }
 
-    public bool AnularPago(int id, int anuladoPorId, int contratoId) {
-        Console.WriteLine("Anulando el pago con ID: " + id + " por el usuario con ID: " + anuladoPorId + " en el contrato con ID: " + contratoId);
+    public bool AnularPago(int id, int anuladoPorId, int contratoId, MySqlTransaction? transaction) {
+        using var connection = transaction != null ? transaction.Connection : GetConnection();
 
-        string query = @$"UPDATE pago SET 
-            {nameof(Pago.Estado)} = '{EstadoPago.Anulado.ToString()}',
-            {nameof(Pago.Anulado_Por_Id)} = @{nameof(Pago.Anulado_Por_Id)}, 
-            {nameof(Pago.Fecha_Anulacion)} = CURRENT_TIMESTAMP
-        WHERE {nameof(Pago.Id)} = @{nameof(Pago.Id)};";
+        if(transaction == null){        
+            using var transactionNew = BeginTransaction(connection);
+            transaction = transactionNew;
+        }
+        try{
+            string query = @$"UPDATE pago SET 
+                {nameof(Pago.Estado)} = '{EstadoPago.Anulado.ToString()}',
+                {nameof(Pago.Anulado_Por_Id)} = @{nameof(Pago.Anulado_Por_Id)}, 
+                {nameof(Pago.Fecha_Anulacion)} = CURRENT_TIMESTAMP
+            WHERE {nameof(Pago.Id)} = @{nameof(Pago.Id)};";
 
-        bool result = 0 < this.ExecuteNonQuery(query, (parameters) => {
-            parameters.AddWithValue($"{nameof(Pago.Id)}", id);
-            parameters.AddWithValue($"{nameof(Pago.Anulado_Por_Id)}", anuladoPorId);
-        });
+            bool result = 0 < this.ExecuteNonQuery(query, (parameters) => {
+                parameters.AddWithValue($"{nameof(Pago.Id)}", id);
+                parameters.AddWithValue($"{nameof(Pago.Anulado_Por_Id)}", anuladoPorId);
+            });
 
-        // if (_repositorioContrato.ActualizarContratoPagado(contratoId, transaction) == 0) {
-        //         throw new Exception("No se pudo anular el pagado del contrato.");
-        // }
+            if (_repositorioContrato.ActualizarContratoPagoAnulado(contratoId, null) == 0) {
+                    throw new Exception("No se pudo anular el pagado del contrato.");
+            }
 
-        return result;
+            return result;
+        } catch (Exception ex) {
+            _logger.LogError("Error: {Error}", ex.Message);
+            if (connection.State != ConnectionState.Open) {
+                _logger.LogError("La conexión se ha cerrado inesperadamente.");
+            } else {
+                transaction.Rollback();
+            }
+            throw;      
+        }
     }
     
 }

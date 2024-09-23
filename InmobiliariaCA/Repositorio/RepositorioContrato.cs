@@ -313,6 +313,46 @@ public class RepositorioContrato : RepositorioBase, IRepositorioContrato {
         }
     }
 
+    public int ActualizarContratoPagoAnulado(int Id, MySqlTransaction? transaction) {
+        using var connection = transaction != null ? transaction.Connection : GetConnection();
+
+        if(transaction == null){        
+            using var transactionNew = BeginTransaction(connection);
+            transaction = transactionNew;
+        }        
+        
+        try{
+            Contrato? contrato = this.GetContrato(Id, null) ?? throw new Exception("No se encontró el contrato.");
+            if(contrato.PagosCompletos() && EstadoContrato.Finalizado.Equals(contrato.Estado)){
+                contrato.Estado = EstadoContrato.Vigente;
+            }
+
+            string query = @$"UPDATE contrato SET
+                                    {nameof(Contrato.Estado)} = @{nameof(Contrato.Estado)},
+                                    {nameof(Contrato.Cuotas_Pagas)} = {nameof(Contrato.Cuotas_Pagas)} - 1                        
+                            WHERE {nameof(Contrato.Id)} = @{nameof(Contrato.Id)}
+                                AND {nameof(Contrato.Cuotas_Pagas)} <= {nameof(Contrato.Cantidad_Cuotas)};";
+
+            int result = this.ExecuteNonQuery(query, (parameters) => {
+                parameters.AddWithValue($"@{nameof(Contrato.Estado)}", contrato.Estado.ToString());
+                parameters.AddWithValue($"@{nameof(Contrato.Id)}", Id);
+            }, transaction);
+
+            // if(transaction.Connection.State == ConnectionState.Open){
+            //     transaction.Commit();   
+            // }
+            return result;
+        } catch (Exception ex) {
+            _logger.LogError("Hubo un error al updatear contrato: {Error}", ex.Message);
+            if (connection.State != ConnectionState.Open) {
+                _logger.LogError("La conexión se ha cerrado inesperadamente.");
+            } else {
+                transaction.Rollback();
+            }
+            throw new Exception("Error al actualizar el contrato. Contacte con el administrador."); 
+        }
+    }
+
     public bool BajaContrato(int id) {
         string query = @$"delete from contrato 
                             where {nameof(Contrato.Id)} = @{nameof(Contrato.Id)};";
