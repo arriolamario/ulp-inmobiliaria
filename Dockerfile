@@ -10,14 +10,14 @@ COPY ["InmobiliariaCA/InmobiliariaCA.csproj", "./"]
 RUN dotnet restore "./InmobiliariaCA.csproj"
 COPY . .
 WORKDIR "/src/."
-RUN dotnet build "InmobiliariaCA.csproj" -c Release -o /app/build/
+RUN dotnet build "InmobiliariaCA.csproj" -c Release -o /app/build/InmobiliariaCA/
 
-
+# Publicar la aplicación
 FROM build AS publish
-RUN dotnet publish "InmobiliariaCA.csproj" -c Release -o /app/publish
+RUN dotnet publish "InmobiliariaCA.csproj" -c Release -o /app/publish/InmobiliariaCA/
 
 # Configurar la imagen final y ejecutar la aplicación
 FROM base AS final
 WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --from=publish /app/publish/InmobiliariaCA/ .
 ENTRYPOINT ["dotnet", "InmobiliariaCA.dll"]
