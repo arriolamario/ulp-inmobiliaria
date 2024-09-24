@@ -29,14 +29,16 @@ public class RepositorioUsuario : RepositorioBase, IRepositorioUsuario
                             {nameof(Usuario.Fecha_Actualizacion)}
                     from usuario;";
 
-        resultUsuarios =this.ExecuteReaderList<Usuario>(query, (parameters) => { }, (reader) => {
-            return new Usuario(){
+        resultUsuarios = this.ExecuteReaderList<Usuario>(query, (parameters) => { }, (reader) =>
+        {
+            return new Usuario()
+            {
                 Id = reader.GetInt32(nameof(Usuario.Id)),
                 Apellido = reader.GetString(nameof(Usuario.Apellido)),
                 Email = reader.GetString(nameof(Usuario.Email)),
                 Nombre = reader.GetString(nameof(Usuario.Nombre)),
                 Password_Hash = reader.GetString(nameof(Usuario.Password_Hash)),
-                Avatar_Url = reader.IsDBNull(reader.GetOrdinal(nameof(Usuario.Avatar_Url))) ? "" :  reader.GetString(nameof(Usuario.Avatar_Url)),
+                Avatar_Url = reader.IsDBNull(reader.GetOrdinal(nameof(Usuario.Avatar_Url))) ? "" : reader.GetString(nameof(Usuario.Avatar_Url)),
                 Rol = reader.GetString(nameof(Usuario.Rol)),
                 Fecha_Creacion = reader.GetDateTime(nameof(Usuario.Fecha_Creacion)),
                 Fecha_Actualizacion = reader.GetDateTime(nameof(Usuario.Fecha_Actualizacion))
@@ -63,16 +65,19 @@ public class RepositorioUsuario : RepositorioBase, IRepositorioUsuario
                     from usuario
                     where {nameof(Usuario.Id)} = @{nameof(Usuario.Id)};";
 
-        usuario =this.ExecuteReader<Usuario>(query, (parameters) => { 
+        usuario = this.ExecuteReader<Usuario>(query, (parameters) =>
+        {
             parameters.AddWithValue(@$"@{nameof(Usuario.Id)}", Id);
-        }, (reader) => {
-            return new Usuario(){
+        }, (reader) =>
+        {
+            return new Usuario()
+            {
                 Id = reader.GetInt32(nameof(Usuario.Id)),
                 Apellido = reader.GetString(nameof(Usuario.Apellido)),
                 Email = reader.GetString(nameof(Usuario.Email)),
                 Nombre = reader.GetString(nameof(Usuario.Nombre)),
                 Password_Hash = reader.GetString(nameof(Usuario.Password_Hash)),
-                Avatar_Url = reader.IsDBNull(reader.GetOrdinal(nameof(Usuario.Avatar_Url))) ? "" :  reader.GetString(nameof(Usuario.Avatar_Url)),
+                Avatar_Url = reader.IsDBNull(reader.GetOrdinal(nameof(Usuario.Avatar_Url))) ? "" : reader.GetString(nameof(Usuario.Avatar_Url)),
                 Rol = reader.GetString(nameof(Usuario.Rol)),
                 Fecha_Creacion = reader.GetDateTime(nameof(Usuario.Fecha_Creacion)),
                 Fecha_Actualizacion = reader.GetDateTime(nameof(Usuario.Fecha_Actualizacion))
@@ -97,15 +102,16 @@ public class RepositorioUsuario : RepositorioBase, IRepositorioUsuario
                             @{nameof(Usuario.Apellido)},
                             @{nameof(Usuario.Rol)});
                         SELECT LAST_INSERT_ID();";
-        
-        usuario.Id = this.ExecuteScalar(query, (parameters) => {
+
+        usuario.Id = this.ExecuteScalar(query, (parameters) =>
+        {
             parameters.AddWithValue(@$"@{nameof(Usuario.Email)}", usuario.Email);
             parameters.AddWithValue(@$"@{nameof(Usuario.Password_Hash)}", usuario.Password_Hash);
             parameters.AddWithValue(@$"@{nameof(Usuario.Nombre)}", usuario.Nombre);
             parameters.AddWithValue(@$"@{nameof(Usuario.Apellido)}", usuario.Apellido);
             parameters.AddWithValue(@$"@{nameof(Usuario.Rol)}", usuario.Rol);
         });
-        
+
         return usuario.Id;
     }
 
@@ -120,9 +126,10 @@ public class RepositorioUsuario : RepositorioBase, IRepositorioUsuario
                             {nameof(Usuario.Avatar_Url)} = @{nameof(Usuario.Avatar_Url)}
                         WHERE {nameof(Usuario.Id)} = @{nameof(Usuario.Id)};";
 
-        return this.ExecuteNonQuery(query, (parameters) => {
+        return this.ExecuteNonQuery(query, (parameters) =>
+        {
             parameters.AddWithValue(@$"@{nameof(Usuario.Id)}", usuario.Id);
-            parameters.AddWithValue(@$"@{nameof(Usuario.Email)}", usuario.Email);   
+            parameters.AddWithValue(@$"@{nameof(Usuario.Email)}", usuario.Email);
             parameters.AddWithValue(@$"@{nameof(Usuario.Nombre)}", usuario.Nombre);
             parameters.AddWithValue(@$"@{nameof(Usuario.Apellido)}", usuario.Apellido);
             parameters.AddWithValue(@$"@{nameof(Usuario.Rol)}", usuario.Rol);
@@ -137,7 +144,8 @@ public class RepositorioUsuario : RepositorioBase, IRepositorioUsuario
         string query = $@"delete from usuario
                         where {nameof(Usuario.Id)} = @{nameof(Usuario.Id)};";
 
-        result = 0 < this.ExecuteNonQuery(query, (parameters) => {
+        result = 0 < this.ExecuteNonQuery(query, (parameters) =>
+        {
             parameters.AddWithValue($"@{nameof(Usuario.Id)}", Id);
         });
         return result;
@@ -160,16 +168,19 @@ public class RepositorioUsuario : RepositorioBase, IRepositorioUsuario
                     from usuario
                     where {nameof(Usuario.Email)} = @{nameof(Usuario.Email)};";
 
-        usuario =this.ExecuteReader<Usuario>(query, (parameters) => { 
+        usuario = this.ExecuteReader<Usuario>(query, (parameters) =>
+        {
             parameters.AddWithValue(@$"@{nameof(Usuario.Email)}", email);
-        }, (reader) => {
-            return new Usuario(){
+        }, (reader) =>
+        {
+            return new Usuario()
+            {
                 Id = reader.GetInt32(nameof(Usuario.Id)),
                 Apellido = reader.GetString(nameof(Usuario.Apellido)),
                 Email = reader.GetString(nameof(Usuario.Email)),
                 Nombre = reader.GetString(nameof(Usuario.Nombre)),
                 Password_Hash = reader.GetString(nameof(Usuario.Password_Hash)),
-                Avatar_Url = reader.IsDBNull(reader.GetOrdinal(nameof(Usuario.Avatar_Url))) ? "" :  reader.GetString(nameof(Usuario.Avatar_Url)),
+                Avatar_Url = reader.IsDBNull(reader.GetOrdinal(nameof(Usuario.Avatar_Url))) ? "" : reader.GetString(nameof(Usuario.Avatar_Url)),
                 Rol = reader.GetString(nameof(Usuario.Rol)),
                 Fecha_Creacion = reader.GetDateTime(nameof(Usuario.Fecha_Creacion)),
                 Fecha_Actualizacion = reader.GetDateTime(nameof(Usuario.Fecha_Actualizacion))
@@ -178,5 +189,14 @@ public class RepositorioUsuario : RepositorioBase, IRepositorioUsuario
 
         return usuario;
     }
+
+    public bool BorrarAdministrador(){
+        string query = $@"select count(*) 
+                from usuario where {nameof(Usuario.Rol)} = 'administrador';";
+        
+        int count = this.ExecuteScalar(query, (parameters) => {});
+        return count > 1;
+    }
+
 }
 
