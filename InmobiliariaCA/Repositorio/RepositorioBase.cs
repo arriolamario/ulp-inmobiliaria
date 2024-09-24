@@ -15,7 +15,7 @@ namespace InmobiliariaCA.Repositorio
         {
             var connection = new MySqlConnection(connectionString);
             connection.Open();
-            
+
             return connection;
         }
 
@@ -50,7 +50,7 @@ namespace InmobiliariaCA.Repositorio
         {
             T? result = default;
 
-             if (transaction == null)
+            if (transaction == null)
             {
                 using (var connection = GetConnection())
                 using (var command = new MySqlCommand(query, connection))
@@ -64,7 +64,8 @@ namespace InmobiliariaCA.Repositorio
                         }
                     }
                 }
-            }else if (transaction != null && transaction.Connection != null)
+            }
+            else if (transaction != null && transaction.Connection != null)
             {
                 var connection = transaction.Connection;
                 using (var command = new MySqlCommand(query, connection))
@@ -87,7 +88,7 @@ namespace InmobiliariaCA.Repositorio
         {
             T? result = default;
 
-             if (transaction == null)
+            if (transaction == null)
             {
                 using (var connection = GetConnection())
                 using (var command = new MySqlCommand(query, connection))
@@ -95,14 +96,15 @@ namespace InmobiliariaCA.Repositorio
                     if (transaction != null) command.Transaction = transaction;
                     parameters?.Invoke(command.Parameters);
                     var reader = command.ExecuteReader();
-                    
+
                     if (reader.Read())
-                        {
-                            result = mapper(reader);
-                        }
-                    
+                    {
+                        result = mapper(reader);
+                    }
+
                 }
-            }else if (transaction != null && transaction.Connection != null)
+            }
+            else if (transaction != null && transaction.Connection != null)
             {
                 var connection = transaction.Connection;
                 using (var command = new MySqlCommand(query, connection))
@@ -110,12 +112,12 @@ namespace InmobiliariaCA.Repositorio
                     if (transaction != null) command.Transaction = transaction;
                     parameters?.Invoke(command.Parameters);
                     var reader = command.ExecuteReader();
-                    
-                        if (reader.Read())
-                        {
-                            result = mapper(reader);
-                        }
-                   
+
+                    if (reader.Read())
+                    {
+                        result = mapper(reader);
+                    }
+
                 }
             }
 
@@ -134,10 +136,10 @@ namespace InmobiliariaCA.Repositorio
                     parameters?.Invoke(command.Parameters);
                     result = Convert.ToInt32(command.ExecuteScalar());
                 }
-            } 
+            }
             else
             {
-                if ( transaction != null && transaction.Connection != null)
+                if (transaction != null && transaction.Connection != null)
                 {
                     var connection = transaction.Connection;
                     using (var command = new MySqlCommand(query, connection))
@@ -153,15 +155,23 @@ namespace InmobiliariaCA.Repositorio
 
         public int ExecuteNonQuery(string query, Action<MySqlParameterCollection> parameters, MySqlTransaction? transaction = null)
         {
-        int filasAfectadas = 0;
+            int filasAfectadas = 0;
 
-        if (transaction == null)
+            if (transaction == null)
             {
                 using (var connection = GetConnection())
                 using (var command = new MySqlCommand(query, connection))
                 {
                     parameters?.Invoke(command.Parameters);
-                    filasAfectadas = command.ExecuteNonQuery();
+                    try
+                    {
+                        filasAfectadas = command.ExecuteNonQuery();
+                    }
+                    catch (MySqlException)
+                    {
+
+                    }
+
                 }
             }
             else
@@ -172,7 +182,14 @@ namespace InmobiliariaCA.Repositorio
                     {
                         command.Transaction = transaction;
                         parameters?.Invoke(command.Parameters);
-                        filasAfectadas = command.ExecuteNonQuery();
+                        try
+                        {
+                            filasAfectadas = command.ExecuteNonQuery();
+                        }
+                        catch (MySqlException)
+                        {
+
+                        }
                     }
                 }
             }

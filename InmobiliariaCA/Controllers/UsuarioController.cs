@@ -183,10 +183,10 @@ public class UsuarioController : Controller
     [Authorize(Policy = "administrador")]
     public IActionResult Baja(int Id)
     {
-        if (Id == 0)
-        {
-        }
-        else if (Id == 1){
+        Usuario? userDb = _repositorioUsuario.GetUsuario(Id);
+        if(userDb == null){
+            TempData["ErrorMessage"] = "No se puede eliminar el usuario";
+        } else if (userDb.Rol == "administrador" && !_repositorioUsuario.BorrarAdministrador()){
             TempData["ErrorMessage"] = "No se puede eliminar el usuario";
         }
         else
