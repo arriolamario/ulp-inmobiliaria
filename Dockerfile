@@ -6,7 +6,7 @@ EXPOSE 80
 # Usar la imagen SDK de .NET para construir la aplicación
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-COPY ["InmobiliariaCA.csproj", "./"]
+COPY ["InmobiliariaCA/InmobiliariaCA.csproj", "./"]
 RUN dotnet restore "./InmobiliariaCA.csproj"
 COPY . .
 WORKDIR "/src/."
