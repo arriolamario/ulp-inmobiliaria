@@ -10,7 +10,7 @@ COPY ["InmobiliariaCA/InmobiliariaCA.csproj", "./"]
 RUN dotnet restore "./InmobiliariaCA.csproj"
 COPY . .
 WORKDIR "/src/."
-RUN dotnet build "InmobiliariaCA.csproj" -c Release -o /app/build
+RUN dotnet build "InmobiliariaCA.csproj" -c Release -o /app/build/InmobiliariaCA
 
 # Publicar la aplicación
 FROM build AS publish
