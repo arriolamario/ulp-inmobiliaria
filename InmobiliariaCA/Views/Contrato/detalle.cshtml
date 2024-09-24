@@ -63,7 +63,7 @@
                     <button type="button" class="btn btn-success" data-toggle="modal" data-target="#pagoModal">
                         Pagar
                     </button>
-                    <a href="@Url.Action("AltaEditar", "Contrato", new { id = Model.Id })" class="btn btn-warning">
+                    <a href="@Url.Action("AltaEditar", "Contrato", new { id = Model.Id, FechaDesde = Model.Fecha_Desde.ToString("yyyy-MM-dd"), FechaHasta = Model.Fecha_Hasta.ToString("yyyy-MM-dd"), Id_Inquilino = Model.Inquilino?.Id, Monto_Alquiler = Model.Monto_Alquiler })" class="btn btn-warning">
                         Editar
                     </a>
                 }
