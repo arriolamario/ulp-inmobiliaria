@@ -358,7 +358,7 @@ public class RepositorioInmueble : RepositorioBase, IRepositorioInmueble
         return resultList;
     }
 
-    public List<Inmueble> GetInmueblesDisponiblesPorFecha(DateTime fechaDesde, DateTime fechaHasta){
+    public List<Inmueble> GetInmueblesDisponiblesPorFecha(DateTime fechaDesde, DateTime fechaHasta, int Id_Contrato) {
         List<Inmueble> inmuebles = new List<Inmueble>();
 
         string query = @$"SELECT i.{nameof(Inmueble.Id)}, 
@@ -376,6 +376,7 @@ public class RepositorioInmueble : RepositorioBase, IRepositorioInmueble
                         FROM inmueble i
                         LEFT JOIN contrato c 
                             ON i.id = c.id_inmueble
+                            {(Id_Contrato > 0 ? $"AND c.id != {Id_Contrato}" : "")}
                             AND c.estado = 'Vigente'
                             AND 
                                 (c.fecha_desde <= @FechaFin AND c.fecha_hasta >= @FechaInicio) -- Contrato que cubre el rango solicitado

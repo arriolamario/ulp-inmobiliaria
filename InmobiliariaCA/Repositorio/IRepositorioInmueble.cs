@@ -16,5 +16,5 @@ public interface IRepositorioInmueble
     bool EsInmuebleDisponible(int IdInmueble, DateTime FechaDesde, DateTime FechaHasta);
     List<TipoInmueble> GetTipoInmuebles();
     List<TipoInmuebleUso> GetTipoInmueblesUsos();
-    public List<Inmueble> GetInmueblesDisponiblesPorFecha(DateTime fechaDesde, DateTime fechaHasta);
+    public List<Inmueble> GetInmueblesDisponiblesPorFecha(DateTime fechaDesde, DateTime fechaHasta, int Id_Contrato);
 }
