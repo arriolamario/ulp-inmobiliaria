@@ -152,6 +152,14 @@ namespace InmobiliariaCA.Controllers
                     ViewBag.Inmuebles = listInmueble;
                     return View("AltaEditar", Contrato);
                 }
+
+            if (Contrato.Monto_Alquiler == 0)
+                {
+                    ModelState.AddModelError("Monto_Alquiler", "Monto debe ser mayor a 0");
+                    ViewBag.Inquilinos = new SelectList(GetInquilinos(), "Id", "NombreCompletoDNI");
+                    ViewBag.Inmuebles = listInmueble;
+                    return View("AltaEditar", Contrato);
+                }
                 if (Contrato.Id == 0)
                 {
                     Contrato contratoNew = new Contrato(Contrato);
