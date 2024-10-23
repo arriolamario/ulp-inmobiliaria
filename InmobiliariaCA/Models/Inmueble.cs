@@ -11,10 +11,12 @@ public class Inmueble
     
     [Required(ErrorMessage = "El tipo de uso es obligatorio.")]
     public int Id_Tipo_Inmueble_Uso { get; set; }
+    [ForeignKey(nameof(Id_Tipo_Inmueble_Uso))]
     public TipoInmuebleUso? Tipo_Uso { get; set; }
     
     [Required(ErrorMessage = "El tipo es obligatorio.")] 
     public int Id_Tipo_Inmueble { get; set; }
+    [ForeignKey(nameof(Id_Tipo_Inmueble))]
     public TipoInmueble? Tipo { get; set; }
     [Required(ErrorMessage = "Los ambientes son obligatorios.")]
     public int Ambientes { get; set; }
@@ -28,6 +30,7 @@ public class Inmueble
     public int Id_Propietario { get; set; }
 
     public bool Activo { get; set; }
+    [ForeignKey(nameof(Id_Propietario))]
     public Propietario? Propietario { get; set; }
     public DateTime Fecha_Creacion { get; set; }
     public DateTime Fecha_Actualizacion { get; set; }

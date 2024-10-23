@@ -1,6 +1,9 @@
 using InmobiliariaCA.Repositorio;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
+using InmobiliariaCA.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,12 +20,46 @@ if(builder.Environment.EnvironmentName == "Production")
 }
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+
+var configuration = builder.Configuration;
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>{
         options.LoginPath = "/Usuario/Login";
         options.LogoutPath = "/Usuario/Logout"; 
         options.AccessDeniedPath = "/Usuario/AccesoDenegado";
+    })
+    .AddJwtBearer(options => 
+    {
+        options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+					{
+						ValidateIssuer = true,
+						ValidateAudience = true,
+						ValidateLifetime = true,
+						ValidateIssuerSigningKey = true,
+						ValidIssuer = configuration["TokenAuthentication:Issuer"],
+						ValidAudience = configuration["TokenAuthentication:Audience"],
+						IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.ASCII.GetBytes(
+							configuration["TokenAuthentication:SecretKey"])),
+					};
+
+        options.Events = new JwtBearerEvents
+		{
+			OnMessageReceived = context =>
+			{
+				var accessToken = context.Request.Query["access_token"];
+				var path = context.HttpContext.Request.Path;
+				if (!string.IsNullOrEmpty(accessToken) &&
+					(path.StartsWithSegments("/api/propietarios/reset") ||
+					path.StartsWithSegments("/api/propietarios/token")))
+				{
+					context.Token = accessToken;
+				}
+				return Task.CompletedTask;
+			}
+		};
     });
 
 builder.Services.AddAuthorization(options => {
@@ -41,6 +78,15 @@ builder.Services.AddScoped<IRepositorioPropietario, RepositorioPropietario>();
 builder.Services.AddScoped<IRepositorioTipos, RepositorioTipos>();
 builder.Services.AddScoped<IRepositorioPago, RepositorioPago>();
 builder.Services.AddScoped<IRepositorioUsuario, RepositorioUsuario>();
+String ConnectionStrings = configuration["ConnectionStrings:DefaultConnection"];
+builder.Services.AddDbContext<DataContext>(
+            options => options
+                .UseMySql(configuration["ConnectionStrings:DefaultConnection"],ServerVersion.AutoDetect(configuration["ConnectionStrings:DefaultConnection"]))
+                .LogTo(Console.WriteLine, LogLevel.Information)
+                .EnableSensitiveDataLogging()
+                .EnableDetailedErrors()
+        );
+
 
 var app = builder.Build();
 
@@ -56,7 +102,13 @@ if (!app.Environment.IsDevelopment())
 //app.UseHttpsRedirection();
 app.UseStaticFiles();
 
+app.UseCors(x => x
+	.AllowAnyOrigin()
+	.AllowAnyMethod()
+	.AllowAnyHeader());
+
 app.UseRouting();
+
 
 app.UseCookiePolicy(new CookiePolicyOptions(){
     MinimumSameSitePolicy = SameSiteMode.None
@@ -64,6 +116,8 @@ app.UseCookiePolicy(new CookiePolicyOptions(){
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapControllers();
 
 
 app.MapControllerRoute(

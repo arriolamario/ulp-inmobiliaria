@@ -1,22 +1,21 @@
 namespace InmobiliariaCA.Models;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
+// [Table("Propietario", Schema = "test")]
 public class Propietario
 {
+    [Key]
     public int Id { get; set; }
     [Required(ErrorMessage = "El documento es obligatorio.")]
-    [RegularExpression(@"^\d{7,8}$", ErrorMessage = "El documento debe tener 7 u 8 dígitos.")]	
+    [RegularExpression(@"^\d{7,8}$", ErrorMessage = "El documento debe tener 7 u 8 dígitos.")]
     public string Dni { get; set; } = "";
     [Required(ErrorMessage = "El nombre es obligatorio.")]
     public string Nombre { get; set; } = "";
     [Required(ErrorMessage = "El apellido es obligatorio.")]
     public string Apellido { get; set; } = "";
-    private string telefono = "";
-    public string Telefono
-    {
-        get { return $"{TelefonoArea}-{TelefonoNumero}"; }
-        set { telefono = value; }
-    }
+    
+    public string Telefono {get; set;}
     [Required(ErrorMessage = "El correo electrónico es obligatorio.")]
     [EmailAddress(ErrorMessage = "El correo electrónico no es válido.")]
     public string Email { get; set; } = "";
@@ -25,11 +24,15 @@ public class Propietario
     public DateTime Fecha_Creacion { get; set; }
     public DateTime Fecha_Actualizacion { get; set; }
     [Required(ErrorMessage = "El area es obligatorio.")]
-    [RegularExpression(@"^\d+$", ErrorMessage = "El area solo debe tener dígitos.")]	
+    [RegularExpression(@"^\d+$", ErrorMessage = "El area solo debe tener dígitos.")]
+    [NotMapped]	
     public string TelefonoArea { get; set; } = "";
     [Required(ErrorMessage = "El numero de telefono es obligatorio.")]
     [RegularExpression(@"^\d+$", ErrorMessage = "El numero solo debe tener dígitos.")]	
+    [NotMapped]
     public string TelefonoNumero { get; set; } = "";
-    public int Estado { get; set; } = 1;
+    public string Password_Hash { get; set; } = "";
+    public string Avatar_Url { get; set; } = "";
+    public string Usuario { get; set; } = "";
     public List<Inmueble> Inmuebles = new List<Inmueble>();
 }

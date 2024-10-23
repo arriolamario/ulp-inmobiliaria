@@ -5,10 +5,12 @@ CREATE TABLE IF NOT EXISTS propietario (
     nombre VARCHAR(100) NOT NULL,
     apellido VARCHAR(100) NOT NULL,
     telefono VARCHAR(20),
-    email VARCHAR(100),
+    usuario VARCHAR(100) UNIQUE NOT NULL,
+    email VARCHAR(100) UNIQUE,
     direccion VARCHAR(255),
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    fecha_actualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    password_hash VARCHAR(255) NOT NULL
 );
 
 -- Crear la tabla 'inquilino'

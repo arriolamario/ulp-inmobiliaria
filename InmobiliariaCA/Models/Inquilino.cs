@@ -20,10 +20,12 @@ public class Inquilino {
 
         [Required(ErrorMessage = "El Teléfono es obligatorio.")]
         [RegularExpression(@"^\d{2,4}$", ErrorMessage = "El área debe contener entre 2 y 4 dígitos numéricos.")]
+        [NotMapped]
         public string TelefonoArea { get; set; } = "";
 
         [Required(ErrorMessage = "El Teléfono es obligatorio.")]
         [RegularExpression(@"^\d{6,10}$", ErrorMessage = "El número de teléfono debe contener entre 6 y 10 dígitos numéricos.")]
+        [NotMapped]
         public string TelefonoNumero { get; set; } = "";
 
         public string Telefono => $"{TelefonoArea}-{TelefonoNumero}";

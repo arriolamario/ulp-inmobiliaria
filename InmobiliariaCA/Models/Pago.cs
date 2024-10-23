@@ -1,6 +1,7 @@
 namespace InmobiliariaCA.Models;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using InmobiliariaCA.Models.ContratoModels;
 
 public class Pago {
@@ -32,8 +33,10 @@ public class Pago {
     public int Creado_Por_Id { get; set; }
     public int? Anulado_Por_Id { get; set; }
     public DateTime? Fecha_Anulacion { get; set; }
-
+    [ForeignKey(nameof(Contrato_Id))]
     public virtual Contrato? Contrato { get; set; }
+    [ForeignKey(nameof(Creado_Por_Id))]
     public virtual Usuario? CreadoPor { get; set; }
+    [ForeignKey(nameof(Anulado_Por_Id))]
     public virtual Usuario? AnuladoPor { get; set; }
 }

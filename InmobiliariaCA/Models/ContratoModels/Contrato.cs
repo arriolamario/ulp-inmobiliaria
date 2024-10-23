@@ -52,13 +52,12 @@ public class Contrato {
     public decimal? Multa { get; set; }
 
     [Range(0, double.MaxValue, ErrorMessage = "La multa debe ser un valor positivo.")]
+    [NotMapped]
     public decimal? Total { get; set; }
 
     [Required(ErrorMessage = "El usuario de creación es obligatorio.")]
     [ForeignKey("UsuarioCreacion")]
     public int Id_Usuario_Creacion { get; set; }
-
-    [ForeignKey("UsuarioFinalizacion")]
     public int? Id_Usuario_Finalizacion { get; set; }
 
     [DataType(DataType.DateTime)]
@@ -74,7 +73,9 @@ public class Contrato {
 
     public virtual Inmueble? Inmueble { get; set; }
     public virtual Inquilino? Inquilino { get; set; }
+    [ForeignKey(nameof(Id_Usuario_Creacion))]
     public virtual Usuario? Usuario_Creacion { get; set; }
+    [ForeignKey(nameof(Id_Usuario_Finalizacion))]
     public virtual Usuario? Usuario_Finalizacion { get; set; }
 
     public EstadoContrato Estado { get; set; } = EstadoContrato.Vigente;
