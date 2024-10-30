@@ -37,4 +37,5 @@ public class Inmueble
     
     [NotMapped]
     public string NombreInmueble => $"{Direccion} - {Tipo?.Descripcion}";
+    public string Avatar_Url { get; set; } = "";
 }

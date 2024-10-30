@@ -370,8 +370,9 @@ public class PropietariosController : ControllerBase
         {
             client.CheckCertificateRevocation = false; // Opción para evitar problemas de certificación en entornos de desarrollo
 
-            await client.ConnectAsync("smtp.mailgun.org", 587, MailKit.Security.SecureSocketOptions.StartTls);
-            await client.AuthenticateAsync("postmaster@sandbox89447560ebb34b72b11aa754b8457bf9.mailgun.org", "935ae8e2b1deb164d8bfb62f5735e877-d010bdaf-4e0ec541");
+            await client.ConnectAsync("sandbox.smtp.mailtrap.io", 587, MailKit.Security.SecureSocketOptions.StartTls);
+            // await client.AuthenticateAsync("postmaster@sandbox89447560ebb34b72b11aa754b8457bf9.mailgun.org", "935ae8e2b1deb164d8bfb62f5735e877-d010bdaf-4e0ec541");
+            await client.AuthenticateAsync("13dee342798801", "7bdcc0bb130c55");
 
             // Enviar correo
             await client.SendAsync(message);
@@ -459,9 +460,9 @@ public class PropietariosController : ControllerBase
         {
             client.CheckCertificateRevocation = false; // Opción para evitar problemas de certificación en entornos de desarrollo
 
-            await client.ConnectAsync("smtp.mailgun.org", 587, MailKit.Security.SecureSocketOptions.StartTls);
-            await client.AuthenticateAsync("postmaster@sandbox89447560ebb34b72b11aa754b8457bf9.mailgun.org", "935ae8e2b1deb164d8bfb62f5735e877-d010bdaf-4e0ec541");
-
+            await client.ConnectAsync("sandbox.smtp.mailtrap.io", 587, MailKit.Security.SecureSocketOptions.StartTls);
+            // await client.AuthenticateAsync("postmaster@sandbox89447560ebb34b72b11aa754b8457bf9.mailgun.org", "935ae8e2b1deb164d8bfb62f5735e877-d010bdaf-4e0ec541");
+            await client.AuthenticateAsync("13dee342798801", "7bdcc0bb130c55");
             // Enviar correo
             await client.SendAsync(message);
             await client.DisconnectAsync(true);

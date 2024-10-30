@@ -24,7 +24,7 @@ public class InmuebleController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<Propietario?>> Inmuebles()
+    public async Task<ActionResult> Inmuebles()
     {
         var Id = User.FindFirst("Id")?.Value;
 
@@ -39,19 +39,140 @@ public class InmuebleController : ControllerBase
             {
                 x.Id,
                 x.Direccion,
-                idTipoUso = x.Id_Tipo_Inmueble_Uso,
-                uso = new
-                {
-                    x.Tipo_Uso.Id,
-                    x.Tipo_Uso.Descripcion
-                },
-                idTipo = x.Id_Tipo_Inmueble,
+                x.Precio,
+                x.Avatar_Url
+            })
+        });
+    }
+
+    [HttpGet]
+    [Route("{idInmueble}")]
+    public async Task<ActionResult> Inmuebles(int idInmueble)
+    {
+        var Id = User.FindFirst("Id")?.Value;
+
+        List<Inmueble> inmuebles = await contexto.Inmueble.Where(x => x.Id_Propietario == int.Parse(Id) && x.Id == idInmueble)
+                                .Include(x => x.Propietario).Include(x => x.Tipo_Uso).Include(x => x.Tipo).ToListAsync();
+
+        return Ok(new
+        {
+            status = "exito",
+            message = "Listado de inmuebles",
+            data = inmuebles.Select(x => new
+            {
+                x.Id,
+                x.Direccion,
+                x.Precio,
+                x.Avatar_Url,
+                x.Ambientes,
+                x.Activo,
                 tipo = new
                 {
                     x.Tipo.Id,
                     x.Tipo.Descripcion
+                },
+                uso = new
+                {
+                    x.Tipo_Uso.Id,
+                    x.Tipo_Uso.Descripcion
                 }
-            })
+            }).First()
+        });
+    }
+
+    [HttpPut]
+    public async Task<ActionResult> Post([FromForm] InmuebleApi inmuebleApi, [FromForm] IFormFile imagen)
+    {
+        var Id = User.FindFirst("Id")?.Value;
+
+
+
+        Inmueble inmueble = new Inmueble
+        {
+            Id_Propietario = Id == null ? 0 : int.Parse(Id),
+            Id_Tipo_Inmueble = inmuebleApi.IdTipo,
+            Id_Tipo_Inmueble_Uso = inmuebleApi.IdUso,
+            Direccion = inmuebleApi.Direccion,
+            Precio = inmuebleApi.Precio,
+            Ambientes = inmuebleApi.Ambientes,
+            Activo = inmuebleApi.Activo,
+            Coordenada_Lat = "0",
+            Coordenada_Lon = "0",
+            Avatar_Url = "",
+            Fecha_Actualizacion = DateTime.Now,
+            Fecha_Creacion = DateTime.Now
+        };
+        try
+        {
+            contexto.Inmueble.Add(inmueble);
+            await contexto.SaveChangesAsync();
+
+            string wwwPath = environment.WebRootPath;
+            string path = Path.Combine(wwwPath, "inmueble");
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+            string fileName = "inmueble_" + inmueble.Id + Path.GetExtension(imagen.FileName);
+            string pathCompleto = Path.Combine(path, fileName);
+            inmueble.Avatar_Url = Path.Combine("\\inmueble", fileName);
+            await contexto.SaveChangesAsync();
+
+            using (FileStream stream = new FileStream(pathCompleto, FileMode.Create))
+            {
+                imagen.CopyTo(stream);
+            }
+        }
+        catch (Exception ex)
+        {
+
+        }
+        // contexto.Add(inmueble);
+
+        return Ok(new
+        {
+            status = "exito",
+            message = "Inmueble creado"
+        });
+    }
+
+    [HttpPatch("{idInmueble}")]
+    public async Task<ActionResult> Patch([FromForm] Boolean activo, [FromForm] IFormFile imagen, int idInmueble)
+    {
+        var Id = User.FindFirst("Id")?.Value;
+        Inmueble inmueblebd =contexto.Inmueble.First(x => x.Id == idInmueble && x.Id_Propietario == int.Parse(Id));
+
+        inmueblebd.Activo = activo;
+
+        
+        try
+        {
+            string wwwPath = environment.WebRootPath;
+            string path = Path.Combine(wwwPath, "inmueble");
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+            string fileName = "inmueble_" + inmueblebd.Id + Path.GetExtension(imagen.FileName);
+            string pathCompleto = Path.Combine(path, fileName);
+            inmueblebd.Avatar_Url = Path.Combine("\\inmueble", fileName);
+            await contexto.SaveChangesAsync();
+
+            using (FileStream stream = new FileStream(pathCompleto, FileMode.Create))
+            {
+                imagen.CopyTo(stream);
+            }
+        }
+        catch (Exception ex)
+        {
+
+        }
+        // contexto.Add(inmueble);
+
+        return Ok(new
+        {
+            status = "exito",
+            message = "Inmueble creado"
         });
     }
 }
