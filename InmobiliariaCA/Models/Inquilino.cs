@@ -28,7 +28,7 @@ public class Inquilino {
         [NotMapped]
         public string TelefonoNumero { get; set; } = "";
 
-        public string Telefono => $"{TelefonoArea}-{TelefonoNumero}";
+        public string Telefono { get; set; } = "";
         [Required(ErrorMessage = "Campo obligatorio")]
         [EmailAddress(ErrorMessage = "El formato del Email no es válido.")]
         public string Email { get; set; } = "";

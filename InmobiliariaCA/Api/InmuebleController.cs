@@ -45,6 +45,35 @@ public class InmuebleController : ControllerBase
         });
     }
 
+    [HttpGet("alquilados")]
+    public async Task<ActionResult> InmueblesAlquilados()
+    {
+        var Id = User.FindFirst("Id")?.Value;
+        // var contrato =    contexto.Contrato.Include(x => x.Inmueble).First();
+        // return Ok(contrato);
+        var inmueblesAlquiladosHoy = await contexto.Contrato
+            .Where(c => c.Fecha_Desde <= DateTime.Today && c.Fecha_Hasta >= DateTime.Today && c.EstadoString == "Vigente")
+            .Include(c => c.Inmueble)
+            .Where(x => x.Inmueble.Id_Propietario == int.Parse(Id)) // Asegúrate de tener la propiedad de navegación configurada
+            .Select(c => new { c.Inmueble, c.Id_Inquilino, Id_Contrato = c.Id})
+            .ToListAsync();
+
+        return Ok(new
+        {
+            status = "exito",
+            message = "Listado de inmuebles alquilados",
+            data = inmueblesAlquiladosHoy.Select(x => new
+            {
+                x.Inmueble.Id,
+                x.Inmueble.Direccion,
+                x.Inmueble.Precio,
+                x.Inmueble.Avatar_Url,
+                idInquilino = x.Id_Inquilino,
+                idContrato = x.Id_Contrato
+            })
+        });
+    }
+
     [HttpGet]
     [Route("{idInmueble}")]
     public async Task<ActionResult> Inmuebles(int idInmueble)

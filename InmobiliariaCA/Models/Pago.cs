@@ -32,6 +32,7 @@ public class Pago {
     public EstadoPago Estado { get; set; } = EstadoPago.Pagado;
     public int Creado_Por_Id { get; set; }
     public int? Anulado_Por_Id { get; set; }
+    public decimal Multa { get; set; } = 0;
     public DateTime? Fecha_Anulacion { get; set; }
     [ForeignKey(nameof(Contrato_Id))]
     public virtual Contrato? Contrato { get; set; }

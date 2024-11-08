@@ -13,8 +13,8 @@ public class DataContext : DbContext
     public DbSet<Propietario> Propietario { get; set; }
     public DbSet<Inquilino> Inquilino { get; set; }
     public DbSet<Inmueble> Inmueble { get; set; }
-    public DbSet<Pago> Pago { get; set; }
-    public DbSet<Contrato> Contrato { get; set; }
+    public DbSet<PagoApi> Pago { get; set; }
+    public DbSet<ContratoApi> Contrato { get; set; }
     public DbSet<TipoInmueble> TipoInmueble { get; set; }
     public DbSet<TipoInmuebleUso> TipoInmuebleUso { get; set; }
     public DbSet<Usuario> Usuario { get; set; }

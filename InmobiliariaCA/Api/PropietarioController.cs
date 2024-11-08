@@ -286,6 +286,7 @@ public class PropietariosController : ControllerBase
                 new Claim("FullName", propietarioBd.Nombre + " " + propietarioBd.Apellido)
             };
         var expiracion = DateTime.Now.AddMinutes(60);
+        
         var token = new JwtSecurityToken(
             issuer: config["TokenAuthentication:Issuer"],
             audience: config["TokenAuthentication:Audience"],
@@ -294,6 +295,8 @@ public class PropietariosController : ControllerBase
             signingCredentials: credenciales
         );
         jwtToken = new JwtSecurityTokenHandler().WriteToken(token);
+        
+        
         return token;
     }
 

@@ -35,6 +35,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     {
         options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
 					{
+                        ClockSkew = TimeSpan.Zero,
 						ValidateIssuer = true,
 						ValidateAudience = true,
 						ValidateLifetime = true,
