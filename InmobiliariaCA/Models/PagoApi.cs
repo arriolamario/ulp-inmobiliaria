@@ -1,0 +1,50 @@
+namespace InmobiliariaCA.Models;
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using InmobiliariaCA.Models.ContratoModels;
+
+[Table("Pago")]
+public class PagoApi {
+    public PagoApi()
+    {
+        
+    }
+
+    public int Id { get; set; }
+    public int Contrato_Id { get; set; }
+
+    // [Required(ErrorMessage = "El número de pago es obligatorio.")]
+    public int Numero_Pago { get; set; }
+
+    // [Required(ErrorMessage = "La fecha de pago es obligatoria.")]
+    // [DataType(DataType.Date, ErrorMessage = "Formato de fecha no válido.")]
+    public DateTime Fecha_Pago { get; set; }
+
+    // [StringLength(255, ErrorMessage = "El detalle no puede exceder los 255 caracteres.")]
+    public string Detalle { get; set; } = "";
+
+    // [Required(ErrorMessage = "El importe es obligatorio.")]
+    // [Range(0.01, double.MaxValue, ErrorMessage = "El importe debe ser mayor que cero.")]
+    public decimal Importe { get; set; }
+
+    //public EstadoPago Estado { get; set; } = EstadoPago.Pagado;
+    [NotMapped]
+    public EstadoPago Estado { 
+        get => Enum.Parse<EstadoPago>(EstadoString); 
+        set => EstadoString = value.ToString(); 
+    }
+
+    [Column("estado")]
+    public string EstadoString { get; set; }
+    public int Creado_Por_Id { get; set; }
+    public int? Anulado_Por_Id { get; set; }
+    public decimal Multa { get; set; } = 0;
+    // public DateTime? Fecha_Anulacion { get; set; }
+    [ForeignKey(nameof(Contrato_Id))]
+    public virtual ContratoApi? Contrato { get; set; }
+    [ForeignKey(nameof(Creado_Por_Id))]
+    public virtual Usuario? CreadoPor { get; set; }
+    [ForeignKey(nameof(Anulado_Por_Id))]
+    public virtual Usuario? AnuladoPor { get; set; }
+}

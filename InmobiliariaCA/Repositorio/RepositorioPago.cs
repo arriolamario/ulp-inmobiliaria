@@ -154,6 +154,7 @@ public class RepositorioPago : RepositorioBase, IRepositorioPago {
                                 {nameof(Pago.Detalle)},
                                 {nameof(Pago.Importe)},
                                 {nameof(Pago.Estado)},
+                                {nameof(Pago.Multa)},
                                 {nameof(Pago.Creado_Por_Id)}
                             ) VALUES (
                                 @{nameof(Pago.Contrato_Id)},
@@ -162,6 +163,7 @@ public class RepositorioPago : RepositorioBase, IRepositorioPago {
                                 @{nameof(Pago.Detalle)},
                                 @{nameof(Pago.Importe)},
                                 @{nameof(Pago.Estado)},
+                                @{nameof(Pago.Multa)},
                                 @{nameof(Pago.Creado_Por_Id)}
                             );
                     SELECT LAST_INSERT_ID();";
@@ -172,6 +174,7 @@ public class RepositorioPago : RepositorioBase, IRepositorioPago {
                 parameters.AddWithValue($"{nameof(Pago.Fecha_Pago)}", pago.Fecha_Pago);
                 parameters.AddWithValue($"{nameof(Pago.Detalle)}", pago.Detalle);
                 parameters.AddWithValue($"{nameof(Pago.Importe)}", pago.Importe);
+                parameters.AddWithValue($"{nameof(Pago.Multa)}", pago.Multa);
                 parameters.AddWithValue($"{nameof(Pago.Estado)}", EstadoPago.Pagado.ToString());
                 parameters.AddWithValue($"{nameof(Pago.Creado_Por_Id)}", pago.Creado_Por_Id);
             }, transaction);

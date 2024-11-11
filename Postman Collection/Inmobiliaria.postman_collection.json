@@ -1,0 +1,708 @@
+{
+	"info": {
+		"_postman_id": "7aba9539-305a-45c8-a755-0311b411abcc",
+		"name": "Inmobiliaria",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "487942"
+	},
+	"item": [
+		{
+			"name": "Inmueble",
+			"item": [
+				{
+					"name": "Inmuebles",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{tokenInmobiliaria}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://192.168.1.135:5182/api/inmueble",
+							"protocol": "http",
+							"host": [
+								"192",
+								"168",
+								"1",
+								"135"
+							],
+							"port": "5182",
+							"path": [
+								"api",
+								"inmueble"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Inmuebles Alquilados",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{tokenInmobiliaria}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://192.168.1.135:5182/api/inmueble/alquilados",
+							"protocol": "http",
+							"host": [
+								"192",
+								"168",
+								"1",
+								"135"
+							],
+							"port": "5182",
+							"path": [
+								"api",
+								"inmueble",
+								"alquilados"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Inmueble",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{tokenInmobiliaria}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "Direccion",
+									"value": "Los Inmigrantes 2054",
+									"type": "text"
+								},
+								{
+									"key": "Ambientes",
+									"value": "3",
+									"type": "text"
+								},
+								{
+									"key": "Precio",
+									"value": "15000000",
+									"type": "text"
+								},
+								{
+									"key": "IdTipo",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "IdUso",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "Activo",
+									"value": "true",
+									"type": "text"
+								},
+								{
+									"key": "imagen",
+									"type": "file",
+									"src": "/C:/Users/arriola/OneDrive - Charles Taylor InsureTech Limited/Pictures/adicionales.jpg"
+								},
+								{
+									"key": "inmuebleApi",
+									"value": "{\"direccion\":\"Av Fuerza Aerea 2778\",\"ambientes\":5,\"precio\":150000.0,\"idTipo\":1,\"idUso\":3,\"activo\":true}",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "http://192.168.1.135:5182/api/inmueble",
+							"protocol": "http",
+							"host": [
+								"192",
+								"168",
+								"1",
+								"135"
+							],
+							"port": "5182",
+							"path": [
+								"api",
+								"inmueble"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Inmueble id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{tokenInmobiliaria}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://192.168.1.135:5182/api/inmueble/2",
+							"protocol": "http",
+							"host": [
+								"192",
+								"168",
+								"1",
+								"135"
+							],
+							"port": "5182",
+							"path": [
+								"api",
+								"inmueble",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Tipos",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{tokenInmobiliaria}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://192.168.1.135:5182/api/tipos",
+							"protocol": "http",
+							"host": [
+								"192",
+								"168",
+								"1",
+								"135"
+							],
+							"port": "5182",
+							"path": [
+								"api",
+								"tipos"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Propietario",
+			"item": [
+				{
+					"name": "Get Propietario",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{tokenInmobiliaria}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5182/api/propietarios",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5182",
+							"path": [
+								"api",
+								"propietarios"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Patch Propietario",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{tokenInmobiliaria}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": 1,\r\n    \"documento\": \"35474955\",\r\n    \"nombre\": \"Mario Fabian\",\r\n    \"apellido\": \"Arriola\",\r\n    \"telefonoArea\": \"266\",\r\n    \"telefonoNumero\": \"4614253\",\r\n    \"email\": \"mario@yopmail.com\",\r\n    \"direccion\": \"Av Fuerza Aerea 2778\",\r\n    \"avatar_Url\": \"\",\r\n    \"usuario\": \"mario\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5182/api/propietarios",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5182",
+							"path": [
+								"api",
+								"propietarios"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cambiar Clave",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{tokenInmobiliaria}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "\"1\"",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://192.168.1.135:5182/api/propietarios/cambiarclave",
+							"protocol": "http",
+							"host": [
+								"192",
+								"168",
+								"1",
+								"135"
+							],
+							"port": "5182",
+							"path": [
+								"api",
+								"propietarios",
+								"cambiarclave"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "RecuperoEnvioMail",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "usuario",
+									"value": "mario",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://192.168.1.135:5182/api/propietarios/usuario",
+							"protocol": "http",
+							"host": [
+								"192",
+								"168",
+								"1",
+								"135"
+							],
+							"port": "5182",
+							"path": [
+								"api",
+								"propietarios",
+								"usuario"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "CambiarAvatar",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{tokenInmobiliaria}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "avatar",
+									"type": "file",
+									"src": "/C:/Users/arriola/OneDrive - Charles Taylor InsureTech Limited/Pictures/independiente.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://192.168.1.135:5182/api/propietarios/cambiaravatar",
+							"protocol": "http",
+							"host": [
+								"192",
+								"168",
+								"1",
+								"135"
+							],
+							"port": "5182",
+							"path": [
+								"api",
+								"propietarios",
+								"cambiaravatar"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Inquilino",
+			"item": [
+				{
+					"name": "Get Inquilino",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{tokenInmobiliaria}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5182/api/inquilino/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5182",
+							"path": [
+								"api",
+								"inquilino",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Contrato",
+			"item": [
+				{
+					"name": "Get Contrato",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{tokenInmobiliaria}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5182/api/contrato/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5182",
+							"path": [
+								"api",
+								"contrato",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Contrato Pagos",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{tokenInmobiliaria}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:5182/api/contrato/2/pagos",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5182",
+							"path": [
+								"api",
+								"contrato",
+								"2",
+								"pagos"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (pm.response.code === 200) {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.collectionVariables.set(\"tokenInmobiliaria\", jsonData.token);\r",
+							"}\r",
+							"else{\r",
+							"    pm.collectionVariables.set(\"tokenInmobiliaria\", \"\");\r",
+							"}"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"Usuario\" : \"mario\",\r\n    \"Clave\" : \"1\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5182/api/Propietarios/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5182",
+					"path": [
+						"api",
+						"Propietarios",
+						"login"
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Response 200 OK",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Usuario\" : \"mario@yopmail.com\",\r\n    \"Clave\" : \"123456\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5182/api/Propietarios/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5182",
+							"path": [
+								"api",
+								"Propietarios",
+								"login"
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 10 Oct 2024 16:19:15 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "Kestrel"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoibWFyaW9AeW9wbWFpbC5jb20iLCJJZCI6IjEiLCJGdWxsTmFtZSI6Ik1hcmlvIEZhYmlhbiBBcnJpb2xhIiwiZXhwIjoxNzI4NTgwNzU2LCJpc3MiOiJJbm1vYmlsaWFyaWFDQSIsImF1ZCI6Im1vYmlsZUFQUCJ9.lrQExkgazVSKAAC79tsgeeqGf2HV6cHhWXdY0YrWg8U\",\n    \"expiracion\": \"2024-10-10T17:19:16Z\",\n    \"usuario\": {\n        \"email\": \"mario@yopmail.com\",\n        \"nombre\": \"Mario Fabian\",\n        \"apellido\": \"Arriola\"\n    }\n}"
+				},
+				{
+					"name": "Response 401 Unauthorized",
+					"originalRequest": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Usuario\" : \"mario@yopmail.com\",\r\n    \"Clave\" : \"1234561\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:5182/api/Propietarios/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "5182",
+							"path": [
+								"api",
+								"Propietarios",
+								"login"
+							]
+						}
+					},
+					"status": "Unauthorized",
+					"code": 401,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json; charset=utf-8"
+						},
+						{
+							"key": "Date",
+							"value": "Thu, 10 Oct 2024 16:19:56 GMT"
+						},
+						{
+							"key": "Server",
+							"value": "Kestrel"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"mensaje\": \"Nombre de usuario o clave incorrecta\"\n}"
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "tokenInmobiliaria",
+			"value": ""
+		}
+	]
+}
